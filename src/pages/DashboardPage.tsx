@@ -1,6 +1,12 @@
 import { useAuth } from "../context/AuthContext";
 
-export function DashboardPage() {
+type Page = 'dashboard' | 'settings'
+
+interface DashboardPageProps {
+  readonly onNavigate: (page: Page) => void;
+}
+
+export function DashboardPage({ onNavigate }: DashboardPageProps) {
   const { user } = useAuth();
 
   if (!user) return null;
@@ -63,7 +69,10 @@ export function DashboardPage() {
             </div>
 
             {user.role === "admin" && (
-              <div className="bg-white overflow-hidden shadow rounded-lg">
+              <button
+                onClick={() => onNavigate('settings')}
+                className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow w-full text-left"
+              >
                 <div className="p-5">
                   <div className="flex items-center">
                     <div className="flex-shrink-0">
@@ -84,7 +93,7 @@ export function DashboardPage() {
                     </div>
                   </div>
                 </div>
-              </div>
+              </button>
             )}
           </div>
         </div>

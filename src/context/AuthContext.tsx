@@ -1,6 +1,6 @@
 import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState, useMemo } from "react";
 import { supabase } from "../lib/supabase";
 import type { User } from "../types";
 
@@ -37,15 +37,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session?.user) {
-        setSupabaseUser(session.user);
-        fetchUserProfile(session.user.id);
-      } else {
+    const initAuth = async () => {
+      try {
+        // Get initial session with timeout
+        const sessionPromise = supabase.auth.getSession();
+        const timeoutPromise = new Promise((_, reject) =>
+          setTimeout(() => reject(new Error('Session check timeout')), 10000)
+        );
+
+        const result = await Promise.race([sessionPromise, timeoutPromise]);
+        const { data: { session } } = result as { data: { session: any } };
+        
+        if (session?.user) {
+          setSupabaseUser(session.user);
+          await fetchUserProfile(session.user.id);
+        } else {
+          setLoading(false);
+        }
+      } catch (error) {
+        console.error('Auth initialization error:', error);
         setLoading(false);
       }
-    });
+    };
+
+    initAuth();
 
     // Listen for auth changes
     const {
@@ -141,14 +156,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const value = {
+  const value = useMemo(() => ({
     user,
     supabaseUser,
     loading,
     signIn,
     signUp,
     signOut,
-  };
+  }), [user, supabaseUser, loading]);
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

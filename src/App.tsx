@@ -1,10 +1,15 @@
+import { useState } from 'react'
 import { AuthProvider, useAuth } from './context/AuthContext'
 import { Layout } from './components/Layout'
 import { LoginPage } from './pages/LoginPage'
 import { DashboardPage } from './pages/DashboardPage'
+import { SettingsPage } from './pages/SettingsPage'
+
+type Page = 'dashboard' | 'settings'
 
 function AppContent() {
   const { user, loading } = useAuth()
+  const [currentPage, setCurrentPage] = useState<Page>('dashboard')
 
   if (loading) {
     return (
@@ -21,9 +26,18 @@ function AppContent() {
     return <LoginPage />
   }
 
+  const renderPage = () => {
+    switch (currentPage) {
+      case 'settings':
+        return <SettingsPage />
+      default:
+        return <DashboardPage onNavigate={setCurrentPage} />
+    }
+  }
+
   return (
-    <Layout>
-      <DashboardPage />
+    <Layout currentPage={currentPage} onNavigate={setCurrentPage}>
+      {renderPage()}
     </Layout>
   )
 }
