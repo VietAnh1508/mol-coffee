@@ -25,7 +25,9 @@ export function LoginPage() {
           setError(error.message || "Failed to create account");
         } else {
           // Success - redirect to login
-          setSuccessMessage("Tài khoản được tạo thành công! Vui lòng đăng nhập.");
+          setSuccessMessage(
+            "Tài khoản được tạo thành công! Vui lòng đăng nhập."
+          );
           setIsSignUp(false);
           setPassword(""); // Clear password for security
           setName("");
@@ -106,7 +108,7 @@ export function LoginPage() {
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>
           )}
-          
+
           {successMessage && (
             <div className="text-green-600 text-sm text-center bg-green-50 border border-green-200 rounded p-3">
               {successMessage}
@@ -119,7 +121,7 @@ export function LoginPage() {
               disabled={loading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
             >
-              {loading ? "Loading..." : isSignUp ? "Đăng ký" : "Đăng nhập"}
+              {loading ? "Đang tải..." : isSignUp ? "Đăng ký" : "Đăng nhập"}
             </button>
           </div>
 
