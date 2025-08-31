@@ -20,6 +20,7 @@
 - **TanStack Query (React Query)** - Powerful data fetching with caching, mutations, and background sync
 - **TanStack Router** - Type-safe, file-based routing system
 - **Tailwind CSS v4** - Latest version with Vite plugin (not PostCSS)
+- **React Icons** - Heroicons v2 for consistent UI iconography
 - **Supabase** - PostgreSQL + Auth + RLS for backend-as-a-service
 - **pnpm** - Faster package management than npm
 - **PWA** - Mobile-optimized without app store requirements
