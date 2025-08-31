@@ -105,6 +105,7 @@ Data Privacy (via Supabase RLS)
 	4.	Activities fixed per shift; cannot change mid-shift.
 	5.	Salary = sum(approved time entries × applicable rate).
 	6.	Payroll is locked once a period is closed (reopen requires admin action).
+	7.	Admins cannot demote themselves or deactivate their own accounts to prevent system lockout scenarios. The last remaining admin cannot be demoted to ensure system manageability.
 
 ⸻
 
