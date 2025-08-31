@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { Layout } from "../components/Layout";
-import { useAuth } from "../context/AuthContext";
+import { useAuth } from "../hooks";
 import { SettingsPage } from "../pages/SettingsPage";
 
 export const Route = createFileRoute("/settings")({

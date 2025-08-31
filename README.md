@@ -59,6 +59,8 @@ SELECT create_admin_user('YOUR_PHONE', 'YOUR_PASSWORD', 'Your Name');
 ## 🏗️ Tech Stack
 
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
+- **Data Fetching:** TanStack Query (React Query) for caching & state management
+- **Routing:** TanStack Router with file-based routing
 - **Backend:** Supabase (PostgreSQL + Auth + RLS)
 - **PWA:** Service Worker + Manifest + Offline-ready
 - **Package Manager:** pnpm
@@ -72,10 +74,11 @@ SELECT create_admin_user('YOUR_PHONE', 'YOUR_PASSWORD', 'Your Name');
 - Database schema with Vietnamese activities
 - Row Level Security (RLS) for data privacy
 - PWA configuration for mobile experience
+- TanStack Query integration for optimized data fetching
+- Settings management with real-time updates (Activities & Rates)
 
 ### 🚧 **In Development (Phase 1 MVP)**
 - Employee management dashboard
-- Activities and rates configuration
 - Schedule calendar interface
 - Enhanced role-based dashboards
 
@@ -129,13 +132,17 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 ## 🎯 Project Status
 
 **Phase:** Foundation Complete → Phase 1 MVP Development  
-**Progress:** ~30% (Solid foundation, ready for feature development)
+**Progress:** ~40% (Foundation + Data Layer + Settings Complete)
 
 **Next Priorities:**
 1. Employee Management Interface
-2. Settings & Configuration Pages  
-3. Scheduling Calendar System
-4. Enhanced Dashboards
+2. Scheduling Calendar System
+3. Enhanced Dashboards
+
+**Recent Completions:**
+- ✅ TanStack Query integration with optimized caching
+- ✅ Settings pages for Activities & Rates management
+- ✅ Real-time data mutations and updates
 
 ## 🤝 Contributing
 

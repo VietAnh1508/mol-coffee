@@ -13,6 +13,7 @@
 - [x] React + TypeScript + Vite setup
 - [x] Tailwind CSS v4 with Vite plugin
 - [x] TanStack Router with file-based routing
+- [x] TanStack Query for optimized data fetching & caching
 - [x] PWA configuration (manifest, service worker)
 - [x] Supabase client integration
 - [x] Environment configuration (.env setup)
@@ -47,7 +48,7 @@
 - [x] Vietnamese default activities (Thử việc, Cà phê, Bánh mì, Quản lý)
 - [x] Default hourly rates (20k-28k VND)
 
-### 🎨 **UI Components**  
+### 🎨 **UI Components & Data Layer**  
 - [x] Login/Signup page with Vietnamese labels
 - [x] Success/error message handling
 - [x] Mobile-responsive design
@@ -57,6 +58,9 @@
 - [x] Auth context provider (optimized with useMemo)
 - [x] Dashboard with role-based navigation
 - [x] Settings page with tab navigation
+- [x] TanStack Query hooks for data fetching (useActivities, useRates, etc.)
+- [x] Mutation hooks for CRUD operations with optimistic updates
+- [x] Automatic cache invalidation and background data synchronization
 
 ---
 
@@ -70,14 +74,17 @@
   - [ ] Deactivate/reactivate employees
 - [ ] Employee profile editing
 
-### ⚙️ **Settings (Admin Only)**
-- [x] Activities management
-  - [x] Add/edit/archive activities
-  - [x] Activity status toggle
-- [x] Rates management
+### ⚙️ **Settings (Admin Only)** ✅ **COMPLETED**
+- [x] Activities management (powered by TanStack Query)
+  - [x] Add/edit/archive activities with real-time updates
+  - [x] Activity status toggle with optimistic UI
+  - [x] Loading states during mutations
+- [x] Rates management (powered by TanStack Query)
   - [x] Set hourly rates per activity
   - [x] Rate effective dating
-  - [x] Rate history view
+  - [x] Rate history view with automatic refresh
+- [x] Data persistence with automatic cache invalidation
+- [x] Error handling and user feedback
 
 ### 📅 **Scheduling System**
 - [ ] Schedule calendar view
@@ -206,6 +213,7 @@ pnpm run db:migration <name>  # Create new migration
 
 ### **Current Tech Stack**
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
+- **Data Fetching:** TanStack Query (React Query) with optimized caching
 - **Routing:** TanStack Router (file-based, type-safe)
 - **Backend:** Supabase (PostgreSQL + Auth + RLS)
 - **Package Manager:** pnpm
@@ -223,4 +231,9 @@ pnpm run db:migration <name>  # Create new migration
 
 ---
 
-**Progress:** ~40% complete (Foundation + Auth + Settings ✅)
+**Progress:** ~45% complete (Foundation + Auth + Data Layer + Settings ✅)
+
+### **Recent Achievements:**
+- ✅ **TanStack Query Integration** - Modern data fetching with caching, mutations, and optimistic updates
+- ✅ **Settings Management Complete** - Full CRUD for Activities and Rates with real-time UI
+- ✅ **Performance Optimizations** - Automatic background sync, cache invalidation, and loading states

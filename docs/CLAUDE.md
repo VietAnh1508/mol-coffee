@@ -17,6 +17,8 @@
 
 ### **Tech Stack Rationale:**
 - **React 19 + TypeScript + Vite** - Modern, fast development with type safety
+- **TanStack Query (React Query)** - Powerful data fetching with caching, mutations, and background sync
+- **TanStack Router** - Type-safe, file-based routing system
 - **Tailwind CSS v4** - Latest version with Vite plugin (not PostCSS)
 - **Supabase** - PostgreSQL + Auth + RLS for backend-as-a-service
 - **pnpm** - Faster package management than npm
@@ -38,35 +40,20 @@
 
 ```
 mol-coffee/
-├── docs/
-│   ├── CLAUDE.md           # This file - Claude context
-│   ├── README.md           # Project overview & setup
-│   ├── PROGRESS.md         # Development status & roadmap
-│   └── requirements.md     # Original specification document
+├── docs/                   # Project documentation & context files
 ├── src/
 │   ├── components/         # Reusable UI components
-│   │   └── Layout.tsx      # Main layout wrapper
-│   ├── pages/              # Page components
-│   │   ├── LoginPage.tsx   # Auth (login/signup)
-│   │   └── DashboardPage.tsx # Main dashboard
-│   ├── context/            # React contexts
-│   │   └── AuthContext.tsx # Authentication state
-│   ├── lib/                # Utilities & configurations
-│   │   └── supabase.ts     # Supabase client
-│   ├── types/              # TypeScript definitions
-│   │   └── index.ts        # All entity types
-│   ├── hooks/              # Custom React hooks (future)
-│   └── utils/              # Helper functions (future)
+│   ├── pages/              # Page components (LoginPage, DashboardPage, SettingsPage)
+│   ├── context/            # React contexts for state management
+│   ├── hooks/              # Custom React hooks (TanStack Query, auth, mutations)
+│   ├── routes/             # TanStack Router route definitions
+│   ├── lib/                # Utilities & configurations (Supabase client)
+│   ├── types/              # TypeScript type definitions
+│   └── utils/              # Helper functions
 ├── supabase/
-│   ├── migrations/         # Database schema migrations
-│   │   ├── 20250830000001_initial_schema.sql
-│   │   ├── 20250830000002_rls_policies.sql
-│   │   ├── 20250830000003_seed_data.sql
-│   │   ├── 20250830000004_admin_functions.sql
-│   │   └── 20250830000005_auto_confirm_users.sql
+│   ├── migrations/         # Database schema migrations & seeds
 │   └── README.md           # Database documentation
 └── scripts/                # Build & deployment scripts
-    └── setup-database.ts   # Programmatic DB setup (unused)
 ```
 
 ## 🔐 SECURITY IMPLEMENTATION
@@ -84,21 +71,24 @@ mol-coffee/
 
 ## 📊 CURRENT STATUS
 
-### **Completed (Foundation Phase):**
-- ✅ Full tech stack setup
+### **Completed (Foundation + Data Layer Phase):**
+- ✅ Full tech stack setup with TanStack Query integration
 - ✅ Database schema with Vietnamese localization
 - ✅ Authentication system with success flows
 - ✅ RLS security policies
 - ✅ Git-tracked database migrations
 - ✅ PWA configuration
 - ✅ Clean TypeScript architecture
+- ✅ Modern data fetching with caching and mutations
+- ✅ Settings management (Activities & Rates) with real-time updates
+- ✅ Comprehensive hook system for data management
 
-### **Progress:** ~30% complete (Solid foundation ready for features)
+### **Progress:** ~45% complete (Foundation + Data Layer + Settings Complete)
 
 ## 🎯 NEXT DEVELOPMENT PRIORITIES
 
 1. **Employee Management Page** - Admin dashboard for user management
-2. **Settings Pages** - Activities and rates management
+2. ~~**Settings Pages** - Activities and rates management~~ ✅ **COMPLETED**
 3. **Scheduling Interface** - Calendar view for shift management
 4. **Enhanced Dashboard** - Role-specific content display
 
@@ -140,7 +130,9 @@ SELECT promote_user_to_admin('PHONE');
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript
-- **State:** Prefer context for global state, useState for local
+- **Data Fetching:** Use TanStack Query hooks, avoid manual fetch in useEffect
+- **State:** Prefer TanStack Query for server state, React context for app state
+- **Mutations:** Use mutation hooks with optimistic updates and error handling
 - **Styling:** Use Tailwind CSS classes, avoid custom CSS
 - **Database:** Always use RLS-aware queries through Supabase client
 - **Auth:** Use the AuthContext, never bypass the auth system
@@ -160,5 +152,5 @@ SELECT promote_user_to_admin('PHONE');
 
 ---
 
-**Last Updated:** August 30, 2025  
-**Phase:** Foundation Complete, Phase 1 MVP Development Ready
+**Last Updated:** August 31, 2025  
+**Phase:** Foundation + Data Layer Complete, Phase 1 MVP Development In Progress

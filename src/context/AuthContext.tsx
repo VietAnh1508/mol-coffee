@@ -1,40 +1,26 @@
-import type { User as SupabaseUser } from "@supabase/supabase-js";
+import type { User as SupabaseUser, Session } from "@supabase/supabase-js";
 import type { ReactNode } from "react";
-import { createContext, useContext, useEffect, useState, useMemo } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { supabase } from "../lib/supabase";
-import type { User } from "../types";
+import { useUserProfile } from "../hooks";
+import { AuthContext } from "./AuthContextDefinition";
 
-interface AuthContextType {
-  user: User | null;
-  supabaseUser: SupabaseUser | null;
-  loading: boolean;
-  signIn: (phone: string, password: string) => Promise<{ error: Error | null }>;
-  signUp: (
-    phone: string,
-    password: string,
-    name: string
-  ) => Promise<{ error: Error | null }>;
-  signOut: () => Promise<void>;
-}
-
-const AuthContext = createContext<AuthContextType | undefined>(undefined);
-
-export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error("useAuth must be used within an AuthProvider");
-  }
-  return context;
-}
+// Re-export the context type for convenience
+export type { AuthContextType } from "./AuthContextDefinition";
 
 interface AuthProviderProps {
   children: ReactNode;
 }
 
 export function AuthProvider({ children }: AuthProviderProps) {
-  const [user, setUser] = useState<User | null>(null);
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [authLoading, setAuthLoading] = useState(true);
+
+  const { data: user, isLoading: profileLoading, error: profileError } = useUserProfile(
+    supabaseUser?.id || null
+  );
+
+  const loading = authLoading || profileLoading;
 
   useEffect(() => {
     const initAuth = async () => {
@@ -46,17 +32,15 @@ export function AuthProvider({ children }: AuthProviderProps) {
         );
 
         const result = await Promise.race([sessionPromise, timeoutPromise]);
-        const { data: { session } } = result as { data: { session: any } };
+        const { data: { session } } = result as { data: { session: Session | null } };
         
         if (session?.user) {
           setSupabaseUser(session.user);
-          await fetchUserProfile(session.user.id);
-        } else {
-          setLoading(false);
         }
       } catch (error) {
         console.error('Auth initialization error:', error);
-        setLoading(false);
+      } finally {
+        setAuthLoading(false);
       }
     };
 
@@ -68,36 +52,21 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } = supabase.auth.onAuthStateChange(async (_, session) => {
       if (session?.user) {
         setSupabaseUser(session.user);
-        await fetchUserProfile(session.user.id);
       } else {
         setSupabaseUser(null);
-        setUser(null);
-        setLoading(false);
       }
+      setAuthLoading(false);
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const fetchUserProfile = async (authUserId: string) => {
-    try {
-      const { data, error } = await supabase
-        .from("users")
-        .select("*")
-        .eq("auth_user_id", authUserId)
-        .single();
-
-      if (error) {
-        console.error("Error fetching user profile:", error);
-      } else {
-        setUser(data);
-      }
-    } catch (error) {
-      console.error("Error fetching user profile:", error);
-    } finally {
-      setLoading(false);
+  // Log profile errors for debugging
+  useEffect(() => {
+    if (profileError) {
+      console.error("Error fetching user profile:", profileError);
     }
-  };
+  }, [profileError]);
 
   const signIn = async (phone: string, password: string) => {
     try {
@@ -146,8 +115,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = async () => {
     try {
-      // Clear local state immediately
-      setUser(null);
+      // Clear local state immediately  
       setSupabaseUser(null);
 
       await supabase.auth.signOut();
@@ -157,7 +125,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const value = useMemo(() => ({
-    user,
+    user: user || null,
     supabaseUser,
     loading,
     signIn,

@@ -1,25 +1,38 @@
-import { useState, useEffect } from "react";
-import { useAuth } from "../context/AuthContext";
-import { supabase } from "../lib/supabase";
+import { useState } from "react";
+import { 
+  useAuth, 
+  useActivities, 
+  useRates, 
+  useCreateActivity, 
+  useUpdateActivity, 
+  useToggleActivity,
+  useCreateRate,
+  useUpdateRate
+} from "../hooks";
 import type { Activity, Rate } from "../types";
 
 export function SettingsPage() {
   const { user } = useAuth();
-  const [activities, setActivities] = useState<Activity[]>([]);
-  const [rates, setRates] = useState<Rate[]>([]);
-  const [loading, setLoading] = useState(true);
+  
+  // TanStack Query hooks
+  const { data: activities = [], isLoading: activitiesLoading } = useActivities();
+  const { data: rates = [], isLoading: ratesLoading } = useRates();
+  
+  // Mutation hooks
+  const createActivityMutation = useCreateActivity();
+  const updateActivityMutation = useUpdateActivity();
+  const toggleActivityMutation = useToggleActivity();
+  const createRateMutation = useCreateRate();
+  const updateRateMutation = useUpdateRate();
+  
+  // Local state
   const [activeTab, setActiveTab] = useState<"activities" | "rates">("activities");
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [editingRate, setEditingRate] = useState<Rate | null>(null);
   const [showActivityForm, setShowActivityForm] = useState(false);
   const [showRateForm, setShowRateForm] = useState(false);
-
-  useEffect(() => {
-    if (user && user.role === "admin") {
-      fetchActivities();
-      fetchRates();
-    }
-  }, [user]);
+  
+  const loading = activitiesLoading || ratesLoading;
 
   // Redirect non-admin users
   if (!user || user.role !== "admin") {
@@ -31,67 +44,40 @@ export function SettingsPage() {
     );
   }
 
-  const fetchActivities = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("activities")
-        .select("*")
-        .order("name");
-
-      if (error) throw error;
-      setActivities(data || []);
-    } catch (error) {
-      console.error("Error fetching activities:", error);
-    }
-  };
-
-  const fetchRates = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("rates")
-        .select(`
-          *,
-          activity:activities(name)
-        `)
-        .order("created_at", { ascending: false });
-
-      if (error) throw error;
-      setRates(data || []);
-    } catch (error) {
-      console.error("Error fetching rates:", error);
-    } finally {
-      setLoading(false);
-    }
-  };
 
   const handleSaveActivity = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const isActive = formData.get("is_active") === "true";
 
-    try {
-      if (editingActivity) {
-        // Update existing activity
-        const { error } = await supabase
-          .from("activities")
-          .update({ name, is_active: isActive })
-          .eq("id", editingActivity.id);
-
-        if (error) throw error;
-      } else {
-        // Create new activity
-        const { error } = await supabase
-          .from("activities")
-          .insert({ name, is_active: isActive });
-
-        if (error) throw error;
-      }
-
-      await fetchActivities();
-      setEditingActivity(null);
-      setShowActivityForm(false);
-    } catch (error) {
-      console.error("Error saving activity:", error);
-      alert("Lỗi khi lưu hoạt động");
+    if (editingActivity) {
+      // Update existing activity
+      updateActivityMutation.mutate({
+        id: editingActivity.id,
+        name,
+        is_active: isActive
+      }, {
+        onSuccess: () => {
+          setEditingActivity(null);
+          setShowActivityForm(false);
+        },
+        onError: () => {
+          alert("Lỗi khi cập nhật hoạt động");
+        }
+      });
+    } else {
+      // Create new activity
+      createActivityMutation.mutate({
+        name,
+        is_active: isActive
+      }, {
+        onSuccess: () => {
+          setEditingActivity(null);
+          setShowActivityForm(false);
+        },
+        onError: () => {
+          alert("Lỗi khi tạo hoạt động");
+        }
+      });
     }
   };
 
@@ -100,54 +86,46 @@ export function SettingsPage() {
     const hourlyVnd = parseInt(formData.get("hourly_vnd") as string);
     const effectiveFrom = formData.get("effective_from") as string;
 
-    try {
-      if (editingRate) {
-        // Update existing rate
-        const { error } = await supabase
-          .from("rates")
-          .update({
-            activity_id: activityId,
-            hourly_vnd: hourlyVnd,
-            effective_from: effectiveFrom,
-          })
-          .eq("id", editingRate.id);
-
-        if (error) throw error;
-      } else {
-        // Create new rate
-        const { error } = await supabase
-          .from("rates")
-          .insert({
-            activity_id: activityId,
-            hourly_vnd: hourlyVnd,
-            effective_from: effectiveFrom,
-          });
-
-        if (error) throw error;
-      }
-
-      await fetchRates();
-      setEditingRate(null);
-      setShowRateForm(false);
-    } catch (error) {
-      console.error("Error saving rate:", error);
-      alert("Lỗi khi lưu mức lương");
+    if (editingRate) {
+      // Update existing rate
+      updateRateMutation.mutate({
+        id: editingRate.id,
+        activity_id: activityId,
+        hourly_vnd: hourlyVnd,
+        effective_from: effectiveFrom,
+      }, {
+        onSuccess: () => {
+          setEditingRate(null);
+          setShowRateForm(false);
+        },
+        onError: () => {
+          alert("Lỗi khi cập nhật mức lương");
+        }
+      });
+    } else {
+      // Create new rate
+      createRateMutation.mutate({
+        activity_id: activityId,
+        hourly_vnd: hourlyVnd,
+        effective_from: effectiveFrom,
+      }, {
+        onSuccess: () => {
+          setEditingRate(null);
+          setShowRateForm(false);
+        },
+        onError: () => {
+          alert("Lỗi khi tạo mức lương");
+        }
+      });
     }
   };
 
-  const handleToggleActivity = async (activity: Activity) => {
-    try {
-      const { error } = await supabase
-        .from("activities")
-        .update({ is_active: !activity.is_active })
-        .eq("id", activity.id);
-
-      if (error) throw error;
-      await fetchActivities();
-    } catch (error) {
-      console.error("Error toggling activity:", error);
-      alert("Lỗi khi cập nhật trạng thái hoạt động");
-    }
+  const handleToggleActivity = (activity: Activity) => {
+    toggleActivityMutation.mutate(activity, {
+      onError: () => {
+        alert("Lỗi khi cập nhật trạng thái hoạt động");
+      }
+    });
   };
 
   if (loading) {
@@ -234,13 +212,16 @@ export function SettingsPage() {
                       </button>
                       <button
                         onClick={() => handleToggleActivity(activity)}
-                        className={`text-sm font-medium ${
+                        disabled={toggleActivityMutation.isPending}
+                        className={`text-sm font-medium disabled:opacity-50 ${
                           activity.is_active
                             ? "text-red-600 hover:text-red-900"
                             : "text-green-600 hover:text-green-900"
                         }`}
                       >
-                        {activity.is_active ? "Vô hiệu hóa" : "Kích hoạt"}
+                        {toggleActivityMutation.isPending 
+                          ? "Đang xử lý..." 
+                          : activity.is_active ? "Vô hiệu hóa" : "Kích hoạt"}
                       </button>
                     </div>
                   </div>
@@ -358,9 +339,10 @@ export function SettingsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  disabled={createActivityMutation.isPending || updateActivityMutation.isPending}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Lưu
+                  {(createActivityMutation.isPending || updateActivityMutation.isPending) ? "Đang lưu..." : "Lưu"}
                 </button>
               </div>
             </form>
@@ -449,9 +431,10 @@ export function SettingsPage() {
                 </button>
                 <button
                   type="submit"
-                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700"
+                  disabled={createRateMutation.isPending || updateRateMutation.isPending}
+                  className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
-                  Lưu
+                  {(createRateMutation.isPending || updateRateMutation.isPending) ? "Đang lưu..." : "Lưu"}
                 </button>
               </div>
             </form>
