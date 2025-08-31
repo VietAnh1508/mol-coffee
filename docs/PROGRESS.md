@@ -12,6 +12,7 @@
 ### 🏗️ **Technical Foundation**
 - [x] React + TypeScript + Vite setup
 - [x] Tailwind CSS v4 with Vite plugin
+- [x] TanStack Router with file-based routing
 - [x] PWA configuration (manifest, service worker)
 - [x] Supabase client integration
 - [x] Environment configuration (.env setup)
@@ -205,6 +206,7 @@ pnpm run db:migration <name>  # Create new migration
 
 ### **Current Tech Stack**
 - **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
+- **Routing:** TanStack Router (file-based, type-safe)
 - **Backend:** Supabase (PostgreSQL + Auth + RLS)
 - **Package Manager:** pnpm
 - **Authentication:** Phone → synthetic email pattern

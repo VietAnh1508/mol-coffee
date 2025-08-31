@@ -1,16 +1,15 @@
 import type { ReactNode } from "react";
+import { Link, useRouterState } from '@tanstack/react-router'
 import { useAuth } from "../context/AuthContext";
-
-type Page = 'dashboard' | 'settings'
 
 interface LayoutProps {
   readonly children: ReactNode;
-  readonly currentPage: Page;
-  readonly onNavigate: (page: Page) => void;
 }
 
-export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
+export function Layout({ children }: LayoutProps) {
   const { user, signOut } = useAuth();
+  const router = useRouterState()
+  const currentPath = router.location.pathname
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -19,34 +18,34 @@ export function Layout({ children, currentPage, onNavigate }: LayoutProps) {
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between h-16">
               <div className="flex items-center space-x-8">
-                <button
-                  onClick={() => onNavigate('dashboard')}
+                <Link
+                  to="/dashboard"
                   className="text-xl font-semibold text-gray-900 hover:text-blue-600"
                 >
                   MoL Coffee
-                </button>
+                </Link>
                 <div className="hidden sm:flex space-x-6">
-                  <button
-                    onClick={() => onNavigate('dashboard')}
+                  <Link
+                    to="/dashboard"
                     className={`text-sm font-medium ${
-                      currentPage === 'dashboard'
+                      currentPath === '/dashboard'
                         ? 'text-blue-600 border-b-2 border-blue-600 pb-4'
                         : 'text-gray-600 hover:text-gray-900'
                     }`}
                   >
                     Trang chủ
-                  </button>
+                  </Link>
                   {user.role === 'admin' && (
-                    <button
-                      onClick={() => onNavigate('settings')}
+                    <Link
+                      to="/settings"
                       className={`text-sm font-medium ${
-                        currentPage === 'settings'
+                        currentPath === '/settings'
                           ? 'text-blue-600 border-b-2 border-blue-600 pb-4'
                           : 'text-gray-600 hover:text-gray-900'
                       }`}
                     >
                       Cài đặt
-                    </button>
+                    </Link>
                   )}
                 </div>
               </div>

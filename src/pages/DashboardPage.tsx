@@ -1,12 +1,7 @@
+import { Link } from '@tanstack/react-router'
 import { useAuth } from "../context/AuthContext";
 
-type Page = 'dashboard' | 'settings'
-
-interface DashboardPageProps {
-  readonly onNavigate: (page: Page) => void;
-}
-
-export function DashboardPage({ onNavigate }: DashboardPageProps) {
+export function DashboardPage() {
   const { user } = useAuth();
 
   if (!user) return null;
@@ -69,9 +64,9 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             </div>
 
             {user.role === "admin" && (
-              <button
-                onClick={() => onNavigate('settings')}
-                className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow w-full text-left"
+              <Link
+                to="/settings"
+                className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
               >
                 <div className="p-5">
                   <div className="flex items-center">
@@ -93,7 +88,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                     </div>
                   </div>
                 </div>
-              </button>
+              </Link>
             )}
           </div>
         </div>
