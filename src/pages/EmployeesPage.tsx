@@ -10,11 +10,16 @@ export function EmployeesPage() {
   const { user } = useAuth();
   const { data: employees = [], isLoading, error } = useUsers();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const [showInactive, setShowInactive] = useState(false);
   const { toast, hideToast } = useToast();
 
   const isCurrentUser = (employee: User) => {
     return employee.id === user?.id;
   };
+
+  const filteredEmployees = showInactive 
+    ? employees 
+    : employees.filter(employee => employee.status === "active");
 
   const closeModal = () => {
     setSelectedEmployeeId(null);
@@ -58,9 +63,23 @@ export function EmployeesPage() {
         title="Danh sách nhân viên"
         subtitle="Quản lý tất cả nhân viên trong hệ thống"
       />
+      
+      <div className="mt-4 flex justify-end">
+        <label className="flex items-center">
+          <input
+            type="checkbox"
+            checked={showInactive}
+            onChange={(e) => setShowInactive(e.target.checked)}
+            className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded"
+          />
+          <span className="ml-2 text-sm text-gray-700">
+            Hiển thị nhân viên không hoạt động
+          </span>
+        </label>
+      </div>
 
       <div className="mt-6 space-y-4">
-        {employees.map((employee) => (
+        {filteredEmployees.map((employee) => (
           <div
             key={employee.id}
             className="bg-white border border-gray-200 rounded-lg p-4 shadow-sm"

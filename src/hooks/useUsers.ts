@@ -31,6 +31,36 @@ export function useUsers() {
   });
 }
 
+export function useActiveUsers() {
+  return useQuery({
+    queryKey: ["users", "active"],
+    queryFn: async (): Promise<User[]> => {
+      const { data, error } = await supabase
+        .from("users")
+        .select("*")
+        .eq("status", "active")
+        .order("created_at", { ascending: false });
+
+      if (error) {
+        throw error;
+      }
+
+      return data || [];
+    },
+    staleTime: 5 * 60 * 1000, // 5 minutes
+    retry: (failureCount, error) => {
+      // Don't retry on permission/auth errors
+      if (
+        error?.message?.includes("permission") ||
+        error?.message?.includes("auth")
+      ) {
+        return false;
+      }
+      return failureCount < 2;
+    },
+  });
+}
+
 export function useUser(userId: string | null) {
   return useQuery({
     queryKey: ["user", userId],

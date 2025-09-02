@@ -1,14 +1,19 @@
-import { useState, useEffect } from 'react'
-import { FaTimes, FaUser, FaCheck } from 'react-icons/fa'
-import { useUsers, useActivities, useScheduleMutations } from '../../hooks'
-import { SHIFT_TEMPLATES } from '../../constants/shifts'
+import { useEffect, useState } from "react";
+import { FaCheck, FaTimes, FaUser } from "react-icons/fa";
+import { SHIFT_TEMPLATES } from "../../constants/shifts";
+import { USER_ROLES } from "../../constants/userRoles";
+import {
+  useActiveUsers,
+  useActivities,
+  useScheduleMutations,
+} from "../../hooks";
 
 interface ShiftAssignmentModalProps {
-  isOpen: boolean
-  onClose: () => void
-  shiftTemplate: 'morning' | 'afternoon'
-  selectedDate: Date
-  onSuccess?: () => void
+  isOpen: boolean;
+  onClose: () => void;
+  shiftTemplate: "morning" | "afternoon";
+  selectedDate: Date;
+  onSuccess?: () => void;
 }
 
 export function ShiftAssignmentModal({
@@ -16,39 +21,41 @@ export function ShiftAssignmentModal({
   onClose,
   shiftTemplate,
   selectedDate,
-  onSuccess
+  onSuccess,
 }: ShiftAssignmentModalProps) {
-  const [selectedUserId, setSelectedUserId] = useState<string>('')
-  const [selectedActivityId, setSelectedActivityId] = useState<string>('')
-  
-  const { data: users = [] } = useUsers()
-  const { data: activities = [] } = useActivities()
-  const { createShift } = useScheduleMutations()
+  const [selectedUserId, setSelectedUserId] = useState<string>("");
+  const [selectedActivityId, setSelectedActivityId] = useState<string>("");
 
-  const activeUsers = users.filter(user => user.status === 'active' && user.role === 'employee')
-  const activeActivities = activities.filter(activity => activity.is_active)
+  const { data: activeUsers = [] } = useActiveUsers();
+  const { data: activities = [] } = useActivities();
+  const { createShift } = useScheduleMutations();
+
+  const employeeUsers = activeUsers.filter(
+    (user) => user.role === USER_ROLES.EMPLOYEE
+  );
+  const activeActivities = activities.filter((activity) => activity.is_active);
 
   // Auto-select employee if there's only one
   useEffect(() => {
-    if (activeUsers.length === 1 && !selectedUserId) {
-      setSelectedUserId(activeUsers[0].id)
+    if (employeeUsers.length === 1 && !selectedUserId) {
+      setSelectedUserId(employeeUsers[0].id);
     }
-  }, [activeUsers, selectedUserId])
+  }, [employeeUsers, selectedUserId]);
 
-  const shiftInfo = SHIFT_TEMPLATES[shiftTemplate]
+  const shiftInfo = SHIFT_TEMPLATES[shiftTemplate];
 
   const getShiftDateTime = (time: string) => {
-    const date = new Date(selectedDate)
-    const [hours, minutes] = time.split(':').map(Number)
-    date.setHours(hours, minutes, 0, 0)
-    return date.toISOString()
-  }
+    const date = new Date(selectedDate);
+    const [hours, minutes] = time.split(":").map(Number);
+    date.setHours(hours, minutes, 0, 0);
+    return date.toISOString();
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    
+    e.preventDefault();
+
     if (!selectedUserId || !selectedActivityId) {
-      return
+      return;
     }
 
     try {
@@ -57,25 +64,25 @@ export function ShiftAssignmentModal({
         activity_id: selectedActivityId,
         start_ts: getShiftDateTime(shiftInfo.start),
         end_ts: getShiftDateTime(shiftInfo.end),
-        template_name: shiftTemplate
-      })
-      
-      onSuccess?.()
-      onClose()
-      setSelectedUserId('')
-      setSelectedActivityId('')
+        template_name: shiftTemplate,
+      });
+
+      onSuccess?.();
+      onClose();
+      setSelectedUserId("");
+      setSelectedActivityId("");
     } catch (error) {
-      console.error('Failed to create shift:', error)
+      console.error("Failed to create shift:", error);
     }
-  }
+  };
 
   const handleClose = () => {
-    onClose()
-    setSelectedUserId('')
-    setSelectedActivityId('')
-  }
+    onClose();
+    setSelectedUserId("");
+    setSelectedActivityId("");
+  };
 
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -97,9 +104,12 @@ export function ShiftAssignmentModal({
         <form onSubmit={handleSubmit} className="p-4 space-y-6">
           {/* Shift Info */}
           <div className="bg-gray-50 rounded-lg p-3">
-            <h4 className="font-medium text-gray-900 mb-1">{shiftInfo.label}</h4>
+            <h4 className="font-medium text-gray-900 mb-1">
+              {shiftInfo.label}
+            </h4>
             <p className="text-sm text-gray-600">
-              {shiftInfo.start} - {shiftInfo.end} • {selectedDate.toLocaleDateString('vi-VN')}
+              {shiftInfo.start} - {shiftInfo.end} •{" "}
+              {selectedDate.toLocaleDateString("vi-VN")}
             </p>
           </div>
 
@@ -109,13 +119,13 @@ export function ShiftAssignmentModal({
               Chọn nhân viên
             </label>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {activeUsers.map((user) => (
+              {employeeUsers.map((user) => (
                 <label
                   key={user.id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
                     selectedUserId === user.id
-                      ? 'border-blue-500 bg-blue-50'
-                      : 'border-gray-200 hover:bg-gray-50'
+                      ? "border-blue-500 bg-blue-50"
+                      : "border-gray-200 hover:bg-gray-50"
                   }`}
                 >
                   <input
@@ -131,7 +141,9 @@ export function ShiftAssignmentModal({
                       <FaUser className="text-gray-500 text-sm" />
                     </div>
                     <div>
-                      <div className="font-medium text-gray-900">{user.name}</div>
+                      <div className="font-medium text-gray-900">
+                        {user.name}
+                      </div>
                       <div className="text-sm text-gray-500">{user.phone}</div>
                     </div>
                   </div>
@@ -140,7 +152,7 @@ export function ShiftAssignmentModal({
                   )}
                 </label>
               ))}
-              {activeUsers.length === 0 && (
+              {employeeUsers.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   Không có nhân viên nào khả dụng
                 </div>
@@ -179,14 +191,16 @@ export function ShiftAssignmentModal({
             </button>
             <button
               type="submit"
-              disabled={!selectedUserId || !selectedActivityId || createShift.isPending}
+              disabled={
+                !selectedUserId || !selectedActivityId || createShift.isPending
+              }
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
-              {createShift.isPending ? 'Đang thêm...' : 'Thêm vào ca'}
+              {createShift.isPending ? "Đang thêm..." : "Thêm vào ca"}
             </button>
           </div>
         </form>
       </div>
     </div>
-  )
+  );
 }
