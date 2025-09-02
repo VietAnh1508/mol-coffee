@@ -9,8 +9,7 @@ export function DashboardPage() {
 
   return (
     <div className="px-4 py-6 sm:px-0">
-      <div className="border-4 border-dashed border-gray-200 rounded-lg p-8">
-        <div className="text-center">
+      <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-900 mb-4">
             Xin chào, {user.name}!
           </h1>
@@ -68,7 +67,10 @@ export function DashboardPage() {
               </Link>
             )}
 
-            <div className="bg-white overflow-hidden shadow rounded-lg">
+            <Link
+              to="/schedule"
+              className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
+            >
               <div className="p-5">
                 <div className="flex items-center">
                   <div className="flex-shrink-0">
@@ -90,7 +92,7 @@ export function DashboardPage() {
                   </div>
                 </div>
               </div>
-            </div>
+            </Link>
 
             <div className="bg-white overflow-hidden shadow rounded-lg">
               <div className="p-5">
@@ -117,7 +119,6 @@ export function DashboardPage() {
             </div>
           </div>
         </div>
-      </div>
     </div>
   );
 }

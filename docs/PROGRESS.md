@@ -107,20 +107,29 @@
 - [x] Data persistence with automatic cache invalidation
 - [x] Error handling and user feedback
 
-### 📅 **Scheduling System**
-- [ ] Schedule calendar view
-  - [ ] Day view layout
-  - [ ] Admin: multi-column (all employees)
-  - [ ] Employee: single column (own shifts only)
-- [ ] Shift management
-  - [ ] Create/edit/delete shifts
-  - [ ] Default templates (Morning: 06:00-12:00, Afternoon: 12:00-18:00)
-  - [ ] Manual time adjustments
-  - [ ] Shift conflict detection (overlap/2-shift max)
-- [ ] Schedule assignment
-  - [ ] Assign employees to shifts
-  - [ ] Activity assignment per shift
-  - [ ] Bulk scheduling tools
+### 📅 **Scheduling System** ✅ **COMPLETED**
+- [x] Schedule calendar view
+  - [x] Day view layout with Vietnamese interface
+  - [x] Admin: multi-column view (all employees)
+  - [x] Employee: single column view (own shifts only)
+  - [x] Role-based access control and UI differences
+  - [x] Date navigation with Vietnamese date formatting
+- [x] Shift display and management
+  - [x] Morning shift template (06:00-12:00) with orange indicators
+  - [x] Afternoon shift template (12:00-18:00) with blue indicators
+  - [x] Custom shift template with gray indicators
+  - [x] White shift cards with colored activity badges
+  - [x] Real-time data fetching with TanStack Query
+  - [x] Loading states and error handling
+- [x] Shift assignment
+  - [x] Employee assignment modal with user selection
+  - [x] Activity assignment per shift
+  - [x] Auto-selection when only one employee available
+  - [x] Form validation and error handling
+- [x] Shift deletion
+  - [x] Delete functionality with confirmation dialog
+  - [x] Role-based delete permissions (admin only)
+  - [x] Toast notifications for user feedback
 
 ### 🔒 **User Profile & Settings**
 - [ ] Change password functionality
@@ -247,18 +256,24 @@ pnpm run db:migration <name>  # Create new migration
 
 1. ~~**Employee Management Page** - Admin can view/manage all employees~~ ✅ **COMPLETED**
 2. ~~**Settings Page** - Admin can manage activities and rates~~ ✅ **COMPLETED**
-3. **Basic Scheduling Interface** - Day view calendar for shift management
+3. ~~**Scheduling System** - Complete shift management with assignment and deletion~~ ✅ **COMPLETED**
 4. **User Profile & Settings** - Change password, profile editing
+5. **Advanced Features** - Shift editing, conflict detection, bulk operations
 
 ---
 
-**Progress:** ~60% complete (Foundation + Auth + Data Layer + Settings + Employee Management + UX Enhancements ✅)
+**Progress:** ~80% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + UX Enhancements ✅)
 
 ### **Recent Achievements:**
-- ✅ **TanStack Query Integration** - Modern data fetching with caching, mutations, and optimistic updates
+- ✅ **Complete Scheduling System** - Full shift management with assignment, deletion, and role-based access
+- ✅ **Employee Assignment Modal** - Intuitive shift assignment with employee and activity selection
+- ✅ **Shift Deletion with Confirmation** - Secure deletion workflow with confirmation dialogs
+- ✅ **Visual Design Improvements** - White cards with colored activity badges for better readability
+- ✅ **Auto-Selection Features** - Smart defaults when only one employee is available
+- ✅ **Shift Constants System** - Centralized time templates for consistency across the app
+- ✅ **Component Architecture** - Reusable ShiftCard and ConfirmationDialog components
 - ✅ **Settings Management Complete** - Full CRUD for Activities and Rates with real-time UI
 - ✅ **Employee Management Complete** - Mobile-first design with comprehensive admin controls
 - ✅ **Admin Safety Features** - Self-management prevention and last admin protection (Business Rule #7)
 - ✅ **Toast Notification System** - Reusable useToast hook with success/error/info feedback
 - ✅ **Mobile-First UX** - Card-based layout with modal details for optimal mobile experience
-- ✅ **Performance Optimizations** - Automatic background sync, cache invalidation, and loading states

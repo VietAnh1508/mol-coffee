@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ScheduleRouteImport } from './routes/schedule'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as EmployeesRouteImport } from './routes/employees'
 import { Route as DashboardRouteImport } from './routes/dashboard'
@@ -18,6 +19,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ScheduleRoute = ScheduleRouteImport.update({
+  id: '/schedule',
+  path: '/schedule',
   getParentRoute: () => rootRouteImport,
 } as any)
 const LoginRoute = LoginRouteImport.update({
@@ -46,6 +52,7 @@ export interface FileRoutesByFullPath {
   '/dashboard': typeof DashboardRoute
   '/employees': typeof EmployeesRoute
   '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
@@ -53,6 +60,7 @@ export interface FileRoutesByTo {
   '/dashboard': typeof DashboardRoute
   '/employees': typeof EmployeesRoute
   '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
@@ -61,14 +69,28 @@ export interface FileRoutesById {
   '/dashboard': typeof DashboardRoute
   '/employees': typeof EmployeesRoute
   '/login': typeof LoginRoute
+  '/schedule': typeof ScheduleRoute
   '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/dashboard' | '/employees' | '/login' | '/settings'
+  fullPaths:
+    | '/'
+    | '/dashboard'
+    | '/employees'
+    | '/login'
+    | '/schedule'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/dashboard' | '/employees' | '/login' | '/settings'
-  id: '__root__' | '/' | '/dashboard' | '/employees' | '/login' | '/settings'
+  to: '/' | '/dashboard' | '/employees' | '/login' | '/schedule' | '/settings'
+  id:
+    | '__root__'
+    | '/'
+    | '/dashboard'
+    | '/employees'
+    | '/login'
+    | '/schedule'
+    | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -76,6 +98,7 @@ export interface RootRouteChildren {
   DashboardRoute: typeof DashboardRoute
   EmployeesRoute: typeof EmployeesRoute
   LoginRoute: typeof LoginRoute
+  ScheduleRoute: typeof ScheduleRoute
   SettingsRoute: typeof SettingsRoute
 }
 
@@ -86,6 +109,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/schedule': {
+      id: '/schedule'
+      path: '/schedule'
+      fullPath: '/schedule'
+      preLoaderRoute: typeof ScheduleRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/login': {
@@ -124,6 +154,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardRoute: DashboardRoute,
   EmployeesRoute: EmployeesRoute,
   LoginRoute: LoginRoute,
+  ScheduleRoute: ScheduleRoute,
   SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
