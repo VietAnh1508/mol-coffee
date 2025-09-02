@@ -27,11 +27,5 @@ export function useUserProfile(authUserId: string | null) {
       return data
     },
     enabled: !!authUserId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: (failureCount, error) => {
-      // Don't retry if user not found (404-like errors)
-      if (error?.message?.includes('not found')) return false
-      return failureCount < 2
-    }
   })
 }

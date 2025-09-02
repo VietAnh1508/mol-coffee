@@ -40,6 +40,7 @@
 ### **Data Access Architecture:**
 - **Supabase Client Integration** - Direct client-side queries with built-in caching
 - **TanStack Query Layer** - Powerful data fetching with background sync and mutations
+- **Centralized Query Configuration** - Default staleTime (5 min) and retry logic in App.tsx QueryClient
 - **RLS Policy Enforcement** - Database-level security prevents unauthorized access
 - **Role-Based Data Filtering** - Policies automatically filter data based on user role
 - **Optimistic Updates** - Immediate UI feedback with automatic error rollback
@@ -155,6 +156,7 @@ SELECT promote_user_to_admin('PHONE');
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript
 - **Data Fetching:** Use TanStack Query hooks, avoid manual fetch in useEffect
+- **Query Configuration:** Keep hooks minimal - staleTime/retry logic centralized in App.tsx QueryClient
 - **State:** Prefer TanStack Query for server state, React context for app state
 - **Mutations:** Use mutation hooks with optimistic updates and error handling
 - **Styling:** Use Tailwind CSS classes, avoid custom CSS

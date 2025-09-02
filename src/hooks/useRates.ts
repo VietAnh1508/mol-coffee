@@ -20,13 +20,5 @@ export function useRates() {
 
       return data || []
     },
-    staleTime: 2 * 60 * 1000, // 2 minutes - rates don't change very often
-    retry: (failureCount, error) => {
-      // Don't retry on permission/auth errors
-      if (error?.message?.includes('permission') || error?.message?.includes('auth')) {
-        return false
-      }
-      return failureCount < 2
-    }
   })
 }

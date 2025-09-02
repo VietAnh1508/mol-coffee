@@ -14,6 +14,15 @@ const queryClient = new QueryClient({
           const status = (error as { status: number }).status;
           if (status >= 400 && status < 500) return false;
         }
+        // Don't retry on permission/auth errors
+        if (error && typeof error === 'object' && 'message' in error) {
+          const message = (error as { message: string }).message;
+          if (message?.includes('permission') || 
+              message?.includes('auth') || 
+              message?.includes('not found')) {
+            return false;
+          }
+        }
         return failureCount < 3;
       },
     },

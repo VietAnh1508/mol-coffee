@@ -17,17 +17,6 @@ export function useUsers() {
 
       return data || [];
     },
-    staleTime: 5 * 60 * 1000, // 5 minutes - user data doesn't change very often
-    retry: (failureCount, error) => {
-      // Don't retry on permission/auth errors
-      if (
-        error?.message?.includes("permission") ||
-        error?.message?.includes("auth")
-      ) {
-        return false;
-      }
-      return failureCount < 2;
-    },
   });
 }
 
@@ -46,17 +35,6 @@ export function useActiveUsers() {
       }
 
       return data || [];
-    },
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: (failureCount, error) => {
-      // Don't retry on permission/auth errors
-      if (
-        error?.message?.includes("permission") ||
-        error?.message?.includes("auth")
-      ) {
-        return false;
-      }
-      return failureCount < 2;
     },
   });
 }
@@ -80,16 +58,5 @@ export function useUser(userId: string | null) {
       return data;
     },
     enabled: !!userId,
-    staleTime: 5 * 60 * 1000, // 5 minutes
-    retry: (failureCount, error) => {
-      // Don't retry on permission/auth errors
-      if (
-        error?.message?.includes("permission") ||
-        error?.message?.includes("auth")
-      ) {
-        return false;
-      }
-      return failureCount < 2;
-    },
   });
 }
