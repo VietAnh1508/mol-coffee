@@ -3,6 +3,7 @@ import { PageTitle } from "../components/PageTitle";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftCard } from "../components/shift/ShiftCard";
 import { SHIFT_TEMPLATES } from "../constants/shifts";
+import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useScheduleShifts } from "../hooks";
 import type { ScheduleShift } from "../types";
 import { formatDate } from "../utils/dateUtils";
@@ -15,7 +16,7 @@ export function SchedulePage() {
     "morning" | "afternoon"
   >("morning");
 
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === USER_ROLES.ADMIN;
   const userId = isAdmin ? undefined : user?.id;
 
   const { data: shifts = [], isLoading } = useScheduleShifts(

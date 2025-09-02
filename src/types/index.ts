@@ -1,8 +1,10 @@
+import type { UserRole } from '../constants/userRoles'
+
 export interface User {
   id: string
   phone: string
   name: string
-  role: 'admin' | 'employee'
+  role: UserRole
   status: 'active' | 'inactive'
   auth_user_id: string
   created_at: string

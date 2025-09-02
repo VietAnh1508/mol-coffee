@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { User } from '../types'
+import { USER_ROLES, type UserRole } from '../constants/userRoles'
 
 interface MutationCallbacks<T = unknown> {
   onSuccess?: (data: T) => void;
@@ -14,7 +15,7 @@ export function useUpdateUser() {
     mutationFn: async ({ id, ...updateData }: { 
       id: string; 
       name?: string; 
-      role?: 'admin' | 'employee';
+      role?: UserRole;
       status?: 'active' | 'inactive';
     }) => {
       const { data, error } = await supabase
@@ -41,7 +42,7 @@ export function useToggleUserRole(callbacks?: MutationCallbacks<User>) {
   
   return useMutation({
     mutationFn: async (user: User) => {
-      const newRole = user.role === 'admin' ? 'employee' : 'admin'
+      const newRole = user.role === USER_ROLES.ADMIN ? USER_ROLES.EMPLOYEE : USER_ROLES.ADMIN
       const { data, error } = await supabase
         .from('users')
         .update({ role: newRole })
@@ -54,6 +55,7 @@ export function useToggleUserRole(callbacks?: MutationCallbacks<User>) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['user', data.id] })
       callbacks?.onSuccess?.(data)
     },
     onError: (error) => {
@@ -81,6 +83,7 @@ export function useToggleUserStatus(callbacks?: MutationCallbacks<User>) {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['users'] })
+      queryClient.invalidateQueries({ queryKey: ['user', data.id] })
       callbacks?.onSuccess?.(data)
     },
     onError: (error) => {
@@ -95,12 +98,21 @@ export function useDeleteUser(callbacks?: MutationCallbacks<{id: string}>) {
   
   return useMutation({
     mutationFn: async (userId: string) => {
-      const { error } = await supabase
+      // First get the auth_user_id from the public.users table
+      const { data: userData, error: fetchError } = await supabase
         .from('users')
-        .delete()
+        .select('auth_user_id')
         .eq('id', userId)
+        .single()
 
-      if (error) throw error
+      if (fetchError) throw fetchError
+      if (!userData) throw new Error('User not found')
+
+      // Delete from auth.users - this will cascade delete from public.users
+      const { error: authError } = await supabase.auth.admin.deleteUser(userData.auth_user_id)
+      
+      if (authError) throw authError
+
       return { id: userId }
     },
     onSuccess: (data) => {

@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { useAuth } from "../hooks";
+import { USER_ROLES } from "../constants/userRoles";
 import { FaCog, FaUsers, FaCalendarAlt, FaDollarSign } from "react-icons/fa";
 
 export function DashboardPage() {
@@ -15,7 +16,7 @@ export function DashboardPage() {
           </h1>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
-            {user.role === "admin" && (
+            {user.role === USER_ROLES.ADMIN && (
               <Link
                 to="/settings"
                 className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
@@ -41,7 +42,7 @@ export function DashboardPage() {
               </Link>
             )}
 
-            {user.role === "admin" && (
+            {user.role === USER_ROLES.ADMIN && (
               <Link
                 to="/employees"
                 className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"

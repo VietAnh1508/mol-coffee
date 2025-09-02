@@ -3,12 +3,13 @@ import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModa
 import { Toast } from "../components/Toast";
 import { PageTitle } from "../components/PageTitle";
 import { useAuth, useToast, useUsers } from "../hooks";
+import { USER_ROLES } from "../constants/userRoles";
 import type { User } from "../types";
 
 export function EmployeesPage() {
   const { user } = useAuth();
   const { data: employees = [], isLoading, error } = useUsers();
-  const [selectedEmployee, setSelectedEmployee] = useState<User | null>(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
   const { toast, hideToast } = useToast();
 
   const isCurrentUser = (employee: User) => {
@@ -16,7 +17,7 @@ export function EmployeesPage() {
   };
 
   const closeModal = () => {
-    setSelectedEmployee(null);
+    setSelectedEmployeeId(null);
   };
 
   if (!user) return null;
@@ -81,12 +82,12 @@ export function EmployeesPage() {
                   <div className="flex flex-col items-end space-y-1">
                     <span
                       className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        employee.role === "admin"
+                        employee.role === USER_ROLES.ADMIN
                           ? "bg-purple-100 text-purple-800"
                           : "bg-blue-100 text-blue-800"
                       }`}
                     >
-                      {employee.role === "admin"
+                      {employee.role === USER_ROLES.ADMIN
                         ? "Quản trị viên"
                         : "Nhân viên"}
                     </span>
@@ -105,7 +106,7 @@ export function EmployeesPage() {
                 </div>
               </div>
               <button
-                onClick={() => setSelectedEmployee(employee)}
+                onClick={() => setSelectedEmployeeId(employee.id)}
                 className="ml-4 inline-flex items-center px-3 py-2 border border-gray-300 shadow-sm text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
                 Chỉnh sửa
@@ -116,9 +117,8 @@ export function EmployeesPage() {
       </div>
 
       <EmployeeDetailsModal
-        employee={selectedEmployee}
+        employeeId={selectedEmployeeId}
         currentUser={user}
-        employees={employees}
         onClose={closeModal}
       />
 

@@ -41,7 +41,7 @@ Settings (Admin only)
 Employee List (Admin only)
 	•	View all employees.
 	•	Promote/demote to admin.
-	•	Deactivate/delete employees.
+	•	Deactivate employees (delete feature temporarily removed for security).
 
 Scheduling
 	•	Default shifts per day:

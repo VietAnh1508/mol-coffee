@@ -1,6 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { Layout } from "../components/Layout";
 import { useAuth } from "../hooks";
+import { USER_ROLES } from "../constants/userRoles";
 import { SettingsPage } from "../pages/SettingsPage";
 
 export const Route = createFileRoute("/settings")({
@@ -25,7 +26,7 @@ function SettingsRoute() {
     return <Navigate to="/login" />;
   }
 
-  if (user.role !== "admin") {
+  if (user.role !== USER_ROLES.ADMIN) {
     return <Navigate to="/dashboard" />;
   }
 

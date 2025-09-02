@@ -91,7 +91,9 @@
   - [x] Visual indicators for current user ("Bạn" badge)
   - [x] Smart UI: hide action buttons when not permitted
   - [x] Toast notifications for user feedback
+  - [x] Optimistic status toggle for improved UX
 - [ ] Employee profile editing
+- [ ] Employee deletion (temporarily removed - requires Auth Admin API or database functions)
 
 ### ⚙️ **Settings (Admin Only)** ✅ **COMPLETED**
 - [x] Activities management (powered by TanStack Query)

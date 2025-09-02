@@ -3,6 +3,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
 import { useAuth } from "../hooks";
+import { USER_ROLES } from "../constants/userRoles";
 
 interface LayoutProps {
   readonly children: ReactNode;
@@ -61,7 +62,7 @@ export function Layout({ children }: LayoutProps) {
                   >
                     Trang chủ
                   </Link>
-                  {user.role === "admin" && (
+                  {user.role === USER_ROLES.ADMIN && (
                     <Link
                       to="/settings"
                       className={`text-sm font-medium ${
@@ -93,7 +94,7 @@ export function Layout({ children }: LayoutProps) {
                         <div className="px-4 py-2 text-sm text-gray-700 border-b border-gray-100">
                           <div className="font-medium">{user.name}</div>
                           <div className="text-xs text-gray-500 capitalize">
-                            {user.role === "admin"
+                            {user.role === USER_ROLES.ADMIN
                               ? "Quản trị viên"
                               : "Nhân viên"}
                           </div>
