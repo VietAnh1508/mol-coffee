@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { ActivityList } from "../components/ActivityList";
-import { RateList } from "../components/RateList";
+import { ActivityList } from "../components/activity/ActivityList";
+import { PageTitle } from "../components/PageTitle";
+import { RateList } from "../components/rates/RateList";
 import { useAuth } from "../hooks";
 
 export function SettingsPage() {
@@ -11,28 +12,14 @@ export function SettingsPage() {
     "activities"
   );
 
-  // Redirect non-admin users
-  if (!user || user.role !== "admin") {
-    return (
-      <div className="text-center py-12">
-        <h2 className="text-xl font-semibold text-gray-900">
-          Không có quyền truy cập
-        </h2>
-        <p className="text-gray-600 mt-2">
-          Chỉ quản trị viên mới có thể truy cập trang này.
-        </p>
-      </div>
-    );
-  }
+  if (!user) return null;
 
   return (
     <div className="px-4 py-6 sm:px-0">
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">Cài đặt</h1>
-        <p className="mt-2 text-gray-600">
-          Quản lý hoạt động và mức lương theo giờ
-        </p>
-      </div>
+      <PageTitle
+        title="Cài đặt"
+        subtitle="Quản lý hoạt động và mức lương theo giờ"
+      />
 
       {/* Tab Navigation */}
       <div className="border-b border-gray-200 mb-6">

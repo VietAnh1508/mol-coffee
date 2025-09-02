@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { FaTimes, FaUser, FaCheck } from 'react-icons/fa'
-import { useUsers, useActivities, useScheduleMutations } from '../hooks'
-import { SHIFT_TEMPLATES } from '../constants/shifts'
+import { useUsers, useActivities, useScheduleMutations } from '../../hooks'
+import { SHIFT_TEMPLATES } from '../../constants/shifts'
 
 interface ShiftAssignmentModalProps {
   isOpen: boolean

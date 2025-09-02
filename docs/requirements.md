@@ -109,16 +109,12 @@ Data Privacy (via Supabase RLS)
 
 ⸻
 
-5. API Endpoints (high-level)
-	•	POST /auth/register { phone, password, name }
-	•	POST /auth/login { phone, password }
-	•	GET/POST /users (Admin)
-	•	GET/POST /activities (Admin CRUD, Employee read)
-	•	GET/POST /rates (Admin CRUD, Employee read)
-	•	GET/POST /schedule (Admin CRUD, Employee read-own)
-	•	GET/POST /time-entries (Admin CRUD, Employee read-own)
-	•	GET /payroll/monthly?userId&month
-	•	POST /payroll/close?month=YYYY-MM
+5. Data Access Control
+	•	Role-based access control enforced at database level
+	•	Employee data isolation: users can only view their own information
+	•	Admin oversight: administrators can access all system data
+	•	Data privacy: unauthorized access prevented even with direct database queries
+	•	Secure authentication with phone number as primary identifier
 
 ⸻
 

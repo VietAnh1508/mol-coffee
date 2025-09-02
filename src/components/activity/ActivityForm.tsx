@@ -1,5 +1,5 @@
-import { useCreateActivity, useUpdateActivity } from "../hooks";
-import type { Activity } from "../types";
+import { useCreateActivity, useUpdateActivity } from "../../hooks";
+import type { Activity } from "../../types";
 
 interface ActivityFormProps {
   activity?: Activity | null;

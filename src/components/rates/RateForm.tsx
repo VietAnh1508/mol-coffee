@@ -1,5 +1,5 @@
-import { useActivities, useCreateRate, useUpdateRate } from "../hooks";
-import type { Rate } from "../types";
+import { useActivities, useCreateRate, useUpdateRate } from "../../hooks";
+import type { Rate } from "../../types";
 
 interface RateFormProps {
   rate?: Rate | null;

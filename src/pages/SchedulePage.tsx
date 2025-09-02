@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react";
 import { PageTitle } from "../components/PageTitle";
-import { ShiftAssignmentModal } from "../components/ShiftAssignmentModal";
-import { ShiftCard } from "../components/ShiftCard";
+import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
+import { ShiftCard } from "../components/shift/ShiftCard";
 import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { useAuth, useScheduleShifts } from "../hooks";
 import type { ScheduleShift } from "../types";

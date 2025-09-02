@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { EmployeeDetailsModal } from "../components/EmployeeDetailsModal";
+import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { Toast } from "../components/Toast";
+import { PageTitle } from "../components/PageTitle";
 import { useAuth, useToast, useUsers } from "../hooks";
 import type { User } from "../types";
 
@@ -52,16 +53,10 @@ export function EmployeesPage() {
 
   return (
     <div className="px-4 py-6 sm:px-0">
-      <div className="sm:flex sm:items-center">
-        <div className="sm:flex-auto">
-          <h1 className="text-xl font-semibold text-gray-900">
-            Danh sách nhân viên
-          </h1>
-          <p className="mt-2 text-sm text-gray-700">
-            Quản lý tất cả nhân viên trong hệ thống
-          </p>
-        </div>
-      </div>
+      <PageTitle
+        title="Danh sách nhân viên"
+        subtitle="Quản lý tất cả nhân viên trong hệ thống"
+      />
 
       <div className="mt-6 space-y-4">
         {employees.map((employee) => (

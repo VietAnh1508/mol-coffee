@@ -1,8 +1,8 @@
 import { useState } from "react";
-import { useActivities, useToggleActivity } from "../hooks";
-import type { Activity } from "../types";
+import { HiPause, HiPencil, HiPlay, HiPlus } from "react-icons/hi2";
+import { useActivities, useToggleActivity } from "../../hooks";
+import type { Activity } from "../../types";
 import { ActivityForm } from "./ActivityForm";
-import { HiPencil, HiPlay, HiPause, HiPlus } from "react-icons/hi2";
 
 export function ActivityList() {
   const { data: activities = [], isLoading } = useActivities();

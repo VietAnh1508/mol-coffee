@@ -3,8 +3,8 @@ import {
   useToast,
   useToggleUserRole,
   useToggleUserStatus,
-} from "../hooks";
-import type { User } from "../types";
+} from "../../hooks";
+import type { User } from "../../types";
 
 interface EmployeeDetailsModalProps {
   employee: User | null;

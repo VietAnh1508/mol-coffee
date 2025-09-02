@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { HiPencil, HiPlus } from "react-icons/hi2";
-import { useRates } from "../hooks";
-import type { Rate } from "../types";
+import { useRates } from "../../hooks";
+import type { Rate } from "../../types";
 import { RateForm } from "./RateForm";
 
 export function RateList() {

@@ -37,6 +37,29 @@
 - **Business Rules Enforcement** - Triggers prevent overlaps, enforce 2-shift max
 - **Vietnamese Data** - Default activities: Thử việc, Cà phê, Bánh mì, Quản lý
 
+### **Data Access Architecture:**
+- **Supabase Client Integration** - Direct client-side queries with built-in caching
+- **TanStack Query Layer** - Powerful data fetching with background sync and mutations
+- **RLS Policy Enforcement** - Database-level security prevents unauthorized access
+- **Role-Based Data Filtering** - Policies automatically filter data based on user role
+- **Optimistic Updates** - Immediate UI feedback with automatic error rollback
+- **Real-time Subscriptions** - Live data updates across sessions (future enhancement)
+
+### **RLS Implementation Strategy:**
+```sql
+-- Employee policies: can only access own data
+-- Admin policies: unrestricted access to all data
+-- Public read access: activities and rates (for employee visibility)
+-- Automatic policy application: no client-side role checking required
+```
+
+### **Supabase Usage Patterns:**
+- **Authentication** - Phone → synthetic email conversion with auto-confirmation
+- **Database Queries** - Direct client queries via `supabase.from()` API
+- **Mutations** - TanStack Query mutations with error handling and cache updates
+- **File Uploads** - Storage bucket integration (future: employee photos, documents)
+- **Edge Functions** - Server-side logic for complex operations (future: payroll calculations)
+
 ## 📁 PROJECT STRUCTURE
 
 ```
