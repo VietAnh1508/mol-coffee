@@ -10,7 +10,7 @@ export function useScheduleShifts(date?: Date, userId?: string) {
         .from('schedule_shifts')
         .select(`
           *,
-          user:users(id, name, phone),
+          user:users(id, name, email),
           activity:activities(id, name)
         `)
 
@@ -53,7 +53,7 @@ export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date, use
         .from('schedule_shifts')
         .select(`
           *,
-          user:users(id, name, phone),
+          user:users(id, name, email),
           activity:activities(id, name)
         `)
         .gte('start_ts', startDate.toISOString())

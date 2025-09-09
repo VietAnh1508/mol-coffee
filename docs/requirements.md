@@ -10,7 +10,7 @@ User Roles:
 	•	Full CRUD on users, schedules, activities, rates, and timekeeping.
 	•	Can view salary data for all employees.
 	•	Employee (Staff):
-	•	Registers via phone number + password.
+	•	Registers via email + password + name.
 	•	Can view only their own schedule and salary data (read-only).
 
 Branching:
@@ -21,9 +21,10 @@ Single branch only (no multi-location support in MVP).
 2. Features Breakdown
 
 Authentication
-	•	Register with phone number (unique) + password.
-	•	Login with phone + password.
+	•	Register with email address (unique) + password + name.
+	•	Login with email + password.
 	•	Change password (self-service).
+	•	Phone number stored as optional user information.
 	•	Admin accounts seeded manually in DB.
 	•	Security: bcrypt/argon2 password hashing, HTTPS, brute-force throttling.
 
@@ -79,12 +80,13 @@ Tech Stack
 	•	Frontend: React + Tailwind CSS, PWA-enabled, Supabase client.
 	•	Backend/DB: Supabase (Postgres + Auth + RLS).
 	•	Auth Strategy:
-	•	Phone as username → mapped to synthetic email for Supabase auth.
-	•	Users sign up with phone + password.
+	•	Direct email authentication with Supabase.
+	•	Users sign up with email + password + name.
+	•	Phone numbers stored as optional user information.
 	•	Hosting: Vercel (FE) + Supabase cloud.
 
 Database Schema (MVP)
-	•	users (id, phone, name, role, status, auth_user_id)
+	•	users (id, email, phone, name, role, status, auth_user_id)
 	•	activities (id, name, is_active)
 	•	rates (id, activity_id, hourly_vnd, effective_from, effective_to)
 	•	schedule_shifts (id, user_id, activity_id, start_ts, end_ts, template_name, is_manual, note)
@@ -95,6 +97,8 @@ Data Privacy (via Supabase RLS)
 	•	Employees: can only SELECT their own shifts, time entries, and salary totals.
 	•	Admins: unrestricted CRUD.
 	•	Rates/activities: read-only for employees; full access for admins.
+	•	Email used for authentication and primary user identification.
+	•	Phone numbers stored as optional contact information.
 
 ⸻
 
@@ -114,7 +118,8 @@ Data Privacy (via Supabase RLS)
 	•	Employee data isolation: users can only view their own information
 	•	Admin oversight: administrators can access all system data
 	•	Data privacy: unauthorized access prevented even with direct database queries
-	•	Secure authentication with phone number as primary identifier
+	•	Secure authentication with email as primary identifier
+	•	Phone numbers stored as supplementary contact information
 
 ⸻
 

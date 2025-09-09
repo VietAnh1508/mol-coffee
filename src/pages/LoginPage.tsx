@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useAuth } from "../hooks";
 
 export function LoginPage() {
-  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [name, setName] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
@@ -20,7 +20,7 @@ export function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(phone, password, name);
+        const { error } = await signUp(email, password, name);
         if (error) {
           setError(error.message || "Failed to create account");
         } else {
@@ -33,7 +33,7 @@ export function LoginPage() {
           setName("");
         }
       } else {
-        const { error } = await signIn(phone, password);
+        const { error } = await signIn(email, password);
         if (error) {
           setError(error.message || "Failed to sign in");
         }
@@ -57,18 +57,18 @@ export function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           <div className="rounded-md shadow-sm -space-y-px">
             <div>
-              <label htmlFor="phone" className="sr-only">
-                Số điện thoại
+              <label htmlFor="email" className="sr-only">
+                Email
               </label>
               <input
-                id="phone"
-                name="phone"
-                type="tel"
+                id="email"
+                name="email"
+                type="email"
                 required
                 className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-t-md focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                placeholder="Số điện thoại"
-                value={phone}
-                onChange={(e) => setPhone(e.target.value)}
+                placeholder="Email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
               />
             </div>
             {isSignUp && (

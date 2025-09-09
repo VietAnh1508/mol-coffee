@@ -6,9 +6,9 @@ export interface AuthContextType {
   user: User | null;
   supabaseUser: SupabaseUser | null;
   loading: boolean;
-  signIn: (phone: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (
-    phone: string,
+    email: string,
     password: string,
     name: string
   ) => Promise<{ error: Error | null }>;

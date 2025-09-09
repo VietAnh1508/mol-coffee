@@ -147,9 +147,9 @@ export function EmployeeDetailsModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
-                Số điện thoại
+                Email
               </label>
-              <p className="mt-1 text-sm text-gray-900">{employee.phone}</p>
+              <p className="mt-1 text-sm text-gray-900">{employee.email}</p>
             </div>
 
             <div>

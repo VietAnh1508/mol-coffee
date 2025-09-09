@@ -68,11 +68,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [profileError]);
 
-  const signIn = async (phone: string, password: string) => {
+  const signIn = async (email: string, password: string) => {
     try {
-      // Convert phone to email format for Supabase auth
-      const email = `${phone}@mol-coffee`;
-
       const { error } = await supabase.auth.signInWithPassword({
         email,
         password,
@@ -86,11 +83,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signUp = async (phone: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string, name: string) => {
     try {
-      // Convert phone to email format for Supabase auth
-      const email = `${phone}@mol-coffee`;
-
       const { error } = await supabase.auth.signUp({
         email,
         password,

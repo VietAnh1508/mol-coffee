@@ -8,7 +8,7 @@
 
 ### Key Characteristics:
 - **Mobile-first PWA** - No native app installation required
-- **Phone-based authentication** - Uses Vietnamese phone numbers as usernames
+- **Email-based authentication** - Direct email authentication with optional phone info
 - **Role-based access control** - Admins vs Employees with strict data isolation
 - **Vietnamese interface** - Labels and activities in Vietnamese
 - **Single-branch MVP** - No multi-location support initially
@@ -26,13 +26,14 @@
 - **PWA** - Mobile-optimized without app store requirements
 
 ### **Authentication Strategy:**
-- **Phone → Email Conversion** - `phone@mol-coffee` pattern for Supabase compatibility
-- **Auto Email Confirmation** - Since emails are synthetic, auto-confirm via trigger
+- **Direct Email Authentication** - Native Supabase email/password authentication
+- **Optional Phone Storage** - Phone numbers stored as additional user information
+- **Auto Email Confirmation** - All users auto-confirmed via trigger
 - **Database Triggers** - Automatic user profile creation on signup
-- **Admin Functions** - SQL functions for admin user creation/promotion
+- **Admin Functions** - SQL functions for admin user creation/promotion (email-based)
 
 ### **Database Design:**
-- **6 Core Tables** - users, activities, rates, schedule_shifts, time_entries, payroll_periods
+- **6 Core Tables** - users (email, phone, name, role), activities, rates, schedule_shifts, time_entries, payroll_periods
 - **Row Level Security (RLS)** - Database-enforced access control
 - **Business Rules Enforcement** - Triggers prevent overlaps, enforce 2-shift max
 - **Vietnamese Data** - Default activities: Thử việc, Cà phê, Bánh mì, Quản lý
@@ -55,7 +56,7 @@
 ```
 
 ### **Supabase Usage Patterns:**
-- **Authentication** - Phone → synthetic email conversion with auto-confirmation
+- **Authentication** - Direct email authentication with auto-confirmation
 - **Database Queries** - Direct client queries via `supabase.from()` API
 - **Mutations** - TanStack Query mutations with error handling and cache updates
 - **File Uploads** - Storage bucket integration (future: employee photos, documents)
@@ -136,10 +137,10 @@ pnpm run db:migration <name> # Create new migration
 ### **Database Admin:**
 ```sql
 -- Create admin user
-SELECT create_admin_user('PHONE', 'PASSWORD', 'NAME');
+SELECT create_admin_user('EMAIL', 'PASSWORD', 'NAME');
 
 -- Promote existing user
-SELECT promote_user_to_admin('PHONE');
+SELECT promote_user_to_admin('EMAIL');
 ```
 
 ## 🚨 IMPORTANT NOTES FOR CLAUDE
@@ -148,7 +149,7 @@ SELECT promote_user_to_admin('PHONE');
 
 1. **Always maintain Vietnamese context** - UI labels, error messages, data
 2. **Respect RLS policies** - Test data access from both admin and employee perspectives  
-3. **Follow phone-based auth pattern** - Never break the `@mol-coffee` email conversion
+3. **Follow email-based auth pattern** - Use direct email authentication, phone is optional
 4. **Use TypeScript strictly** - All new code must be properly typed
 5. **Mobile-first design** - Tailwind classes should prioritize mobile experience
 6. **Update PROGRESS.md** - Mark completed features and update status
@@ -178,5 +179,5 @@ SELECT promote_user_to_admin('PHONE');
 
 ---
 
-**Last Updated:** August 31, 2025  
+**Last Updated:** September 9, 2025  
 **Phase:** Foundation + Data Layer Complete, Phase 1 MVP Development In Progress

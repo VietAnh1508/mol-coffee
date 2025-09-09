@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)  
-**Last Updated:** August 31, 2025
+**Last Updated:** September 9, 2025
 
 ---
 
@@ -21,17 +21,19 @@
 - [x] Project structure (components, pages, hooks, context, types)
 
 ### 🔐 **Authentication System**
-- [x] Phone number → synthetic email conversion (@mol-coffee pattern)
-- [x] User registration with phone + password + name
-- [x] Login with phone + password
-- [x] Auto email confirmation for synthetic emails
+- [x] ~~Phone number → synthetic email conversion (@mol-coffee pattern)~~ **MIGRATED TO EMAIL**
+- [x] Direct email authentication with Supabase
+- [x] User registration with email + password + name
+- [x] Login with email + password
+- [x] Phone number stored as optional user information
+- [x] Auto email confirmation for all users
 - [x] User profile auto-creation via database trigger
 - [x] Success message + redirect flow after signup
-- [x] Admin user creation functions
+- [x] Admin user creation functions (email-based)
 
 ### 🗄️ **Database & Security**
 - [x] Complete database schema (6 tables)
-  - [x] users (phone, name, role, status, auth_user_id)
+  - [x] users (email, phone, name, role, status, auth_user_id)
   - [x] activities (name, is_active)
   - [x] rates (activity_id, hourly_vnd, effective_from/to)
   - [x] schedule_shifts (user_id, activity_id, start_ts, end_ts, template_name)
@@ -279,3 +281,39 @@ pnpm run db:migration <name>  # Create new migration
 - ✅ **Admin Safety Features** - Self-management prevention and last admin protection (Business Rule #7)
 - ✅ **Toast Notification System** - Reusable useToast hook with success/error/info feedback
 - ✅ **Mobile-First UX** - Card-based layout with modal details for optimal mobile experience
+- ✅ **Email Authentication Migration** - Converted from phone-based synthetic emails to direct email auth
+
+---
+
+## 📧 EMAIL AUTHENTICATION MIGRATION (September 9, 2025)
+
+### **Migration Overview**
+Successfully migrated from phone-based synthetic email system (`phone@mol-coffee`) to direct email authentication for improved UX and native Supabase integration.
+
+### **Key Changes Made**
+**Database Schema:**
+- ✅ Added `email` column to users table (required, unique)
+- ✅ Kept `phone` column as optional user information
+- ✅ Updated database functions (`create_admin_user`, `promote_user_to_admin`)
+- ✅ Removed @mol-coffee email pattern restrictions
+- ✅ Updated indexes and constraints
+
+**Frontend Code:**
+- ✅ Updated `AuthContext` to use direct email authentication
+- ✅ Modified `LoginPage` UI (phone input → email input)
+- ✅ Updated `User` TypeScript interface (`phone?: string`, `email: string`)
+- ✅ Updated all query hooks to select email instead of/alongside phone
+- ✅ Modified employee management components to display email
+
+**Benefits Achieved:**
+- ✅ **Simplified Authentication** - No more synthetic email conversion
+- ✅ **Standard UX** - Users expect email login patterns
+- ✅ **Native Supabase** - Direct email auth support
+- ✅ **Flexible Data Model** - Phone as optional contact info
+- ✅ **Future-Ready** - Enables email verification, password recovery
+
+### **Migration Files**
+- `supabase/migrations/20250909034138_change_phone_to_email_auth.sql`
+- `scripts/insert-test-users.sql` (updated with real emails)
+
+---

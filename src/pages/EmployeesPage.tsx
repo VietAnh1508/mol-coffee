@@ -1,15 +1,17 @@
 import { useState } from "react";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
-import { Toast } from "../components/Toast";
 import { PageTitle } from "../components/PageTitle";
-import { useAuth, useToast, useUsers } from "../hooks";
+import { Toast } from "../components/Toast";
 import { USER_ROLES } from "../constants/userRoles";
+import { useAuth, useToast, useUsers } from "../hooks";
 import type { User } from "../types";
 
 export function EmployeesPage() {
   const { user } = useAuth();
   const { data: employees = [], isLoading, error } = useUsers();
-  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(null);
+  const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
+    null
+  );
   const [showInactive, setShowInactive] = useState(false);
   const { toast, hideToast } = useToast();
 
@@ -17,9 +19,9 @@ export function EmployeesPage() {
     return employee.id === user?.id;
   };
 
-  const filteredEmployees = showInactive 
-    ? employees 
-    : employees.filter(employee => employee.status === "active");
+  const filteredEmployees = showInactive
+    ? employees
+    : employees.filter((employee) => employee.status === "active");
 
   const closeModal = () => {
     setSelectedEmployeeId(null);
@@ -63,7 +65,7 @@ export function EmployeesPage() {
         title="Danh sách nhân viên"
         subtitle="Quản lý tất cả nhân viên trong hệ thống"
       />
-      
+
       <div className="mt-4 flex justify-end">
         <label className="flex items-center">
           <input
@@ -96,7 +98,7 @@ export function EmployeesPage() {
                         </span>
                       )}
                     </p>
-                    <p className="text-sm text-gray-500">{employee.phone}</p>
+                    <p className="text-sm text-gray-500">{employee.email}</p>
                   </div>
                   <div className="flex flex-col items-end space-y-1">
                     <span

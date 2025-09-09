@@ -144,7 +144,7 @@ export function ShiftAssignmentModal({
                       <div className="font-medium text-gray-900">
                         {user.name}
                       </div>
-                      <div className="text-sm text-gray-500">{user.phone}</div>
+                      <div className="text-sm text-gray-500">{user.email}</div>
                     </div>
                   </div>
                   {selectedUserId === user.id && (

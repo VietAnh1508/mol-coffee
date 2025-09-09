@@ -28,7 +28,7 @@ export function useScheduleMutations() {
         })
         .select(`
           *,
-          user:users(id, name, phone),
+          user:users(id, name, email),
           activity:activities(id, name)
         `)
         .single()
@@ -57,7 +57,7 @@ export function useScheduleMutations() {
         .eq('id', id)
         .select(`
           *,
-          user:users(id, name, phone),
+          user:users(id, name, email),
           activity:activities(id, name)
         `)
         .single()
@@ -103,7 +103,7 @@ export function useScheduleMutations() {
         .from('schedule_shifts')
         .select(`
           *,
-          user:users(id, name, phone),
+          user:users(id, name, email),
           activity:activities(id, name)
         `)
         .eq('user_id', user_id)
