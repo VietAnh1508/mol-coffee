@@ -93,6 +93,29 @@ export function useToggleUserStatus(callbacks?: MutationCallbacks<User>) {
   })
 }
 
+export function useUpdateUserProfile() {
+  const queryClient = useQueryClient()
+
+  return useMutation({
+    mutationFn: async (data: { userId: string; name: string; phone: string }) => {
+      const { error } = await supabase
+        .from('users')
+        .update({ 
+          name: data.name.trim(), 
+          phone: data.phone.trim() 
+        })
+        .eq('id', data.userId)
+
+      if (error) throw error
+    },
+    onSuccess: () => {
+      // Invalidate user profile queries to refetch updated data
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] })
+      queryClient.invalidateQueries({ queryKey: ['users'] })
+    },
+  })
+}
+
 export function useDeleteUser(callbacks?: MutationCallbacks<{id: string}>) {
   const queryClient = useQueryClient()
   

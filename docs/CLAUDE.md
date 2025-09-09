@@ -27,9 +27,11 @@
 
 ### **Authentication Strategy:**
 - **Direct Email Authentication** - Native Supabase email/password authentication
-- **Optional Phone Storage** - Phone numbers stored as additional user information
+- **Progressive Profile Completion** - Minimal signup (email+password), profile completion on first login
+- **Placeholder Phone System** - Auto-generated placeholder phones until user provides real number
+- **Vietnamese Phone Validation** - 10-digit mobile number validation (03, 05, 07, 08, 09 prefixes)
 - **Auto Email Confirmation** - All users auto-confirmed via trigger
-- **Database Triggers** - Automatic user profile creation on signup
+- **Database Triggers** - Automatic user profile creation with placeholder data
 - **Admin Functions** - SQL functions for admin user creation/promotion (email-based)
 
 ### **Database Design:**
@@ -149,10 +151,11 @@ SELECT promote_user_to_admin('EMAIL');
 
 1. **Always maintain Vietnamese context** - UI labels, error messages, data
 2. **Respect RLS policies** - Test data access from both admin and employee perspectives  
-3. **Follow email-based auth pattern** - Use direct email authentication, phone is optional
-4. **Use TypeScript strictly** - All new code must be properly typed
-5. **Mobile-first design** - Tailwind classes should prioritize mobile experience
-6. **Update PROGRESS.md** - Mark completed features and update status
+3. **Follow progressive profile pattern** - Email+password signup, profile completion modal for name+phone
+4. **Vietnamese phone validation** - Enforce 10-digit mobile format with proper prefixes
+5. **Use TypeScript strictly** - All new code must be properly typed
+6. **Mobile-first design** - Tailwind classes should prioritize mobile experience
+7. **Update PROGRESS.md** - Mark completed features and update status
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript

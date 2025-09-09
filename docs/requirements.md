@@ -10,7 +10,8 @@ User Roles:
 	•	Full CRUD on users, schedules, activities, rates, and timekeeping.
 	•	Can view salary data for all employees.
 	•	Employee (Staff):
-	•	Registers via email + password + name.
+	•	Registers via email + password (minimal signup).
+	•	Completes profile with name + phone on first login.
 	•	Can view only their own schedule and salary data (read-only).
 
 Branching:
@@ -21,10 +22,13 @@ Single branch only (no multi-location support in MVP).
 2. Features Breakdown
 
 Authentication
-	•	Register with email address (unique) + password + name.
+	•	Progressive registration flow:
+		•	Initial signup: email (unique) + password only.
+		•	Profile completion: name + phone required on first login.
+		•	Vietnamese mobile phone validation (10 digits, 03/05/07/08/09 prefixes).
 	•	Login with email + password.
 	•	Change password (self-service).
-	•	Phone number stored as optional user information.
+	•	Phone number required for admin contact purposes.
 	•	Admin accounts seeded manually in DB.
 	•	Security: bcrypt/argon2 password hashing, HTTPS, brute-force throttling.
 
@@ -81,12 +85,14 @@ Tech Stack
 	•	Backend/DB: Supabase (Postgres + Auth + RLS).
 	•	Auth Strategy:
 	•	Direct email authentication with Supabase.
-	•	Users sign up with email + password + name.
-	•	Phone numbers stored as optional user information.
+	•	Progressive profile completion with ProfileCompletionModal.
+	•	Users sign up with email + password, complete profile on first login.
+	•	Phone numbers required with Vietnamese mobile validation.
+	•	Placeholder phone system during registration process.
 	•	Hosting: Vercel (FE) + Supabase cloud.
 
 Database Schema (MVP)
-	•	users (id, email, phone, name, role, status, auth_user_id)
+	•	users (id, email, phone [required], name, role, status, auth_user_id)
 	•	activities (id, name, is_active)
 	•	rates (id, activity_id, hourly_vnd, effective_from, effective_to)
 	•	schedule_shifts (id, user_id, activity_id, start_ts, end_ts, template_name, is_manual, note)
@@ -98,7 +104,7 @@ Data Privacy (via Supabase RLS)
 	•	Admins: unrestricted CRUD.
 	•	Rates/activities: read-only for employees; full access for admins.
 	•	Email used for authentication and primary user identification.
-	•	Phone numbers stored as optional contact information.
+	•	Phone numbers required for admin contact purposes (Vietnamese mobile format).
 
 ⸻
 

@@ -6,11 +6,11 @@ export interface AuthContextType {
   user: User | null;
   supabaseUser: SupabaseUser | null;
   loading: boolean;
+  isProfileComplete: boolean;
   signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
   signUp: (
     email: string,
-    password: string,
-    name: string
+    password: string
   ) => Promise<{ error: Error | null }>;
   signOut: () => Promise<void>;
 }

@@ -2,15 +2,16 @@ import { Link, useRouterState } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
-import { useAuth } from "../hooks";
 import { USER_ROLES } from "../constants/userRoles";
+import { useAuth } from "../hooks";
+import { ProfileCompletionModal } from "./ProfileCompletionModal";
 
 interface LayoutProps {
   readonly children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
-  const { user, signOut } = useAuth();
+  const { user, signOut, isProfileComplete } = useAuth();
   const router = useRouterState();
   const currentPath = router.location.pathname;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -35,6 +36,8 @@ export function Layout({ children }: LayoutProps) {
 
   return (
     <div className="min-h-screen bg-gray-50">
+      {user && !isProfileComplete && <ProfileCompletionModal user={user} />}
+
       {user && (
         <nav className="bg-white shadow-sm border-b">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">

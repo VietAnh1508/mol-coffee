@@ -1,9 +1,10 @@
-import type { User as SupabaseUser, Session } from "@supabase/supabase-js";
+import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
 import type { ReactNode } from "react";
-import { useEffect, useState, useMemo } from "react";
-import { supabase } from "../lib/supabase";
+import { useEffect, useMemo, useState } from "react";
 import { useUserProfile } from "../hooks";
+import { supabase } from "../lib/supabase";
 import { AuthContext } from "./AuthContextDefinition";
+import { isPlaceholderPhone } from "../constants/userDefaults";
 
 // Re-export the context type for convenience
 export type { AuthContextType } from "./AuthContextDefinition";
@@ -16,9 +17,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
-  const { data: user, isLoading: profileLoading, error: profileError } = useUserProfile(
-    supabaseUser?.id || null
-  );
+  const {
+    data: user,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useUserProfile(supabaseUser?.id || null);
 
   const loading = authLoading || profileLoading;
 
@@ -28,17 +31,19 @@ export function AuthProvider({ children }: AuthProviderProps) {
         // Get initial session with timeout
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error('Session check timeout')), 10000)
+          setTimeout(() => reject(new Error("Session check timeout")), 10000)
         );
 
         const result = await Promise.race([sessionPromise, timeoutPromise]);
-        const { data: { session } } = result as { data: { session: Session | null } };
-        
+        const {
+          data: { session },
+        } = result as { data: { session: Session | null } };
+
         if (session?.user) {
           setSupabaseUser(session.user);
         }
       } catch (error) {
-        console.error('Auth initialization error:', error);
+        console.error("Auth initialization error:", error);
       } finally {
         setAuthLoading(false);
       }
@@ -83,15 +88,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const signUp = async (email: string, password: string, name: string) => {
+  const signUp = async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
         password,
         options: {
-          data: {
-            name: name, // Pass name to trigger via user metadata
-          },
           emailRedirectTo: undefined, // No email confirmation needed
         },
       });
@@ -109,7 +111,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = async () => {
     try {
-      // Clear local state immediately  
+      // Clear local state immediately
       setSupabaseUser(null);
 
       await supabase.auth.signOut();
@@ -118,14 +120,29 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   };
 
-  const value = useMemo(() => ({
-    user: user || null,
-    supabaseUser,
-    loading,
-    signIn,
-    signUp,
-    signOut,
-  }), [user, supabaseUser, loading]);
+  const isProfileComplete = (userData: typeof user): boolean => {
+    if (!userData) return false;
+    // Check if name exists and phone is not a placeholder
+    return Boolean(
+      userData.name &&
+      userData.name.trim() !== "" &&
+      userData.phone &&
+      !isPlaceholderPhone(userData.phone)
+    );
+  };
+
+  const value = useMemo(
+    () => ({
+      user: user || null,
+      supabaseUser,
+      loading,
+      isProfileComplete: isProfileComplete(user),
+      signIn,
+      signUp,
+      signOut,
+    }),
+    [user, supabaseUser, loading]
+  );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

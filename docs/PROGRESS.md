@@ -285,35 +285,56 @@ pnpm run db:migration <name>  # Create new migration
 
 ---
 
-## 📧 EMAIL AUTHENTICATION MIGRATION (September 9, 2025)
+## 📧 AUTHENTICATION & PROFILE COMPLETION FLOW (September 9, 2025)
 
 ### **Migration Overview**
-Successfully migrated from phone-based synthetic email system (`phone@mol-coffee`) to direct email authentication for improved UX and native Supabase integration.
+Successfully implemented a modern authentication flow with progressive profile completion for optimal user experience.
 
 ### **Key Changes Made**
 **Database Schema:**
 - ✅ Added `email` column to users table (required, unique)
-- ✅ Kept `phone` column as optional user information
+- ✅ Made `phone` column required with placeholder system
 - ✅ Updated database functions (`create_admin_user`, `promote_user_to_admin`)
 - ✅ Removed @mol-coffee email pattern restrictions
-- ✅ Updated indexes and constraints
+- ✅ Updated triggers to auto-generate placeholder phone numbers
 
-**Frontend Code:**
-- ✅ Updated `AuthContext` to use direct email authentication
-- ✅ Modified `LoginPage` UI (phone input → email input)
-- ✅ Updated `User` TypeScript interface (`phone?: string`, `email: string`)
-- ✅ Updated all query hooks to select email instead of/alongside phone
-- ✅ Modified employee management components to display email
+**Authentication Flow:**
+- ✅ **Simplified Registration** - Only email + password required initially
+- ✅ **Progressive Profile Completion** - Name + phone collected on first login
+- ✅ **Auto Email Confirmation** - All users auto-confirmed via trigger
+- ✅ **Placeholder Phone System** - Generates unique placeholder phones (`+84000000XXX`)
+- ✅ **Profile Completion Modal** - Appears when name/phone incomplete
+- ✅ **Vietnamese Phone Validation** - 10-digit mobile number validation
+
+**Frontend Implementation:**
+- ✅ Updated `AuthContext` with profile completion checking
+- ✅ Created `ProfileCompletionModal` with Vietnamese phone validation
+- ✅ Simplified `LoginPage` to only collect email + password on signup
+- ✅ Added `useUpdateUserProfile` mutation hook
+- ✅ Implemented phone validation utilities
+- ✅ Updated employee management to display phone numbers
 
 **Benefits Achieved:**
-- ✅ **Simplified Authentication** - No more synthetic email conversion
-- ✅ **Standard UX** - Users expect email login patterns
-- ✅ **Native Supabase** - Direct email auth support
-- ✅ **Flexible Data Model** - Phone as optional contact info
-- ✅ **Future-Ready** - Enables email verification, password recovery
+- ✅ **Lower Signup Friction** - Minimal initial registration form
+- ✅ **Better Mobile UX** - Progressive information collection
+- ✅ **Standard Flow** - Follows modern app registration patterns
+- ✅ **Data Completeness** - Ensures all users have name + phone
+- ✅ **Vietnamese Localization** - Phone validation for VN mobile numbers
+
+### **Registration Flow:**
+```
+1. User registers with email + password
+2. Database trigger creates profile with placeholder phone
+3. User logs in successfully
+4. ProfileCompletionModal appears if profile incomplete
+5. User provides name + phone (validated)
+6. Profile updated, modal disappears
+7. User proceeds to dashboard
+```
 
 ### **Migration Files**
 - `supabase/migrations/20250909034138_change_phone_to_email_auth.sql`
-- `scripts/insert-test-users.sql` (updated with real emails)
+- `supabase/migrations/20250909044537_add_phone_column_to_users.sql`
+- `supabase/migrations/20250909063909_update_handle_new_user_trigger_with_phone.sql`
 
 ---

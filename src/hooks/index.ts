@@ -1,11 +1,24 @@
-export { useUserProfile } from './useUserProfile'
-export { useAuth } from './useAuth'
-export { useActivities } from './useActivities'
-export { useRates } from './useRates'
-export { useUsers, useUser, useActiveUsers } from './useUsers'
-export { useToast } from './useToast'
-export { useCreateActivity, useUpdateActivity, useToggleActivity } from './useActivityMutations'
-export { useCreateRate, useUpdateRate } from './useRateMutations'
-export { useUpdateUser, useToggleUserRole, useToggleUserStatus, useDeleteUser } from './useUserMutations'
-export { useScheduleShifts, useScheduleShiftsByDateRange } from './useScheduleShifts'
-export { useScheduleMutations } from './useScheduleMutations'
+export { useActivities } from "./useActivities";
+export {
+  useCreateActivity,
+  useToggleActivity,
+  useUpdateActivity,
+} from "./useActivityMutations";
+export { useAuth } from "./useAuth";
+export { useCreateRate, useUpdateRate } from "./useRateMutations";
+export { useRates } from "./useRates";
+export { useScheduleMutations } from "./useScheduleMutations";
+export {
+  useScheduleShifts,
+  useScheduleShiftsByDateRange,
+} from "./useScheduleShifts";
+export { useToast } from "./useToast";
+export {
+  useDeleteUser,
+  useToggleUserRole,
+  useToggleUserStatus,
+  useUpdateUser,
+  useUpdateUserProfile,
+} from "./useUserMutations";
+export { useUserProfile } from "./useUserProfile";
+export { useActiveUsers, useUser, useUsers } from "./useUsers";

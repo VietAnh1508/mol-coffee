@@ -1,31 +1,31 @@
-import { useQuery } from '@tanstack/react-query'
-import { supabase } from '../lib/supabase'
-import type { User } from '../types'
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "../lib/supabase";
+import type { User } from "../types";
 
 export function useUserProfile(authUserId: string | null) {
   return useQuery({
-    queryKey: ['user-profile', authUserId],
+    queryKey: ["user-profile", authUserId],
     queryFn: async (): Promise<User> => {
       if (!authUserId) {
-        throw new Error('No auth user ID provided')
+        throw new Error("No auth user ID provided");
       }
 
       const { data, error } = await supabase
-        .from('users')
-        .select('*')
-        .eq('auth_user_id', authUserId)
-        .single()
+        .from("users")
+        .select("*")
+        .eq("auth_user_id", authUserId)
+        .single();
 
       if (error) {
-        throw error
+        throw error;
       }
 
       if (!data) {
-        throw new Error('User profile not found')
+        throw new Error("User profile not found");
       }
 
-      return data
+      return data;
     },
     enabled: !!authUserId,
-  })
+  });
 }

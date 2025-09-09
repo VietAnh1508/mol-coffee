@@ -154,6 +154,13 @@ export function EmployeeDetailsModal({
 
             <div>
               <label className="block text-sm font-medium text-gray-700">
+                Số điện thoại
+              </label>
+              <p className="mt-1 text-sm text-gray-900">{employee.phone}</p>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-700">
                 Vai trò
               </label>
               <div className="mt-1 flex items-center justify-between">

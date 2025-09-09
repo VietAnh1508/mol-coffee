@@ -4,7 +4,6 @@ import { useAuth } from "../hooks";
 export function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState("");
   const [isSignUp, setIsSignUp] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -20,7 +19,7 @@ export function LoginPage() {
 
     try {
       if (isSignUp) {
-        const { error } = await signUp(email, password, name);
+        const { error } = await signUp(email, password);
         if (error) {
           setError(error.message || "Failed to create account");
         } else {
@@ -30,7 +29,6 @@ export function LoginPage() {
           );
           setIsSignUp(false);
           setPassword(""); // Clear password for security
-          setName("");
         }
       } else {
         const { error } = await signIn(email, password);
@@ -71,23 +69,6 @@ export function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
               />
             </div>
-            {isSignUp && (
-              <div>
-                <label htmlFor="name" className="sr-only">
-                  Tên
-                </label>
-                <input
-                  id="name"
-                  name="name"
-                  type="text"
-                  required
-                  className="appearance-none rounded-none relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm"
-                  placeholder="Tên"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                />
-              </div>
-            )}
             <div>
               <label htmlFor="password" className="sr-only">
                 Mật khẩu
