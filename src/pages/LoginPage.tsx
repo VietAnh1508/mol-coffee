@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useAuth } from "../hooks";
+import { PasswordPolicy } from "../components/PasswordPolicy";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");
@@ -85,6 +86,13 @@ export function LoginPage() {
               />
             </div>
           </div>
+
+          {isSignUp && (
+            <PasswordPolicy 
+              variant="info" 
+              className="mt-4"
+            />
+          )}
 
           {error && (
             <div className="text-red-600 text-sm text-center">{error}</div>

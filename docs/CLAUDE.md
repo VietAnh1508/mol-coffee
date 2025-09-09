@@ -71,13 +71,24 @@ mol-coffee/
 ├── docs/                   # Project documentation & context files
 ├── src/
 │   ├── components/         # Reusable UI components
-│   ├── pages/              # Page components (LoginPage, DashboardPage, SettingsPage)
+│   │   ├── Layout.tsx      # Main app layout with navigation
+│   │   ├── Toast.tsx       # Toast notification component
+│   │   ├── PasswordPolicy.tsx # Reusable password policy display
+│   │   └── ...             # Other reusable components
+│   ├── pages/              # Page components
+│   │   ├── LoginPage.tsx   # Login/signup with password policy
+│   │   ├── ProfilePage.tsx # User profile editing
+│   │   ├── ChangePasswordPage.tsx # Password change functionality
+│   │   └── ...             # Other page components
 │   ├── context/            # React contexts for state management
 │   ├── hooks/              # Custom React hooks (TanStack Query, auth, mutations)
 │   ├── routes/             # TanStack Router route definitions
+│   ├── constants/          # Application constants
+│   │   ├── password.ts     # Password validation constants
+│   │   └── ...             # Other constants
 │   ├── lib/                # Utilities & configurations (Supabase client)
 │   ├── types/              # TypeScript type definitions
-│   └── utils/              # Helper functions
+│   └── utils/              # Helper functions (phone validation, etc.)
 ├── supabase/
 │   ├── migrations/         # Database schema migrations & seeds
 │   └── README.md           # Database documentation
@@ -90,6 +101,7 @@ mol-coffee/
 - ✅ `.env` contains ONLY client-safe variables
 - ✅ `SUPABASE_ACCESS_TOKEN` removed (use CLI login instead)
 - ✅ `.env` excluded from Git via `.gitignore`
+- ⚠️ **Never commit access tokens** - use `npx supabase login` for CLI auth
 
 ### **Database Security:**
 - ✅ **RLS Policies** - Employees see own data, Admins see all
@@ -97,28 +109,6 @@ mol-coffee/
 - ✅ **Input Validation** - Database constraints and checks
 - ✅ **Synthetic Email Safety** - Auto-confirmation for @mol-coffee emails
 
-## 📊 CURRENT STATUS
-
-### **Completed (Foundation + Data Layer Phase):**
-- ✅ Full tech stack setup with TanStack Query integration
-- ✅ Database schema with Vietnamese localization
-- ✅ Authentication system with success flows
-- ✅ RLS security policies
-- ✅ Git-tracked database migrations
-- ✅ PWA configuration
-- ✅ Clean TypeScript architecture
-- ✅ Modern data fetching with caching and mutations
-- ✅ Settings management (Activities & Rates) with real-time updates
-- ✅ Comprehensive hook system for data management
-
-### **Progress:** ~45% complete (Foundation + Data Layer + Settings Complete)
-
-## 🎯 NEXT DEVELOPMENT PRIORITIES
-
-1. **Employee Management Page** - Admin dashboard for user management
-2. ~~**Settings Pages** - Activities and rates management~~ ✅ **COMPLETED**
-3. **Scheduling Interface** - Calendar view for shift management
-4. **Enhanced Dashboard** - Role-specific content display
 
 ## 🛠️ DEVELOPMENT COMMANDS
 
@@ -141,7 +131,7 @@ pnpm run db:migration <name> # Create new migration
 -- Create admin user
 SELECT create_admin_user('EMAIL', 'PASSWORD', 'NAME');
 
--- Promote existing user
+-- Promote existing user to admin
 SELECT promote_user_to_admin('EMAIL');
 ```
 
@@ -156,6 +146,7 @@ SELECT promote_user_to_admin('EMAIL');
 5. **Use TypeScript strictly** - All new code must be properly typed
 6. **Mobile-first design** - Tailwind classes should prioritize mobile experience
 7. **Update PROGRESS.md** - Mark completed features and update status
+8. **Make sure migration scripts are idempotent** - Database migrations should be safe to run multiple times
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript
@@ -166,6 +157,9 @@ SELECT promote_user_to_admin('EMAIL');
 - **Styling:** Use Tailwind CSS classes, avoid custom CSS
 - **Database:** Always use RLS-aware queries through Supabase client
 - **Auth:** Use the AuthContext, never bypass the auth system
+- **Routes:** ALWAYS add authentication guards to protected routes (see `/schedule` or `/profile` route examples)
+- **Constants:** Use centralized constants for business rules (see `constants/password.ts` for password policies)
+- **Form Validation:** Always validate forms with Vietnamese error messages and use constants for validation rules
 
 ### **Testing Strategy:**
 - **Auth Flow:** Test signup → success message → login flow
@@ -182,5 +176,4 @@ SELECT promote_user_to_admin('EMAIL');
 
 ---
 
-**Last Updated:** September 9, 2025  
-**Phase:** Foundation + Data Layer Complete, Phase 1 MVP Development In Progress
+**Last Updated:** September 9, 2025

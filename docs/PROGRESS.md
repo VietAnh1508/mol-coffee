@@ -135,9 +135,24 @@
   - [x] Role-based delete permissions (admin only)
   - [x] Toast notifications for user feedback
 
-### 🔒 **User Profile & Settings**
-- [ ] Change password functionality
-- [ ] Profile editing (name, phone)
+### 🔒 **User Profile & Settings** ✅ **COMPLETED**
+- [x] User profile page with edit functionality
+  - [x] Mobile-first design with responsive layout
+  - [x] Edit name and phone number with form validation
+  - [x] Vietnamese phone number validation (10 digits, 03/05/07/08/09 prefixes)
+  - [x] Toast notifications for success/error feedback
+  - [x] Accessible via user dropdown menu in navigation
+- [x] Change password functionality
+  - [x] Secure password change page with current password verification
+  - [x] Password visibility toggle for all password fields
+  - [x] Comprehensive form validation with Vietnamese error messages
+  - [x] Password policy enforcement (minimum 6 characters)
+  - [x] Supabase auth integration with updateUser API
+  - [x] Success feedback and form reset on completion
+- [x] Password policy system
+  - [x] Reusable PasswordPolicy component with flexible variants
+  - [x] Centralized password constants for maintainability
+  - [x] Consistent policy display across signup and password change flows
 - [ ] User preferences
 
 ---
@@ -214,61 +229,26 @@
 
 ---
 
-## 📝 DEVELOPMENT NOTES
-
-### **Database Admin Setup**
-```sql
--- Create admin user
-SELECT create_admin_user('PHONE_NUMBER', 'PASSWORD', 'NAME');
-
--- Promote existing user to admin
-SELECT promote_user_to_admin('PHONE_NUMBER');
-```
-
-### **Migration Commands**
-```bash
-# First time setup - login to Supabase CLI
-npx supabase login
-
-# Link to project (one time)
-npx supabase link --project-ref kngqtplideqcsaculhek
-
-# Database operations
-pnpm run db:push    # Apply migrations
-pnpm run db:pull    # Pull remote changes
-pnpm run db:diff    # Show differences
-pnpm run db:migration <name>  # Create new migration
-```
-
-### **Security Notes**
-- ✅ **SUPABASE_ACCESS_TOKEN** removed from .env (use CLI login instead)
-- ✅ **.env excluded from git** (contains client-safe variables only)
-- ⚠️ **Never commit access tokens** - use `npx supabase login` for CLI auth
-
-### **Current Tech Stack**
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
-- **Data Fetching:** TanStack Query (React Query) with optimized caching
-- **Routing:** TanStack Router (file-based, type-safe)
-- **Backend:** Supabase (PostgreSQL + Auth + RLS)
-- **Package Manager:** pnpm
-- **Authentication:** Phone → synthetic email pattern
-- **Deployment:** Ready for Vercel + Supabase Cloud
-
----
-
 ## 🎯 NEXT PRIORITIES
 
 1. ~~**Employee Management Page** - Admin can view/manage all employees~~ ✅ **COMPLETED**
 2. ~~**Settings Page** - Admin can manage activities and rates~~ ✅ **COMPLETED**
 3. ~~**Scheduling System** - Complete shift management with assignment and deletion~~ ✅ **COMPLETED**
-4. **User Profile & Settings** - Change password, profile editing
-5. **Advanced Features** - Shift editing, conflict detection, bulk operations
+4. ~~**User Profile & Settings** - Change password, profile editing~~ ✅ **COMPLETED**
+5. **Phase 2 Features** - Timekeeping, payroll system, salary calculations
+6. **Advanced Features** - Shift editing, conflict detection, bulk operations
 
 ---
 
-**Progress:** ~80% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + UX Enhancements ✅)
+**Progress:** ~90% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management ✅)
 
 ### **Recent Achievements:**
+- ✅ **User Profile & Password Management System** - Complete user profile editing and password change functionality
+- ✅ **User Profile Page** - Mobile-first profile editing with name/phone validation and success feedback
+- ✅ **Change Password Feature** - Secure password change with current password verification and policy enforcement
+- ✅ **Password Policy System** - Reusable PasswordPolicy component with centralized constants and consistent UX
+- ✅ **Navigation Integration** - User dropdown menu links to profile page for intuitive access
+- ✅ **Form Validation Excellence** - Vietnamese phone validation and comprehensive error handling
 - ✅ **Complete Scheduling System** - Full shift management with assignment, deletion, and role-based access
 - ✅ **Employee Assignment Modal** - Intuitive shift assignment with employee and activity selection
 - ✅ **Shift Deletion with Confirmation** - Secure deletion workflow with confirmation dialogs
