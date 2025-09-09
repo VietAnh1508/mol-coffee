@@ -3,7 +3,7 @@ import type { UserRole } from '../constants/userRoles'
 export interface User {
   id: string
   email: string
-  phone?: string
+  phone: string
   name: string
   role: UserRole
   status: 'active' | 'inactive'

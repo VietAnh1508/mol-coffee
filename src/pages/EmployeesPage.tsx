@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { HiCheckCircle, HiXCircle } from "react-icons/hi2";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { PageTitle } from "../components/PageTitle";
 import { Toast } from "../components/Toast";
@@ -90,39 +91,33 @@ export function EmployeesPage() {
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-3">
                   <div className="flex-1">
-                    <p className="text-sm font-medium text-gray-900 truncate">
-                      {employee.name}
+                    <div className="flex items-center space-x-2">
+                      <p className="text-sm font-medium text-gray-900 truncate">
+                        {employee.name}
+                      </p>
+                      <span
+                        className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
+                          employee.role === USER_ROLES.ADMIN
+                            ? "bg-purple-100 text-purple-800"
+                            : "bg-blue-100 text-blue-800"
+                        }`}
+                      >
+                        {employee.role === USER_ROLES.ADMIN
+                          ? "Quản trị viên"
+                          : "Nhân viên"}
+                      </span>
                       {isCurrentUser(employee) && (
-                        <span className="ml-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800">
+                        <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800">
                           Bạn
                         </span>
                       )}
-                    </p>
-                    <p className="text-sm text-gray-500">{employee.email}</p>
-                  </div>
-                  <div className="flex flex-col items-end space-y-1">
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        employee.role === USER_ROLES.ADMIN
-                          ? "bg-purple-100 text-purple-800"
-                          : "bg-blue-100 text-blue-800"
-                      }`}
-                    >
-                      {employee.role === USER_ROLES.ADMIN
-                        ? "Quản trị viên"
-                        : "Nhân viên"}
-                    </span>
-                    <span
-                      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                        employee.status === "active"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
-                      }`}
-                    >
-                      {employee.status === "active"
-                        ? "Hoạt động"
-                        : "Không hoạt động"}
-                    </span>
+                      {employee.status === "active" ? (
+                        <HiCheckCircle className="h-5 w-5 text-green-500" title="Hoạt động" />
+                      ) : (
+                        <HiXCircle className="h-5 w-5 text-red-500" title="Không hoạt động" />
+                      )}
+                    </div>
+                    <p className="text-sm text-gray-500 mt-1">{employee.phone}</p>
                   </div>
                 </div>
               </div>
