@@ -1,10 +1,14 @@
-import type { Session, User as SupabaseUser } from "@supabase/supabase-js";
+import type {
+  AuthError,
+  Session,
+  User as SupabaseUser,
+} from "@supabase/supabase-js";
 import type { ReactNode } from "react";
 import { useEffect, useMemo, useState } from "react";
+import { isPlaceholderPhone } from "../constants/userDefaults";
 import { useUserProfile } from "../hooks";
 import { supabase } from "../lib/supabase";
 import { AuthContext } from "./AuthContextDefinition";
-import { isPlaceholderPhone } from "../constants/userDefaults";
 
 // Re-export the context type for convenience
 export type { AuthContextType } from "./AuthContextDefinition";
@@ -82,9 +86,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       return { error };
     } catch (error) {
-      return {
-        error: error instanceof Error ? error : new Error("Unknown error"),
-      };
+      // Preserve AuthError type or create a compatible error with code property
+      const authError =
+        error instanceof Error ? error : new Error("Unknown error");
+      return { error: authError as AuthError };
     }
   };
 
@@ -100,12 +105,12 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
       if (error) return { error };
 
-      // User profile will be created automatically by the handle_new_user trigger
       return { error: null };
     } catch (error) {
-      return {
-        error: error instanceof Error ? error : new Error("Unknown error"),
-      };
+      // Preserve AuthError type or create a compatible error with code property
+      const authError =
+        error instanceof Error ? error : new Error("Unknown error");
+      return { error: authError as AuthError };
     }
   };
 
@@ -125,9 +130,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Check if name exists and phone is not a placeholder
     return Boolean(
       userData.name &&
-      userData.name.trim() !== "" &&
-      userData.phone &&
-      !isPlaceholderPhone(userData.phone)
+        userData.name.trim() !== "" &&
+        userData.phone &&
+        !isPlaceholderPhone(userData.phone)
     );
   };
 

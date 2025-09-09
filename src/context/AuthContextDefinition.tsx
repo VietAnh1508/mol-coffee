@@ -1,5 +1,5 @@
+import type { AuthError, User as SupabaseUser } from "@supabase/supabase-js";
 import { createContext } from "react";
-import type { User as SupabaseUser } from "@supabase/supabase-js";
 import type { User } from "../types";
 
 export interface AuthContextType {
@@ -7,12 +7,17 @@ export interface AuthContextType {
   supabaseUser: SupabaseUser | null;
   loading: boolean;
   isProfileComplete: boolean;
-  signIn: (email: string, password: string) => Promise<{ error: Error | null }>;
+  signIn: (
+    email: string,
+    password: string
+  ) => Promise<{ error: AuthError | null }>;
   signUp: (
     email: string,
     password: string
-  ) => Promise<{ error: Error | null }>;
+  ) => Promise<{ error: AuthError | null }>;
   signOut: () => Promise<void>;
 }
 
-export const AuthContext = createContext<AuthContextType | undefined>(undefined);
+export const AuthContext = createContext<AuthContextType | undefined>(
+  undefined
+);
