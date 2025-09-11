@@ -70,11 +70,6 @@ export function SchedulePage() {
     <div className="px-4 py-6 sm:px-0">
       <PageTitle
         title={isAdmin ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
-        subtitle={
-          isAdmin
-            ? "Quản lý tất cả ca nhân viên trong hệ thống"
-            : "Xem lịch làm việc của bạn"
-        }
       />
 
       {/* Date Navigation */}

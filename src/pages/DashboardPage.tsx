@@ -15,29 +15,19 @@ export function DashboardPage() {
           Xin chào, {user.name}!
         </h1>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mt-8">
+        <div className="grid grid-cols-2 gap-4 mt-8 max-w-sm mx-auto">
           {user.role === USER_ROLES.ADMIN && (
             <Link
               to="/settings"
-              className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
+              className="bg-white rounded-lg shadow hover:shadow-md transition-shadow block aspect-square"
             >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-purple-500 rounded-md flex items-center justify-center">
-                      <FaCog className="text-white text-sm" />
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dd>
-                        <div className="text-lg font-medium text-gray-900">
-                          Cài đặt
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
+              <div className="flex flex-col items-center justify-center h-full p-4">
+                <div className="w-12 h-12 bg-purple-500 rounded-lg flex items-center justify-center mb-3">
+                  <FaCog className="text-white text-lg" />
                 </div>
+                <span className="text-sm font-medium text-gray-900 text-center">
+                  Cài đặt
+                </span>
               </div>
             </Link>
           )}
@@ -45,77 +35,50 @@ export function DashboardPage() {
           {user.role === USER_ROLES.ADMIN && (
             <Link
               to="/employees"
-              className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
+              className="bg-white rounded-lg shadow hover:shadow-md transition-shadow block aspect-square"
             >
-              <div className="p-5">
-                <div className="flex items-center">
-                  <div className="flex-shrink-0">
-                    <div className="w-8 h-8 bg-orange-500 rounded-md flex items-center justify-center">
-                      <FaUsers className="text-white text-sm" />
-                    </div>
-                  </div>
-                  <div className="ml-5 w-0 flex-1">
-                    <dl>
-                      <dd>
-                        <div className="text-lg font-medium text-gray-900">
-                          Danh sách nhân viên
-                        </div>
-                      </dd>
-                    </dl>
-                  </div>
+              <div className="flex flex-col items-center justify-center h-full p-4">
+                <div className="w-12 h-12 bg-orange-500 rounded-lg flex items-center justify-center mb-3">
+                  <FaUsers className="text-white text-lg" />
                 </div>
+                <span className="text-sm font-medium text-gray-900 text-center">
+                  Danh sách nhân viên
+                </span>
               </div>
             </Link>
           )}
 
           <Link
             to="/schedule"
-            className="bg-white overflow-hidden shadow rounded-lg hover:shadow-md transition-shadow block"
+            className="bg-white rounded-lg shadow hover:shadow-md transition-shadow block aspect-square"
           >
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-blue-500 rounded-md flex items-center justify-center">
-                    <FaCalendarAlt className="text-white text-sm" />
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dd>
-                      <div className="text-lg font-medium text-gray-900">
-                        {user.role === USER_ROLES.ADMIN
-                          ? "Quản lý ca làm việc"
-                          : "Ca làm việc"}
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
+            <div className="flex flex-col items-center justify-center h-full p-4">
+              <div className="w-12 h-12 bg-blue-500 rounded-lg flex items-center justify-center mb-3">
+                <FaCalendarAlt className="text-white text-lg" />
               </div>
+              <span className="text-sm font-medium text-gray-900 text-center">
+                {user.role === USER_ROLES.ADMIN
+                  ? "Quản lý ca làm việc"
+                  : "Ca làm việc"}
+              </span>
             </div>
           </Link>
 
-          <div className="bg-white overflow-hidden shadow rounded-lg">
-            <div className="p-5">
-              <div className="flex items-center">
-                <div className="flex-shrink-0">
-                  <div className="w-8 h-8 bg-green-500 rounded-md flex items-center justify-center">
-                    <FaDollarSign className="text-white text-sm" />
-                  </div>
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dd>
-                      <div className="text-lg font-medium text-gray-900">
-                        {user.role === USER_ROLES.ADMIN
-                          ? "Bảng lương nhân viên"
-                          : "Bảng lương"}
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
+          <Link
+            to="/payroll"
+            className="bg-white rounded-lg shadow hover:shadow-md transition-shadow block aspect-square"
+          >
+            <div className="flex flex-col items-center justify-center h-full p-4">
+              <div className="w-12 h-12 bg-green-500 rounded-lg flex items-center justify-center mb-3">
+                <FaDollarSign className="text-white text-lg" />
               </div>
+              <span className="text-sm font-medium text-gray-900 text-center">
+                {user.role === USER_ROLES.ADMIN
+                  ? "Bảng lương nhân viên"
+                  : "Bảng lương"}
+              </span>
             </div>
-          </div>
+          </Link>
         </div>
       </div>
     </div>

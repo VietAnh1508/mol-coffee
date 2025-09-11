@@ -1,4 +1,4 @@
-import { Link, useRouterState } from "@tanstack/react-router";
+import { Link } from "@tanstack/react-router";
 import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
@@ -12,8 +12,6 @@ interface LayoutProps {
 
 export function Layout({ children }: LayoutProps) {
   const { user, signOut, isProfileComplete } = useAuth();
-  const router = useRouterState();
-  const currentPath = router.location.pathname;
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
@@ -54,30 +52,6 @@ export function Layout({ children }: LayoutProps) {
                   />
                   <span>MoL Coffee</span>
                 </Link>
-                <div className="hidden sm:flex space-x-6">
-                  <Link
-                    to="/dashboard"
-                    className={`text-sm font-medium ${
-                      currentPath === "/dashboard"
-                        ? "text-blue-600 border-b-2 border-blue-600 pb-4"
-                        : "text-gray-600 hover:text-gray-900"
-                    }`}
-                  >
-                    Trang chủ
-                  </Link>
-                  {user.role === USER_ROLES.ADMIN && (
-                    <Link
-                      to="/settings"
-                      className={`text-sm font-medium ${
-                        currentPath === "/settings"
-                          ? "text-blue-600 border-b-2 border-blue-600 pb-4"
-                          : "text-gray-600 hover:text-gray-900"
-                      }`}
-                    >
-                      Cài đặt
-                    </Link>
-                  )}
-                </div>
               </div>
               <div className="flex items-center">
                 <div className="relative" ref={dropdownRef}>
