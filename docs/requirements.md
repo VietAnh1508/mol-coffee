@@ -101,7 +101,7 @@ Database Schema (MVP)
 	•	payroll_periods (id, year_month, status, closed_by, closed_at)
 
 Data Privacy (via Supabase RLS)
-	•	Employees: can SELECT all shifts (for schedule visibility) but only their own time entries and salary totals.
+	•	Employees: can SELECT all shifts and colleagues' basic info (name, email, phone) for schedule coordination, but only their own time entries and salary totals.
 	•	Admins: unrestricted CRUD on all data.
 	•	Rates/activities: read-only for employees; full access for admins.
 	•	Email used for authentication and primary user identification.
@@ -122,8 +122,9 @@ Data Privacy (via Supabase RLS)
 
 5. Data Access Control
 	•	Role-based access control enforced at database level
-	•	Employee data isolation: users can only view their own information
-	•	Admin oversight: administrators can access all system data
+	•	Employee schedule coordination: employees can view colleagues' schedules and basic info (name, email, phone)
+	•	Employee data privacy: employees can only view their own salary and time entry data
+	•	Admin oversight: administrators can access all system data including roles and status
 	•	Data privacy: unauthorized access prevented even with direct database queries
 	•	Secure authentication with email as primary identifier
 	•	Phone numbers stored as supplementary contact information

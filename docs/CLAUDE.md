@@ -51,10 +51,10 @@
 
 ### **RLS Implementation Strategy:**
 ```sql
--- Employee policies: can view all shifts, but only access own time entries and salary data
+-- Employee policies: can view all shifts and colleagues' basic info (name, email, phone), but only access own time entries and salary data
 -- Admin policies: unrestricted access to all data
 -- Public read access: activities and rates (for employee visibility)
--- Schedule visibility: employees can see colleagues' schedules for coordination
+-- Schedule visibility: employees can see colleagues' schedules and contact info for coordination
 -- Automatic policy application: no client-side role checking required
 ```
 
