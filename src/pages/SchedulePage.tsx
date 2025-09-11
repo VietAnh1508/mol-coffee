@@ -23,12 +23,8 @@ export function SchedulePage() {
   );
 
   const isAdmin = user?.role === USER_ROLES.ADMIN;
-  const userId = isAdmin ? undefined : user?.id;
 
-  const { data: shifts = [], isLoading } = useScheduleShifts(
-    selectedDate,
-    userId
-  );
+  const { data: shifts = [], isLoading } = useScheduleShifts(selectedDate);
 
   // Group shifts by template (morning/afternoon)
   const groupedShifts = useMemo(() => {

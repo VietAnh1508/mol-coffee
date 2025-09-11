@@ -2,9 +2,9 @@ import { useQuery } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { ScheduleShift } from '../types'
 
-export function useScheduleShifts(date?: Date, userId?: string) {
+export function useScheduleShifts(date?: Date) {
   return useQuery({
-    queryKey: ['schedule-shifts', date?.toDateString(), userId],
+    queryKey: ['schedule-shifts', date?.toDateString()],
     queryFn: async (): Promise<ScheduleShift[]> => {
       let query = supabase
         .from('schedule_shifts')
@@ -26,11 +26,6 @@ export function useScheduleShifts(date?: Date, userId?: string) {
           .lt('start_ts', endOfDay.toISOString())
       }
 
-      // Filter by user if provided (for employee view)
-      if (userId) {
-        query = query.eq('user_id', userId)
-      }
-
       query = query.order('start_ts', { ascending: true })
 
       const { data, error } = await query
@@ -45,11 +40,11 @@ export function useScheduleShifts(date?: Date, userId?: string) {
   })
 }
 
-export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date, userId?: string) {
+export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date) {
   return useQuery({
-    queryKey: ['schedule-shifts-range', startDate.toDateString(), endDate.toDateString(), userId],
+    queryKey: ['schedule-shifts-range', startDate.toDateString(), endDate.toDateString()],
     queryFn: async (): Promise<ScheduleShift[]> => {
-      let query = supabase
+      const query = supabase
         .from('schedule_shifts')
         .select(`
           *,
@@ -58,12 +53,7 @@ export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date, use
         `)
         .gte('start_ts', startDate.toISOString())
         .lt('start_ts', endDate.toISOString())
-
-      if (userId) {
-        query = query.eq('user_id', userId)
-      }
-
-      query = query.order('start_ts', { ascending: true })
+        .order('start_ts', { ascending: true })
 
       const { data, error } = await query
 

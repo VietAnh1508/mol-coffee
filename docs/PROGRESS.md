@@ -116,8 +116,8 @@
 ### 📅 **Scheduling System** ✅ **COMPLETED**
 - [x] Schedule calendar view
   - [x] Day view layout with Vietnamese interface
-  - [x] Admin: multi-column view (all employees)
-  - [x] Employee: single column view (own shifts only)
+  - [x] Admin: multi-column view (all employees) with modification rights
+  - [x] Employee: can view all employees' schedules (read-only access)
   - [x] Role-based access control and UI differences
   - [x] Date navigation with Vietnamese date formatting
 - [x] Shift display and management
@@ -252,7 +252,8 @@
 **Progress:** ~90% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management ✅)
 
 ### **Recent Achievements:**
-- ✅ **Shift Hour Editing System** - Complete shift time and activity editing for real-world scenarios ✅ **NEW**
+- ✅ **Employee Schedule Visibility Enhancement** - Employees can now view all colleagues' schedules while maintaining admin-only modification rights ✅ **NEW**
+- ✅ **Shift Hour Editing System** - Complete shift time and activity editing for real-world scenarios
 - ✅ **ShiftEditModal Component** - Intuitive modal for editing shift times, activities, and notes
 - ✅ **Custom Shift Removal** - Simplified system to morning/afternoon only, removing UI clutter
 - ✅ **Role-based Dashboard Menus** - Different titles for Admin vs Employee roles for better UX

@@ -7,12 +7,13 @@ Build a mobile-first Progressive Web App (PWA) to manage scheduling, timekeeping
 
 User Roles:
 	•	Admin (Manager/Owner):
-	•	Full CRUD on users, schedules, activities, rates, and timekeeping.
-	•	Can view salary data for all employees.
+		•	Full CRUD on users, schedules, activities, rates, and timekeeping.
+		•	Can view salary data for all employees.
 	•	Employee (Staff):
-	•	Registers via email + password (minimal signup).
-	•	Completes profile with name + phone on first login.
-	•	Can view only their own schedule and salary data (read-only).
+		•	Registers via email + password (minimal signup).
+		•	Completes profile with name + phone on first login.
+		•	Can view all employees' schedules but only their own salary data (read-only).
+		•	Cannot modify any schedule shifts (view-only access to schedules).
 
 Branching:
 Single branch only (no multi-location support in MVP).
@@ -50,16 +51,16 @@ Employee List (Admin only)
 
 Scheduling
 	•	Default shifts per day:
-	•	Morning: 06:00–12:00
-	•	Afternoon: 12:00–18:00
+		•	Morning: 06:00–12:00
+		•	Afternoon: 12:00–18:00
 	•	Rules:
-	•	Max 2 shifts/day/employee.
-	•	No overlaps per employee.
-	•	Activities cannot change mid-shift.
-	•	Admin can manually adjust times (late arrival, early leave).
+		•	Max 2 shifts/day/employee.
+		•	No overlaps per employee.
+		•	Activities cannot change mid-shift.
+		•	Admin can manually adjust times (late arrival, early leave).
 	•	UI: Day view calendar.
-	•	Admin: multiple columns (employees).
-	•	Employee: personal column only (read-only).
+		•	Admin: multiple columns (employees) with full modification rights.
+		•	Employee: can view all employees' schedules but cannot modify any shifts.
 	•	Conflict handling: Prevent overlaps, enforce 2-shift max.
 
 Timekeeping
@@ -100,8 +101,8 @@ Database Schema (MVP)
 	•	payroll_periods (id, year_month, status, closed_by, closed_at)
 
 Data Privacy (via Supabase RLS)
-	•	Employees: can only SELECT their own shifts, time entries, and salary totals.
-	•	Admins: unrestricted CRUD.
+	•	Employees: can SELECT all shifts (for schedule visibility) but only their own time entries and salary totals.
+	•	Admins: unrestricted CRUD on all data.
 	•	Rates/activities: read-only for employees; full access for admins.
 	•	Email used for authentication and primary user identification.
 	•	Phone numbers required for admin contact purposes (Vietnamese mobile format).
@@ -130,7 +131,7 @@ Data Privacy (via Supabase RLS)
 ⸻
 
 6. Acceptance Criteria (MVP)
-	•	Employees see only their own salary and schedule.
+	•	Employees can view all schedules but only their own salary data.
 	•	Admins can view and manage all data.
 	•	Two-shift max per day enforced.
 	•	Overlap prevention works.

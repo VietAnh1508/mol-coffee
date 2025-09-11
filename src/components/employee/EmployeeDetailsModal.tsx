@@ -1,6 +1,7 @@
 import { useToast, useToggleUserRole, useToggleUserStatus, useUser, useUsers } from "../../hooks";
 import { USER_ROLES } from "../../constants/userRoles";
 import type { User } from "../../types";
+import { CurrentUserBadge } from "../CurrentUserBadge";
 import { Spinner } from "../Spinner";
 
 interface EmployeeDetailsModalProps {
@@ -75,9 +76,6 @@ export function EmployeeDetailsModal({
     );
   }
 
-  const isCurrentUser = (emp: User) => {
-    return emp.id === currentUser?.id;
-  };
 
   const isLastAdmin = (emp: User) => {
     if (emp.role !== USER_ROLES.ADMIN) return false;
@@ -86,13 +84,13 @@ export function EmployeeDetailsModal({
   };
 
   const canToggleRole = (emp: User) => {
-    if (isCurrentUser(emp) && emp.role === USER_ROLES.ADMIN) return false;
+    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN) return false;
     if (isLastAdmin(emp)) return false;
     return true;
   };
 
   const canToggleStatus = (emp: User) => {
-    if (isCurrentUser(emp) && emp.status === "active") return false;
+    if (emp.id === currentUser?.id && emp.status === "active") return false;
     return true;
   };
 
@@ -138,11 +136,7 @@ export function EmployeeDetailsModal({
               </label>
               <p className="mt-1 text-sm text-gray-900">
                 {employee.name}
-                {isCurrentUser(employee) && (
-                  <span className="ml-2 inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800">
-                    Bạn
-                  </span>
-                )}
+                <CurrentUserBadge user={employee} className="ml-2" />
               </p>
             </div>
 

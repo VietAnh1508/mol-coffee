@@ -1,12 +1,12 @@
 import { useState } from "react";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi2";
+import { CurrentUserBadge } from "../components/CurrentUserBadge";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
 import { Toast } from "../components/Toast";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useToast, useUsers } from "../hooks";
-import type { User } from "../types";
 
 export function EmployeesPage() {
   const { user } = useAuth();
@@ -16,10 +16,6 @@ export function EmployeesPage() {
   );
   const [showInactive, setShowInactive] = useState(false);
   const { toast, hideToast } = useToast();
-
-  const isCurrentUser = (employee: User) => {
-    return employee.id === user?.id;
-  };
 
   const filteredEmployees = showInactive
     ? employees
@@ -107,11 +103,7 @@ export function EmployeesPage() {
                           ? "Quản trị viên"
                           : "Nhân viên"}
                       </span>
-                      {isCurrentUser(employee) && (
-                        <span className="inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800">
-                          Bạn
-                        </span>
-                      )}
+                      <CurrentUserBadge user={employee} />
                       {employee.status === "active" ? (
                         <HiCheckCircle className="h-5 w-5 text-green-500" title="Hoạt động" />
                       ) : (

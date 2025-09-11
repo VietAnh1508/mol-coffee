@@ -36,7 +36,7 @@
 
 ### **Database Design:**
 - **6 Core Tables** - users (email, phone, name, role), activities, rates, schedule_shifts, time_entries, payroll_periods
-- **Row Level Security (RLS)** - Database-enforced access control
+- **Row Level Security (RLS)** - Database-enforced access control with schedule visibility for all employees
 - **Business Rules Enforcement** - Triggers prevent overlaps, enforce 2-shift max
 - **Vietnamese Data** - Default activities: Thử việc, Cà phê, Bánh mì, Quản lý
 
@@ -51,9 +51,10 @@
 
 ### **RLS Implementation Strategy:**
 ```sql
--- Employee policies: can only access own data
+-- Employee policies: can view all shifts, but only access own time entries and salary data
 -- Admin policies: unrestricted access to all data
 -- Public read access: activities and rates (for employee visibility)
+-- Schedule visibility: employees can see colleagues' schedules for coordination
 -- Automatic policy application: no client-side role checking required
 ```
 
@@ -140,13 +141,14 @@ SELECT promote_user_to_admin('EMAIL');
 ### **When Working on This Project:**
 
 1. **Always maintain Vietnamese context** - UI labels, error messages, data
-2. **Respect RLS policies** - Test data access from both admin and employee perspectives  
-3. **Follow progressive profile pattern** - Email+password signup, profile completion modal for name+phone
-4. **Vietnamese phone validation** - Enforce 10-digit mobile format with proper prefixes
-5. **Use TypeScript strictly** - All new code must be properly typed
-6. **Mobile-first design** - Tailwind classes should prioritize mobile experience
-7. **Update PROGRESS.md** - Mark completed features and update status
-8. **Make sure migration scripts are idempotent** - Database migrations should be safe to run multiple times
+2. **Respect RLS policies** - Test data access from both admin and employee perspectives
+3. **Schedule Visibility Rules** - Employees can view all schedules but only admins can modify shifts  
+4. **Follow progressive profile pattern** - Email+password signup, profile completion modal for name+phone
+5. **Vietnamese phone validation** - Enforce 10-digit mobile format with proper prefixes
+6. **Use TypeScript strictly** - All new code must be properly typed
+7. **Mobile-first design** - Tailwind classes should prioritize mobile experience
+8. **Update PROGRESS.md** - Mark completed features and update status
+9. **Make sure migration scripts are idempotent** - Database migrations should be safe to run multiple times
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript

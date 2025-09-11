@@ -4,6 +4,7 @@ import { useScheduleMutations, useToast } from "../../hooks";
 import type { ScheduleShift } from "../../types";
 import { formatTime } from "../../utils/dateUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
+import { CurrentUserBadge } from "../CurrentUserBadge";
 
 interface ShiftCardProps {
   shift: ScheduleShift;
@@ -57,8 +58,11 @@ export function ShiftCard({ shift, isAdmin, onEdit }: ShiftCardProps) {
     <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
       <div className="flex justify-between items-start mb-2">
         <div className="flex-1">
-          <div className="font-medium text-gray-900 mb-1">
-            {isAdmin ? shift.user?.name : "Bạn"}
+          <div className="flex items-center space-x-2 mb-1">
+            <span className="font-medium text-gray-900">
+              {shift.user?.name || "Không xác định"}
+            </span>
+            {shift.user && <CurrentUserBadge user={shift.user} />}
           </div>
           {shift.activity?.name && (
             <span
