@@ -1,5 +1,6 @@
 import { useMemo, useState } from "react";
 import { PageTitle } from "../components/PageTitle";
+import { Spinner } from "../components/Spinner";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftCard } from "../components/shift/ShiftCard";
 import { ShiftEditModal } from "../components/shift/ShiftEditModal";
@@ -125,14 +126,20 @@ export function SchedulePage() {
         <div className="p-4 border-b border-gray-200">
           <div className="flex justify-between items-center">
             <h3 className="font-medium text-gray-900">Ca làm việc</h3>
-            {isLoading && (
-              <div className="text-sm text-gray-500">Đang tải...</div>
-            )}
           </div>
         </div>
 
-        <div className="p-4">
-          <div className="space-y-4">
+        <div className="p-4 relative">
+          {/* Loading Overlay */}
+          {isLoading && (
+            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-b-lg flex items-center justify-center z-10">
+              <div className="flex flex-col items-center space-y-3">
+                <Spinner />
+              </div>
+            </div>
+          )}
+
+          <div className={`space-y-4 ${isLoading ? "blur-sm" : ""}`}>
             {/* Morning Shift */}
             <div className="border border-gray-200 rounded-lg p-4">
               <div className="flex justify-between items-center mb-3">

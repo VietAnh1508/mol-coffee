@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HiPause, HiPencil, HiPlay, HiPlus } from "react-icons/hi2";
 import { useActivities, useToggleActivity } from "../../hooks";
 import type { Activity } from "../../types";
+import { Spinner } from "../Spinner";
 import { ActivityForm } from "./ActivityForm";
 
 export function ActivityList() {
@@ -37,7 +38,7 @@ export function ActivityList() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+        <Spinner />
       </div>
     );
   }

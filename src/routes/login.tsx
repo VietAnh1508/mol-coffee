@@ -1,6 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { useAuth } from "../hooks";
 import { LoginPage } from "../pages/LoginPage";
+import { Spinner } from "../components/Spinner";
 
 export const Route = createFileRoute("/login")({
   component: LoginRoute,
@@ -12,7 +13,7 @@ function LoginRoute() {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+        <Spinner size="lg" />
       </div>
     );
   }

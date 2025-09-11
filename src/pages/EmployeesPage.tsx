@@ -2,6 +2,7 @@ import { useState } from "react";
 import { HiCheckCircle, HiXCircle } from "react-icons/hi2";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { PageTitle } from "../components/PageTitle";
+import { Spinner } from "../components/Spinner";
 import { Toast } from "../components/Toast";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useToast, useUsers } from "../hooks";
@@ -34,7 +35,7 @@ export function EmployeesPage() {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto"></div>
+          <Spinner size="lg" />
           <p className="mt-2 text-gray-600">Loading...</p>
         </div>
       </div>

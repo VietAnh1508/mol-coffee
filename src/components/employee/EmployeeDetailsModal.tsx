@@ -1,6 +1,7 @@
 import { useToast, useToggleUserRole, useToggleUserStatus, useUser, useUsers } from "../../hooks";
 import { USER_ROLES } from "../../constants/userRoles";
 import type { User } from "../../types";
+import { Spinner } from "../Spinner";
 
 interface EmployeeDetailsModalProps {
   employeeId: string | null;
@@ -48,7 +49,7 @@ export function EmployeeDetailsModal({
       <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
         <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
           <div className="flex items-center justify-center py-12">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <Spinner />
             <span className="ml-3">Đang tải...</span>
           </div>
         </div>
@@ -214,7 +215,7 @@ export function EmployeeDetailsModal({
                     >
                       {toggleStatusMutation.isPending ? (
                         <div className="absolute inset-0 flex items-center justify-center">
-                          <div className="h-3 w-3 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                          <Spinner size="sm" color="white" />
                         </div>
                       ) : (
                         <span
