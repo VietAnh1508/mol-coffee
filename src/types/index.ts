@@ -37,7 +37,7 @@ export interface ScheduleShift {
   activity_id: string
   start_ts: string
   end_ts: string
-  template_name: 'morning' | 'afternoon' | 'custom'
+  template_name: 'morning' | 'afternoon'
   is_manual: boolean
   note?: string
   created_at: string

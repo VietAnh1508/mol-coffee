@@ -2,6 +2,7 @@ import { useMemo, useState } from "react";
 import { PageTitle } from "../components/PageTitle";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftCard } from "../components/shift/ShiftCard";
+import { ShiftEditModal } from "../components/shift/ShiftEditModal";
 import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useScheduleShifts } from "../hooks";
@@ -15,6 +16,10 @@ export function SchedulePage() {
   const [selectedShiftTemplate, setSelectedShiftTemplate] = useState<
     "morning" | "afternoon"
   >("morning");
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [selectedShift, setSelectedShift] = useState<ScheduleShift | null>(
+    null
+  );
 
   const isAdmin = user?.role === USER_ROLES.ADMIN;
   const userId = isAdmin ? undefined : user?.id;
@@ -24,16 +29,20 @@ export function SchedulePage() {
     userId
   );
 
-  // Group shifts by template (morning/afternoon/custom)
+  // Group shifts by template (morning/afternoon)
   const groupedShifts = useMemo(() => {
     const groups = {
       morning: [] as ScheduleShift[],
       afternoon: [] as ScheduleShift[],
-      custom: [] as ScheduleShift[],
     };
 
     shifts.forEach((shift) => {
-      groups[shift.template_name].push(shift);
+      if (
+        shift.template_name === "morning" ||
+        shift.template_name === "afternoon"
+      ) {
+        groups[shift.template_name].push(shift);
+      }
     });
 
     return groups;
@@ -51,8 +60,13 @@ export function SchedulePage() {
   };
 
   const handleEditShift = (shift: ScheduleShift) => {
-    // TODO: Implement edit functionality
-    console.log("Edit shift:", shift);
+    setSelectedShift(shift);
+    setIsEditModalOpen(true);
+  };
+
+  const handleEditModalClose = () => {
+    setIsEditModalOpen(false);
+    setSelectedShift(null);
   };
 
   return (
@@ -196,29 +210,6 @@ export function SchedulePage() {
                 )}
               </div>
             </div>
-
-            {/* Custom Shifts */}
-            {groupedShifts.custom.length > 0 && (
-              <div className="border border-gray-200 rounded-lg p-4">
-                <div className="flex justify-between items-center mb-3">
-                  <div className="flex items-center">
-                    <div className="w-4 h-4 bg-gray-400 rounded-full mr-3"></div>
-                    <h4 className="font-medium text-gray-900">Ca tùy chỉnh</h4>
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  {groupedShifts.custom.map((shift) => (
-                    <ShiftCard
-                      key={shift.id}
-                      shift={shift}
-                      isAdmin={isAdmin}
-                      onEdit={handleEditShift}
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
         </div>
       </div>
@@ -241,12 +232,6 @@ export function SchedulePage() {
               {SHIFT_TEMPLATES.afternoon.end})
             </span>
           </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-gray-400 rounded-full mr-2"></div>
-            <span className="text-gray-600">
-              Ca tùy chỉnh (thời gian linh hoạt)
-            </span>
-          </div>
         </div>
       </div>
 
@@ -256,6 +241,16 @@ export function SchedulePage() {
         onClose={handleCloseModal}
         shiftTemplate={selectedShiftTemplate}
         selectedDate={selectedDate}
+        onSuccess={() => {
+          // The data will automatically refresh due to TanStack Query
+        }}
+      />
+
+      {/* Shift Edit Modal */}
+      <ShiftEditModal
+        isOpen={isEditModalOpen}
+        onClose={handleEditModalClose}
+        shift={selectedShift}
         onSuccess={() => {
           // The data will automatically refresh due to TanStack Query
         }}

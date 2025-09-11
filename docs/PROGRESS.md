@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)  
-**Last Updated:** September 9, 2025
+**Last Updated:** September 11, 2025
 
 ---
 
@@ -66,6 +66,8 @@
 - [x] Success/error message display
 - [x] Auth context provider (optimized with useMemo)
 - [x] Dashboard with role-based navigation
+  - [x] Role-based menu titles (Admin vs Employee) ✅ **NEW**
+  - [x] Consistent menu layout without sub-titles
 - [x] Settings page with tab navigation
 - [x] TanStack Query hooks for data fetching (useActivities, useRates, useUsers, etc.)
 - [x] Mutation hooks for CRUD operations with optimistic updates
@@ -121,7 +123,7 @@
 - [x] Shift display and management
   - [x] Morning shift template (06:00-12:00) with orange indicators
   - [x] Afternoon shift template (12:00-18:00) with blue indicators
-  - [x] Custom shift template with gray indicators
+  - [x] ~~Custom shift template with gray indicators~~ **REMOVED** - Simplified to morning/afternoon only
   - [x] White shift cards with colored activity badges
   - [x] Real-time data fetching with TanStack Query
   - [x] Loading states and error handling
@@ -130,6 +132,13 @@
   - [x] Activity assignment per shift
   - [x] Auto-selection when only one employee available
   - [x] Form validation and error handling
+- [x] Shift editing ✅ **NEW**
+  - [x] ShiftEditModal for time and activity adjustments
+  - [x] Handle real-world scenarios (late arrival, early departure)
+  - [x] Activity switching within shifts
+  - [x] Time validation (end > start)
+  - [x] Notes field for admin comments
+  - [x] Preserve original shift templates (no custom conversion)
 - [x] Shift deletion
   - [x] Delete functionality with confirmation dialog
   - [x] Role-based delete permissions (admin only)
@@ -243,13 +252,19 @@
 **Progress:** ~90% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management ✅)
 
 ### **Recent Achievements:**
+- ✅ **Shift Hour Editing System** - Complete shift time and activity editing for real-world scenarios ✅ **NEW**
+- ✅ **ShiftEditModal Component** - Intuitive modal for editing shift times, activities, and notes
+- ✅ **Custom Shift Removal** - Simplified system to morning/afternoon only, removing UI clutter
+- ✅ **Role-based Dashboard Menus** - Different titles for Admin vs Employee roles for better UX
+- ✅ **Database Schema Optimization** - Removed 'custom' enum value with clean migration script
+- ✅ **Template Preservation** - Edited shifts stay in original morning/afternoon sections
 - ✅ **User Profile & Password Management System** - Complete user profile editing and password change functionality
 - ✅ **User Profile Page** - Mobile-first profile editing with name/phone validation and success feedback
 - ✅ **Change Password Feature** - Secure password change with current password verification and policy enforcement
 - ✅ **Password Policy System** - Reusable PasswordPolicy component with centralized constants and consistent UX
 - ✅ **Navigation Integration** - User dropdown menu links to profile page for intuitive access
 - ✅ **Form Validation Excellence** - Vietnamese phone validation and comprehensive error handling
-- ✅ **Complete Scheduling System** - Full shift management with assignment, deletion, and role-based access
+- ✅ **Complete Scheduling System** - Full shift management with assignment, deletion, editing, and role-based access
 - ✅ **Employee Assignment Modal** - Intuitive shift assignment with employee and activity selection
 - ✅ **Shift Deletion with Confirmation** - Secure deletion workflow with confirmation dialogs
 - ✅ **Visual Design Improvements** - White cards with colored activity badges for better readability
