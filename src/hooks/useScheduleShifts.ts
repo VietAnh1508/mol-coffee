@@ -27,7 +27,6 @@ export function useScheduleShifts(date?: Date) {
       query = query.order("start_ts", { ascending: true });
 
       const { data, error } = await query;
-      console.log(data);
 
       if (error) {
         throw new Error(`Failed to fetch schedule shifts: ${error.message}`);
