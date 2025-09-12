@@ -1,4 +1,5 @@
 import { useMemo, useState } from "react";
+import { DateNavigation } from "../components/DateNavigation";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
@@ -8,7 +9,6 @@ import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useScheduleShifts } from "../hooks";
 import type { ScheduleShift } from "../types";
-import { formatDate } from "../utils/dateUtils";
 
 export function SchedulePage() {
   const { user } = useAuth();
@@ -72,45 +72,10 @@ export function SchedulePage() {
         title={isAdmin ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
       />
 
-      {/* Date Navigation */}
-      <div className="bg-white rounded-lg shadow p-4 mb-6">
-        <div className="flex items-center justify-between">
-          <button
-            onClick={() => {
-              const prevDay = new Date(selectedDate);
-              prevDay.setDate(prevDay.getDate() - 1);
-              setSelectedDate(prevDay);
-            }}
-            className="p-2 text-gray-500 hover:text-gray-700"
-          >
-            ←
-          </button>
-
-          <div className="text-center">
-            <h2 className="text-lg font-semibold text-gray-900">
-              {formatDate(selectedDate)}
-            </h2>
-          </div>
-
-          <button
-            onClick={() => {
-              const nextDay = new Date(selectedDate);
-              nextDay.setDate(nextDay.getDate() + 1);
-              setSelectedDate(nextDay);
-            }}
-            className="p-2 text-gray-500 hover:text-gray-700"
-          >
-            →
-          </button>
-        </div>
-
-        <button
-          onClick={() => setSelectedDate(new Date())}
-          className="w-full mt-3 text-blue-500 hover:text-blue-600 text-sm"
-        >
-          Hôm nay
-        </button>
-      </div>
+      <DateNavigation
+        selectedDate={selectedDate}
+        onDateChange={setSelectedDate}
+      />
 
       {/* Schedule Grid */}
       <div className="bg-white rounded-lg shadow">
