@@ -1,0 +1,213 @@
+import { useState } from "react";
+import { FaPlus, FaLock, FaLockOpen, FaTrash } from "react-icons/fa";
+import {
+  usePayrollPeriods,
+  useClosePayrollPeriod,
+  useReopenPayrollPeriod,
+  useDeletePayrollPeriod,
+  useToast
+} from "../../hooks";
+import { ConfirmationDialog } from "../ConfirmationDialog";
+import { Spinner } from "../Spinner";
+import { PayrollPeriodForm } from "./PayrollPeriodForm";
+import { formatMonthName } from "../../utils/payrollUtils";
+
+interface PayrollPeriodManagerProps {
+  onPeriodSelect: (yearMonth: string) => void;
+  selectedPeriod?: string;
+}
+
+export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: PayrollPeriodManagerProps) {
+  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [confirmAction, setConfirmAction] = useState<{
+    action: "close" | "reopen" | "delete";
+    periodId: string;
+    periodName: string;
+  } | null>(null);
+
+  const { data: periods, isLoading } = usePayrollPeriods();
+  const closePeriod = useClosePayrollPeriod();
+  const reopenPeriod = useReopenPayrollPeriod();
+  const deletePeriod = useDeletePayrollPeriod();
+  const { showToast } = useToast();
+
+  const handleFormSuccess = (yearMonth: string) => {
+    setShowCreateForm(false);
+    onPeriodSelect(yearMonth);
+  };
+
+  const handleFormCancel = () => {
+    setShowCreateForm(false);
+  };
+
+  const handleConfirmAction = async () => {
+    if (!confirmAction) return;
+
+    try {
+      switch (confirmAction.action) {
+        case "close":
+          await closePeriod.mutateAsync(confirmAction.periodId);
+          showToast("Đã khóa kỳ lương", "success");
+          break;
+        case "reopen":
+          await reopenPeriod.mutateAsync(confirmAction.periodId);
+          showToast("Đã mở lại kỳ lương", "success");
+          break;
+        case "delete":
+          await deletePeriod.mutateAsync(confirmAction.periodId);
+          showToast("Đã xóa kỳ lương", "success");
+          if (selectedPeriod === confirmAction.periodName) {
+            // If we deleted the selected period, select the first available one
+            const remainingPeriods = periods?.filter(p => p.id !== confirmAction.periodId);
+            if (remainingPeriods && remainingPeriods.length > 0) {
+              onPeriodSelect(remainingPeriods[0].year_month);
+            }
+          }
+          break;
+      }
+    } catch (error) {
+      console.log(error);
+      showToast("Thao tác không thành công", "error");
+    } finally {
+      setConfirmAction(null);
+    }
+  };
+
+
+  if (isLoading) {
+    return <Spinner />;
+  }
+
+  return (
+    <div className="bg-white rounded-lg shadow p-4">
+      <div className="flex items-center justify-between mb-4">
+        <h3 className="text-lg font-semibold text-gray-900">Quản lý kỳ lương</h3>
+        <button
+          onClick={() => setShowCreateForm(true)}
+          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+        >
+          <FaPlus className="h-4 w-4 mr-1" />
+          Tạo kỳ mới
+        </button>
+      </div>
+
+      {showCreateForm && (
+        <PayrollPeriodForm
+          onSuccess={handleFormSuccess}
+          onCancel={handleFormCancel}
+        />
+      )}
+
+      <div className="space-y-2">
+        {periods?.map((period) => (
+          <div
+            key={period.id}
+            className={`flex items-center justify-between p-3 rounded-md border ${
+              selectedPeriod === period.year_month
+                ? "border-indigo-500 bg-indigo-50"
+                : "border-gray-200 hover:border-gray-300"
+            }`}
+          >
+            <div className="flex-1">
+              <button
+                onClick={() => onPeriodSelect(period.year_month)}
+                className="text-left w-full"
+              >
+                <div className="font-medium text-gray-900">
+                  {formatMonthName(period.year_month)}
+                </div>
+                <div className="text-sm text-gray-500">
+                  {period.status === "closed" ? (
+                    <span className="inline-flex items-center">
+                      <FaLock className="h-4 w-4 mr-1" />
+                      Đã khóa
+                      {period.closed_by_user && ` bởi ${period.closed_by_user.name}`}
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center">
+                      <FaLockOpen className="h-4 w-4 mr-1" />
+                      Đang mở
+                    </span>
+                  )}
+                </div>
+              </button>
+            </div>
+
+            <div className="flex items-center gap-1">
+              {period.status === "open" ? (
+                <button
+                  onClick={() => setConfirmAction({
+                    action: "close",
+                    periodId: period.id,
+                    periodName: period.year_month
+                  })}
+                  className="p-2 text-orange-600 hover:bg-orange-50 rounded-md"
+                  title="Khóa kỳ lương"
+                >
+                  <FaLock className="h-4 w-4" />
+                </button>
+              ) : (
+                <button
+                  onClick={() => setConfirmAction({
+                    action: "reopen",
+                    periodId: period.id,
+                    periodName: period.year_month
+                  })}
+                  className="p-2 text-green-600 hover:bg-green-50 rounded-md"
+                  title="Mở lại kỳ lương"
+                >
+                  <FaLockOpen className="h-4 w-4" />
+                </button>
+              )}
+
+              <button
+                onClick={() => setConfirmAction({
+                  action: "delete",
+                  periodId: period.id,
+                  periodName: period.year_month
+                })}
+                className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                title="Xóa kỳ lương"
+              >
+                <FaTrash className="h-4 w-4" />
+              </button>
+            </div>
+          </div>
+        ))}
+
+        {(!periods || periods.length === 0) && (
+          <div className="text-center py-8 text-gray-500">
+            <p>Chưa có kỳ lương nào</p>
+            <p className="text-sm">Tạo kỳ lương đầu tiên để bắt đầu</p>
+          </div>
+        )}
+      </div>
+
+      {confirmAction && (
+        <ConfirmationDialog
+          isOpen={true}
+          title={
+            confirmAction.action === "close" ? "Khóa kỳ lương" :
+            confirmAction.action === "reopen" ? "Mở lại kỳ lương" :
+            "Xóa kỳ lương"
+          }
+          message={
+            confirmAction.action === "close"
+              ? `Bạn có chắc muốn khóa kỳ lương ${formatMonthName(confirmAction.periodName)}? Việc này sẽ ngăn không cho chỉnh sửa lịch làm việc trong kỳ này.`
+              : confirmAction.action === "reopen"
+              ? `Bạn có chắc muốn mở lại kỳ lương ${formatMonthName(confirmAction.periodName)}? Việc này sẽ cho phép chỉnh sửa lịch làm việc lại.`
+              : `Bạn có chắc muốn xóa kỳ lương ${formatMonthName(confirmAction.periodName)}? Việc này không thể hoàn tác.`
+          }
+          confirmText={
+            confirmAction.action === "close" ? "Khóa" :
+            confirmAction.action === "reopen" ? "Mở lại" :
+            "Xóa"
+          }
+          onConfirm={handleConfirmAction}
+          onClose={() => setConfirmAction(null)}
+          isLoading={closePeriod.isPending || reopenPeriod.isPending || deletePeriod.isPending}
+        />
+      )}
+    </div>
+  );
+}

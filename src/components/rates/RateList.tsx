@@ -4,6 +4,7 @@ import { useRates } from "../../hooks";
 import type { Rate } from "../../types";
 import { Spinner } from "../Spinner";
 import { RateForm } from "./RateForm";
+import { formatMoney } from "../../utils/payrollUtils";
 
 export function RateList() {
   const { data: rates = [], isLoading } = useRates();
@@ -60,7 +61,7 @@ export function RateList() {
                   </h3>
                   <div className="mt-1 text-sm text-gray-600">
                     <span className="font-medium">
-                      {rate.hourly_vnd.toLocaleString("vi-VN")} VND/giờ
+                      {formatMoney(rate.hourly_vnd)} VND/giờ
                     </span>
                     {" • "}
                     <span>

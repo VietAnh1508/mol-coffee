@@ -63,18 +63,19 @@ Scheduling
 		•	Employee: can view all employees' schedules but cannot modify any shifts.
 	•	Conflict handling: Prevent overlaps, enforce 2-shift max.
 
-Timekeeping
-	•	Admin-only CRUD of time entries.
-	•	Option to copy schedule → time entries.
-	•	Approved time entries form the basis of salary.
+Timekeeping (Simplified)
+	•	Schedules serve as actual work records.
+	•	Admins edit schedules directly for late arrivals/early departures.
+	•	Schedule shifts form the basis of salary calculation.
 
 Payroll & Salary
-	•	Monthly totals (read-only for both roles).
-	•	Hours by activity.
-	•	Subtotals = hours × rate.
+	•	Monthly totals calculated directly from schedule shifts (read-only for both roles).
+	•	Hours by activity from scheduled work.
+	•	Subtotals = scheduled hours × effective rate.
 	•	Final monthly salary (VND).
 	•	Daily breakdown for transparency.
 	•	Admin can close/reopen payroll periods.
+	•	Period locking prevents schedule changes after payroll finalization.
 	•	Export CSV.
 
 ⸻
@@ -96,12 +97,11 @@ Database Schema (MVP)
 	•	users (id, email, phone [required], name, role, status, auth_user_id)
 	•	activities (id, name, is_active)
 	•	rates (id, activity_id, hourly_vnd, effective_from, effective_to)
-	•	schedule_shifts (id, user_id, activity_id, start_ts, end_ts, template_name, is_manual, note)
-	•	time_entries (id, user_id, activity_id, start_ts, end_ts, source, approved_by, approved_at)
-	•	payroll_periods (id, year_month, status, closed_by, closed_at)
+	•	schedule_shifts (id, user_id, activity_id, start_ts, end_ts, template_name, is_manual, note) - serves as both schedule and actual work record
+	•	payroll_periods (id, year_month, status, closed_by, closed_at) - manages payroll period locking
 
 Data Privacy (via Supabase RLS)
-	•	Employees: can SELECT all shifts and colleagues' basic info (name, email, phone) for schedule coordination, but only their own time entries and salary totals.
+	•	Employees: can SELECT all shifts and colleagues' basic info (name, email, phone) for schedule coordination, but only their own salary totals.
 	•	Admins: unrestricted CRUD on all data.
 	•	Rates/activities: read-only for employees; full access for admins.
 	•	Email used for authentication and primary user identification.
@@ -114,7 +114,7 @@ Data Privacy (via Supabase RLS)
 	2.	No overlapping shifts per employee per day.
 	3.	Max 2 shifts per day per employee.
 	4.	Activities fixed per shift; cannot change mid-shift.
-	5.	Salary = sum(approved time entries × applicable rate).
+	5.	Salary = sum(scheduled hours × applicable rate per activity).
 	6.	Payroll is locked once a period is closed (reopen requires admin action).
 	7.	Admins cannot demote themselves or deactivate their own accounts to prevent system lockout scenarios. The last remaining admin cannot be demoted to ensure system manageability.
 
@@ -144,6 +144,6 @@ Data Privacy (via Supabase RLS)
 
 7. Roadmap
 	•	Phase 1 (MVP): Auth, RBAC, Settings, Employee list, Scheduling.
-	•	Phase 2: Timekeeping CRUD + approvals, Monthly Totals, CSV export, Payroll lock.
+	•	Phase 2: Schedule-based Payroll, Monthly Salary Calculations, CSV export, Payroll period management.
 	•	Phase 3: Hardening (rate effective-dating UI, PWA polish, offline shell).
-	•	Future: Multi-branch, employee self clock-in/out, notifications, shift swaps.
+	•	Future: Multi-branch, employee self clock-in/out, notifications, shift swaps, advanced timekeeping.

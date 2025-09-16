@@ -46,6 +46,8 @@ export interface ScheduleShift {
   activity?: Activity
 }
 
+// Reserved for future timekeeping features
+// Currently payroll is calculated directly from schedule_shifts
 export interface TimeEntry {
   id: string
   user_id: string

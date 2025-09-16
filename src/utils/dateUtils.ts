@@ -14,3 +14,7 @@ export const formatTime = (dateString: string) => {
     hour12: false
   })
 }
+
+export const formatHours = (hours: number): string => {
+  return `${hours.toFixed(1)} giờ`;
+}
