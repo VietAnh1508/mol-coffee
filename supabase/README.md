@@ -1,6 +1,8 @@
-# Database Schema & Migrations
+# Database Migrations
 
-This directory contains the database schema and migrations for the Coffee Shop Management System.
+This directory contains the database migrations for the Coffee Shop Management System.
+
+> **📋 For comprehensive database schema documentation, see [`docs/DATABASE.md`](../docs/DATABASE.md)**
 
 ## Setup
 
@@ -43,83 +45,15 @@ This directory contains the database schema and migrations for the Coffee Shop M
 - Creates user profile creation trigger
 - Adds shift overlap validation
 
-## Schema Overview
+## Migration Notes
 
-```
-users
-├── id (UUID)
-├── phone (VARCHAR) - unique
-├── name (VARCHAR)
-├── role (admin|employee)
-├── status (active|inactive)
-└── auth_user_id (UUID) -> auth.users
+### Important Schema Changes
+- **Migration 20250909034138**: Converted from phone-based to email authentication
+- **Migration 20250911000001**: Removed 'custom' shift template, simplified to morning/afternoon
+- **Migration 20250911164958**: Enabled employees to view all schedules (coordination)
+- **Migration 20250911175745**: Allowed employees to view colleague contact info
 
-activities
-├── id (UUID)
-├── name (VARCHAR) - unique
-└── is_active (BOOLEAN)
-
-rates
-├── id (UUID)
-├── activity_id (UUID) -> activities
-├── hourly_vnd (INTEGER)
-├── effective_from (DATE)
-└── effective_to (DATE)
-
-schedule_shifts (PRIMARY PAYROLL SOURCE)
-├── id (UUID)
-├── user_id (UUID) -> users
-├── activity_id (UUID) -> activities
-├── start_ts (TIMESTAMP)
-├── end_ts (TIMESTAMP)
-├── template_name (morning|afternoon|custom)
-├── is_manual (BOOLEAN)
-└── note (TEXT)
-└── Note: Serves as both schedule and actual work record for payroll
-
-time_entries (RESERVED FOR FUTURE)
-├── id (UUID)
-├── user_id (UUID) -> users
-├── activity_id (UUID) -> activities
-├── start_ts (TIMESTAMP)
-├── end_ts (TIMESTAMP)
-├── source (schedule|manual)
-├── approved_by (UUID) -> users
-└── approved_at (TIMESTAMP)
-└── Note: Currently unused - payroll calculated from schedule_shifts
-
-payroll_periods
-├── id (UUID)
-├── year_month (VARCHAR) - format: YYYY-MM
-├── status (open|closed)
-├── closed_by (UUID) -> users
-└── closed_at (TIMESTAMP)
-```
-
-## Business Rules Enforced
-
-- **Max 2 shifts per day** per employee
-- **No overlapping shifts** for same employee
-- **Activity immutability** within shifts
-- **Email authentication** with progressive profile completion
-- **Role-based data access** (RLS policies)
-- **Automatic user profile creation** on auth signup
-- **Payroll period locking** prevents changes to closed periods
-- **Schedule-based payroll** - shifts serve as actual work records
-- **Direct schedule editing** for late arrivals/early departures
-
-## Payroll Calculation Model
-
-**Simplified Approach**: Payroll is calculated directly from `schedule_shifts` table.
-
-- **Data Source**: `schedule_shifts.start_ts` and `schedule_shifts.end_ts`
-- **Rate Application**: `rates` table with effective dating
-- **Formula**: `SUM(EXTRACT(EPOCH FROM (end_ts - start_ts))/3600 * hourly_vnd)`
-- **Adjustments**: Admins edit schedule times directly for actual hours worked
-- **Period Locking**: `payroll_periods` prevents schedule changes after payroll finalization
-
-**Benefits**:
-- Single source of truth (schedule = actual work)
-- Simplified data model
-- Real-time payroll calculations
-- No duplicate timekeeping systems
+### Payroll Model
+- **Current approach**: Direct calculation from `schedule_shifts` table
+- **Future enhancement**: Separate `time_entries` system for advanced timekeeping
+- **Period locking**: Prevents schedule changes after payroll finalization

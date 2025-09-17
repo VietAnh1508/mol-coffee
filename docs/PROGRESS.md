@@ -32,27 +32,13 @@
 - [x] Admin user creation functions (email-based)
 
 ### 🗄️ **Database & Security**
-- [x] Complete database schema (6 tables)
-  - [x] users (email, phone, name, role, status, auth_user_id)
-  - [x] activities (name, is_active)
-  - [x] rates (activity_id, hourly_vnd, effective_from/to)
-  - [x] schedule_shifts (user_id, activity_id, start_ts, end_ts, template_name)
-  - [x] time_entries (user_id, activity_id, start_ts, end_ts, source, approved_by)
-  - [x] payroll_periods (year_month, status, closed_by)
-- [x] Row Level Security (RLS) policies
-  - [x] Employees: own data only
-  - [x] Admins: full access
-- [x] Business rules enforcement
-  - [x] Max 2 shifts per day per employee
-  - [x] No overlapping shifts  
-  - [x] Shift time validation
-  - [x] Admin self-management prevention (Business Rule #7)
-    - [x] Frontend validation with hidden UI controls
-    - [x] Visual feedback for current user identification
-    - [x] Last admin protection to prevent system lockout
-- [x] Git-tracked migrations with Supabase CLI
-- [x] Vietnamese default activities (Thử việc, Cà phê, Bánh mì, Quản lý)
-- [x] Default hourly rates (20k-28k VND)
+- [x] Complete database schema (6 tables) - see `docs/DATABASE.md`
+- [x] Row Level Security (RLS) with role-based access control
+- [x] Business rules enforcement via database triggers
+- [x] Employee schedule visibility (can view all schedules, admins can modify)
+- [x] Admin self-management prevention (Business Rule #7)
+- [x] Git-tracked migrations with comprehensive documentation
+- [x] Vietnamese localization (activities, rates, phone validation)
 
 ### 🎨 **UI Components & Data Layer**  
 - [x] Login/Signup page with Vietnamese labels

@@ -35,10 +35,10 @@
 - **Admin Functions** - SQL functions for admin user creation/promotion (email-based)
 
 ### **Database Design:**
-- **6 Core Tables** - users (email, phone, name, role), activities, rates, schedule_shifts, time_entries, payroll_periods
-- **Row Level Security (RLS)** - Database-enforced access control with schedule visibility for all employees
-- **Business Rules Enforcement** - Triggers prevent overlaps, enforce 2-shift max
-- **Vietnamese Data** - Default activities: Thử việc, Cà phê, Bánh mì, Quản lý
+- **Complete Schema** - Comprehensive documentation in `docs/DATABASE.md`
+- **Row Level Security (RLS)** - Role-based access control with employee schedule visibility
+- **Business Rules Enforcement** - Database triggers and constraints
+- **Vietnamese Localization** - Activities, rates, and phone validation
 
 ### **Data Access Architecture:**
 - **Supabase Client Integration** - Direct client-side queries with built-in caching
@@ -50,13 +50,10 @@
 - **Real-time Subscriptions** - Live data updates across sessions (future enhancement)
 
 ### **RLS Implementation Strategy:**
-```sql
--- Employee policies: can view all shifts and colleagues' basic info (name, email, phone), but only access own time entries and salary data
--- Admin policies: unrestricted access to all data
--- Public read access: activities and rates (for employee visibility)
--- Schedule visibility: employees can see colleagues' schedules and contact info for coordination
--- Automatic policy application: no client-side role checking required
-```
+- **Detailed policies documented in `docs/DATABASE.md`**
+- **Employee Access:** View all schedules and colleague info, own salary data only
+- **Admin Access:** Full CRUD on all data
+- **Automatic Enforcement:** Database-level security, no client-side role checking needed
 
 ### **Supabase Usage Patterns:**
 - **Authentication** - Direct email authentication with auto-confirmation
@@ -142,13 +139,14 @@ SELECT promote_user_to_admin('EMAIL');
 
 1. **Always maintain Vietnamese context** - UI labels, error messages, data
 2. **Respect RLS policies** - Test data access from both admin and employee perspectives
-3. **Schedule Visibility Rules** - Employees can view all schedules but only admins can modify shifts  
+3. **Schedule Visibility Rules** - Employees can view all schedules but only admins can modify shifts
 4. **Follow progressive profile pattern** - Email+password signup, profile completion modal for name+phone
 5. **Vietnamese phone validation** - Enforce 10-digit mobile format with proper prefixes
 6. **Use TypeScript strictly** - All new code must be properly typed
 7. **Mobile-first design** - Tailwind classes should prioritize mobile experience
 8. **Update PROGRESS.md** - Mark completed features and update status
 9. **Make sure migration scripts are idempotent** - Database migrations should be safe to run multiple times
+10. **⚠️ IMPORTANT: Update DATABASE.md** - When making database schema changes, ALWAYS update `docs/DATABASE.md` to reflect the changes. This is the single source of truth for database documentation.
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript
@@ -172,10 +170,11 @@ SELECT promote_user_to_admin('EMAIL');
 ## 📚 REFERENCE DOCUMENTS
 
 - **`requirements.md`** - Original detailed specification
-- **`PROGRESS.md`** - Current development status and roadmap  
-- **`supabase/README.md`** - Database schema and migration guide
+- **`PROGRESS.md`** - Current development status and roadmap
+- **`DATABASE.md`** - Comprehensive database schema and RLS documentation
+- **`supabase/README.md`** - Database migration guide
 - **`README.md`** - Project setup and getting started guide
 
 ---
 
-**Last Updated:** September 9, 2025
+**Last Updated:** September 17, 2025

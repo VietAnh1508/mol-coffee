@@ -94,18 +94,16 @@ Tech Stack
 	•	Hosting: Vercel (FE) + Supabase cloud.
 
 Database Schema (MVP)
-	•	users (id, email, phone [required], name, role, status, auth_user_id)
-	•	activities (id, name, is_active)
-	•	rates (id, activity_id, hourly_vnd, effective_from, effective_to)
-	•	schedule_shifts (id, user_id, activity_id, start_ts, end_ts, template_name, is_manual, note) - serves as both schedule and actual work record
-	•	payroll_periods (id, year_month, status, closed_by, closed_at) - manages payroll period locking
+	•	Complete schema documentation available in `docs/DATABASE.md`
+	•	6 core tables: users, activities, rates, schedule_shifts, time_entries, payroll_periods
+	•	Row Level Security (RLS) with role-based access control
+	•	Vietnamese localization with default activities and rates
 
 Data Privacy (via Supabase RLS)
-	•	Employees: can SELECT all shifts and colleagues' basic info (name, email, phone) for schedule coordination, but only their own salary totals.
-	•	Admins: unrestricted CRUD on all data.
-	•	Rates/activities: read-only for employees; full access for admins.
-	•	Email used for authentication and primary user identification.
-	•	Phone numbers required for admin contact purposes (Vietnamese mobile format).
+	•	Detailed RLS policies and access control documented in `docs/DATABASE.md`
+	•	Employees: can view all schedules and colleague info, but only own salary data
+	•	Admins: unrestricted CRUD access to all data
+	•	Database-enforced security prevents unauthorized access
 
 ⸻
 
