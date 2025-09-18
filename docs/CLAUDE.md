@@ -108,19 +108,7 @@ mol-coffee/
 
 ## 🛠️ DEVELOPMENT COMMANDS
 
-### **Common Operations:**
-```bash
-# Development
-pnpm dev                    # Start dev server
-pnpm build                  # Build for production
-pnpm lint                   # Run ESLint
-
-# Database (requires supabase CLI login)
-pnpm run db:push            # Apply migrations
-pnpm run db:pull            # Pull remote changes
-pnpm run db:diff            # Show differences
-pnpm run db:migration <name> # Create new migration
-```
+**For development and database commands, see [README.md](../README.md#🛠️-development-commands)**
 
 ### **Database Admin:**
 ```sql

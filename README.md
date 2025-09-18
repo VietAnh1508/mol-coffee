@@ -8,7 +8,7 @@ A mobile-first Progressive Web App for managing coffee shop employee schedules, 
 
 **MoL Coffee** streamlines coffee shop operations with:
 - 📱 **Mobile-optimized PWA** - No app store installation needed
-- 📞 **Phone-based authentication** - Vietnamese phone numbers as usernames  
+- 📧 **Email-based authentication** - Secure email authentication with profile completion
 - 👥 **Role-based access** - Admin dashboard vs Employee self-service
 - 🇻🇳 **Vietnamese interface** - Localized for Vietnamese coffee shops
 - ⏰ **Smart scheduling** - Conflict prevention and business rules enforcement
@@ -53,7 +53,7 @@ pnpm run db:push
 
 In Supabase SQL Editor:
 ```sql
-SELECT create_admin_user('YOUR_PHONE', 'YOUR_PASSWORD', 'Your Name');
+SELECT create_admin_user('YOUR_EMAIL', 'YOUR_PASSWORD', 'Your Name');
 ```
 
 ## 🏗️ Tech Stack
@@ -68,39 +68,27 @@ SELECT create_admin_user('YOUR_PHONE', 'YOUR_PASSWORD', 'Your Name');
 
 ## 📱 Features
 
-### ✅ **Implemented (Foundation)**
-- Phone number authentication with Vietnamese UI
-- User role management (Admin/Employee)
-- Database schema with Vietnamese activities
-- Row Level Security (RLS) for data privacy
-- PWA configuration for mobile experience
-- TanStack Query integration for optimized data fetching
-- Settings management with real-time updates (Activities & Rates)
+**Core Features Implemented:**
+- Complete employee scheduling and payroll management system
+- Email authentication with Vietnamese interface
+- Role-based dashboards for admins and employees
+- Real-time data management with optimistic updates
 
-### 🚧 **In Development (Phase 1 MVP)**
-- Employee management dashboard
-- Schedule calendar interface
-- Enhanced role-based dashboards
-
-### 📋 **Planned (Phase 2+)**
-- Time entry management
-- Payroll calculation and reports  
-- CSV export functionality
-- Advanced scheduling features
+**For detailed feature list and development status, see [docs/PROGRESS.md](docs/PROGRESS.md)**
 
 ## 🔐 Security Features
 
-- **Phone-based Auth** - Secure authentication using Vietnamese phone numbers
+- **Email-based Auth** - Secure authentication with progressive profile completion
 - **Row Level Security** - Database-enforced access control
 - **Role-based Access** - Admins see all data, employees see only their own
 - **Environment Security** - Sensitive tokens excluded from git
 
 ## 📚 Documentation
 
-- **[docs/CLAUDE.md](docs/CLAUDE.md)** - Full context for AI development assistance
-- **[docs/PROGRESS.md](docs/PROGRESS.md)** - Development status and roadmap
-- **[docs/requirements.md](docs/requirements.md)** - Original specification document
-- **[supabase/README.md](supabase/README.md)** - Database schema guide
+- **[docs/requirements.md](docs/requirements.md)** - Business requirements and features specification
+- **[docs/PROGRESS.md](docs/PROGRESS.md)** - Current development status and completed features
+- **[docs/DATABASE.md](docs/DATABASE.md)** - Database schema, RLS policies, and technical details
+- **[docs/CLAUDE.md](docs/CLAUDE.md)** - Development context and architectural patterns
 
 ## 🛠️ Development Commands
 
@@ -131,30 +119,14 @@ VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
 ## 🎯 Project Status
 
-**Phase:** Foundation Complete → Phase 1 MVP Development  
-**Progress:** ~40% (Foundation + Data Layer + Settings Complete)
+**Phase:** Phase 1 MVP Complete
+**Progress:** ~95% (Foundation + Complete Feature Set)
 
-**Next Priorities:**
-1. Employee Management Interface
-2. Scheduling Calendar System
-3. Enhanced Dashboards
-
-**Recent Completions:**
-- ✅ TanStack Query integration with optimized caching
-- ✅ Settings pages for Activities & Rates management
-- ✅ Real-time data mutations and updates
+See **[docs/PROGRESS.md](docs/PROGRESS.md)** for detailed status, completed features, and development roadmap.
 
 ## 🤝 Contributing
 
-This project follows Vietnamese coffee shop operational patterns and uses:
-- **Vietnamese labels** in UI
-- **Mobile-first design** principles
-- **TypeScript strict mode** for reliability
-- **Database-enforced business rules**
-
-## 📄 License
-
-[Add your license here]
+This project follows Vietnamese coffee shop operational patterns with mobile-first design and TypeScript strict mode. See **[docs/CLAUDE.md](docs/CLAUDE.md)** for development guidelines and architectural patterns.
 
 ---
 
