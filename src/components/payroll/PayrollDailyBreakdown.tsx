@@ -1,19 +1,24 @@
 import { useState } from "react";
 import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { usePayrollDailyBreakdown } from "../../hooks";
+import { formatDate, formatHours, formatTime } from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
-import { formatDate, formatHours } from "../../utils/dateUtils";
 import { Spinner } from "../Spinner";
 
 interface PayrollDailyBreakdownProps {
   yearMonth: string;
   userId?: string;
-  employeeName?: string;
 }
 
-export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: PayrollDailyBreakdownProps) {
+export function PayrollDailyBreakdown({
+  yearMonth,
+  userId,
+}: PayrollDailyBreakdownProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { data: dailyData, isLoading } = usePayrollDailyBreakdown(yearMonth, userId);
+  const { data: dailyData, isLoading } = usePayrollDailyBreakdown(
+    yearMonth,
+    userId
+  );
 
   if (isLoading) {
     return (
@@ -32,15 +37,17 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
     );
   }
 
-  // Group by date
-  const groupedByDate = dailyData.reduce((acc, entry) => {
-    const date = entry.date;
-    if (!acc[date]) {
-      acc[date] = [];
-    }
-    acc[date].push(entry);
-    return acc;
-  }, {} as Record<string, typeof dailyData>);
+  const groupedByDate = dailyData.reduce(
+    (acc, entry) => {
+      const date = entry.date;
+      if (!acc[date]) {
+        acc[date] = [];
+      }
+      acc[date].push(entry);
+      return acc;
+    },
+    {} as Record<string, typeof dailyData>
+  );
 
   const sortedDates = Object.keys(groupedByDate).sort();
 
@@ -51,7 +58,7 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
         className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50"
       >
         <span className="text-sm font-medium text-gray-700">
-          Chi tiết theo ngày{employeeName && ` - ${employeeName}`}
+          Chi tiết theo ngày
         </span>
         {isExpanded ? (
           <FaChevronUp className="h-4 w-4 text-gray-500" />
@@ -65,13 +72,22 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
           <div className="space-y-3">
             {sortedDates.map((date) => {
               const dayEntries = groupedByDate[date];
-              const dayTotal = dayEntries.reduce((sum, entry) => sum + entry.subtotal, 0);
-              const dayHours = dayEntries.reduce((sum, entry) => sum + entry.hours, 0);
+              const dayTotal = dayEntries.reduce(
+                (sum, entry) => sum + entry.subtotal,
+                0
+              );
+              const dayHours = dayEntries.reduce(
+                (sum, entry) => sum + entry.hours,
+                0
+              );
 
               return (
                 <div key={date} className="bg-gray-50 rounded-lg p-3">
-                  <div className="flex items-center justify-between mb-2">
-                    <h5 className="font-medium text-gray-900">{formatDate(new Date(date))}</h5>
+                  {/* Day Header with Total */}
+                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
+                    <h5 className="font-medium text-gray-900">
+                      {formatDate(new Date(date))}
+                    </h5>
                     <div className="text-right">
                       <div className="font-medium text-gray-900">
                         {formatCurrency(dayTotal)}
@@ -82,11 +98,12 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
                     </div>
                   </div>
 
-                  <div className="space-y-1">
+                  {/* Shift Details */}
+                  <div className="space-y-2">
                     {dayEntries.map((entry) => (
                       <div
                         key={entry.shiftId}
-                        className="flex items-center justify-between text-sm py-1"
+                        className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
                       >
                         <div className="flex items-center space-x-2">
                           {!userId && (
@@ -95,10 +112,8 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
                             </span>
                           )}
                           <span className="text-gray-700">
-                            {entry.activity.name}
-                          </span>
-                          <span className="text-gray-500">
-                            ({formatHours(entry.hours)})
+                            {entry.activity.name} ({formatTime(entry.startTime)}{" "}
+                            - {formatTime(entry.endTime)})
                           </span>
                         </div>
                         <div className="font-medium text-gray-900">
@@ -120,10 +135,14 @@ export function PayrollDailyBreakdown({ yearMonth, userId, employeeName }: Payro
               </span>
               <div className="text-right">
                 <div className="font-bold text-gray-900">
-                  {formatCurrency(dailyData.reduce((sum, entry) => sum + entry.subtotal, 0))}
+                  {formatCurrency(
+                    dailyData.reduce((sum, entry) => sum + entry.subtotal, 0)
+                  )}
                 </div>
                 <div className="text-xs text-gray-500">
-                  {formatHours(dailyData.reduce((sum, entry) => sum + entry.hours, 0))}
+                  {formatHours(
+                    dailyData.reduce((sum, entry) => sum + entry.hours, 0)
+                  )}
                 </div>
               </div>
             </div>

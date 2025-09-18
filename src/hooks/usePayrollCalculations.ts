@@ -25,6 +25,8 @@ export interface PayrollDailyEntry {
   rate: number;
   subtotal: number;
   shiftId: string;
+  startTime: string;
+  endTime: string;
 }
 
 export function usePayrollCalculations(yearMonth: string | null, userId?: string) {
@@ -227,6 +229,8 @@ export function usePayrollDailyBreakdown(yearMonth: string | null, userId?: stri
           rate,
           subtotal: Math.round(subtotal),
           shiftId: shift.id,
+          startTime: shift.start_ts,
+          endTime: shift.end_ts,
         };
       });
     },
