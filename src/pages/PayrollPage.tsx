@@ -123,6 +123,7 @@ export function PayrollPage() {
           <PayrollDataDisplay
             payrollData={payrollData}
             selectedPeriod={selectedPeriod}
+            isAdmin={isAdmin}
           />
         )}
       </div>
