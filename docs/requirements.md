@@ -115,6 +115,7 @@ Data Privacy (via Supabase RLS)
 	5.	Salary = sum(scheduled hours × applicable rate per activity).
 	6.	Payroll is locked once a period is closed (reopen requires admin action).
 	7.	Admins cannot demote themselves or deactivate their own accounts to prevent system lockout scenarios. The last remaining admin cannot be demoted to ensure system manageability.
+	8.	Smart shift assignment prevents double-booking employees to the same shift template on the same date.
 
 ⸻
 

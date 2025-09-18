@@ -239,13 +239,6 @@ RETURNS TRIGGER AS $$
 -- Generates placeholder phone numbers
 ```
 
-### Application-Level Rules
-- Employees can only register as Employees (not Admins)
-- Activities fixed per shift (cannot change mid-shift)
-- Salary = sum(scheduled hours × applicable rate per activity)
-- Payroll locked once period is closed (reopen requires admin)
-- Vietnamese phone validation (10 digits, specific prefixes)
-
 ---
 
 ## 📈 PERFORMANCE OPTIMIZATION

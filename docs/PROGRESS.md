@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)  
-**Last Updated:** September 11, 2025
+**Last Updated:** September 18, 2025
 
 ---
 
@@ -118,6 +118,7 @@
   - [x] Activity assignment per shift
   - [x] Auto-selection when only one employee available
   - [x] Form validation and error handling
+  - [x] Smart employee filtering - excludes already assigned employees ✅ **NEW**
 - [x] Shift editing ✅ **NEW**
   - [x] ShiftEditModal for time and activity adjustments
   - [x] Handle real-world scenarios (late arrival, early departure)
@@ -258,6 +259,7 @@
 **Progress:** ~95% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management + Complete Payroll System ✅)
 
 ### **Recent Achievements:**
+- ✅ **Smart Employee Assignment Logic** - ShiftAssignmentModal now excludes employees already assigned to the same shift template and date ✅ **NEW**
 - ✅ **Complete Payroll & Salary System** - Full schedule-based payroll calculation with period management and role-based access ✅ **NEW**
 - ✅ **PayrollPage Enhancement** - Replaced placeholder with comprehensive salary display and period management
 - ✅ **Payroll Period Management** - Create, lock, unlock, and delete monthly payroll periods with audit trail

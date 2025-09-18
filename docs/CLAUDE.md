@@ -50,10 +50,9 @@
 - **Real-time Subscriptions** - Live data updates across sessions (future enhancement)
 
 ### **RLS Implementation Strategy:**
+- **Database-level security** - Policies automatically enforce role-based access
+- **No client-side role checking** - Trust database policies for data filtering
 - **Detailed policies documented in `docs/DATABASE.md`**
-- **Employee Access:** View all schedules and colleague info, own salary data only
-- **Admin Access:** Full CRUD on all data
-- **Automatic Enforcement:** Database-level security, no client-side role checking needed
 
 ### **Supabase Usage Patterns:**
 - **Authentication** - Direct email authentication with auto-confirmation
@@ -102,10 +101,9 @@ mol-coffee/
 - ⚠️ **Never commit access tokens** - use `npx supabase login` for CLI auth
 
 ### **Database Security:**
-- ✅ **RLS Policies** - Employees see own data, Admins see all
+- ✅ **RLS Policies** - Role-based access control automatically enforced
 - ✅ **Role Validation** - Triggers prevent unauthorized role changes
 - ✅ **Input Validation** - Database constraints and checks
-- ✅ **Synthetic Email Safety** - Auto-confirmation for @mol-coffee emails
 
 
 ## 🛠️ DEVELOPMENT COMMANDS
@@ -141,7 +139,7 @@ SELECT promote_user_to_admin('EMAIL');
 2. **Respect RLS policies** - Test data access from both admin and employee perspectives
 3. **Schedule Visibility Rules** - Employees can view all schedules but only admins can modify shifts
 4. **Follow progressive profile pattern** - Email+password signup, profile completion modal for name+phone
-5. **Vietnamese phone validation** - Enforce 10-digit mobile format with proper prefixes
+5. **Vietnamese phone validation** - Enforce proper mobile format validation
 6. **Use TypeScript strictly** - All new code must be properly typed
 7. **Mobile-first design** - Tailwind classes should prioritize mobile experience
 8. **Update PROGRESS.md** - Mark completed features and update status
@@ -177,4 +175,4 @@ SELECT promote_user_to_admin('EMAIL');
 
 ---
 
-**Last Updated:** September 17, 2025
+**Last Updated:** September 18, 2025

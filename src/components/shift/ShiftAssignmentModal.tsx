@@ -6,6 +6,7 @@ import {
   useActiveUsers,
   useActivities,
   useScheduleMutations,
+  useScheduleShifts,
 } from "../../hooks";
 
 interface ShiftAssignmentModalProps {
@@ -29,9 +30,15 @@ export function ShiftAssignmentModal({
   const { data: activeUsers = [] } = useActiveUsers();
   const { data: activities = [] } = useActivities();
   const { createShift } = useScheduleMutations();
+  const { data: existingShifts = [] } = useScheduleShifts(selectedDate);
+
+  // Get users already assigned to this shift template on the selected date
+  const assignedUserIds = existingShifts
+    .filter(shift => shift.template_name === shiftTemplate)
+    .map(shift => shift.user_id);
 
   const employeeUsers = activeUsers.filter(
-    (user) => user.role === USER_ROLES.EMPLOYEE
+    (user) => user.role === USER_ROLES.EMPLOYEE && !assignedUserIds.includes(user.id)
   );
   const activeActivities = activities.filter((activity) => activity.is_active);
 
@@ -154,7 +161,10 @@ export function ShiftAssignmentModal({
               ))}
               {employeeUsers.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
-                  Không có nhân viên nào khả dụng
+                  {assignedUserIds.length > 0
+                    ? "Tất cả nhân viên đã được phân công vào ca này"
+                    : "Không có nhân viên nào khả dụng"
+                  }
                 </div>
               )}
             </div>
