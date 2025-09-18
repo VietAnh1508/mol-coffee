@@ -151,7 +151,7 @@
   - [x] Consistent policy display across signup and password change flows
 - [ ] User preferences
 
-### 💰 **Payroll & Salary System** ✅ **COMPLETED**
+### 💰 **Payroll & Salary System** ✅ **COMPLETED** ⚠️ **ENHANCEMENT NEEDED**
 - [x] Schedule-based payroll calculation system
   - [x] Direct calculation from schedule_shifts table (simplified approach)
   - [x] Effective-dated rate application with time range validation
@@ -184,6 +184,21 @@
   - [x] Real-time payroll calculations with TanStack Query caching
   - [x] Optimized queries with proper indexing and joins
   - [x] Business rule enforcement (period locking prevents schedule modifications)
+- [ ] **UI/UX Improvements** ⚠️ **PENDING**
+  - [ ] Employee list view for admins (replace long scrolling page)
+  - [ ] Individual employee payroll detail page with dedicated route
+  - [ ] Click-to-navigate from employee list to detailed view
+  - [ ] Separate summary overview from individual employee details
+  - [ ] Improved mobile experience for payroll navigation
+- [ ] **Lunch Allowance Bonus System** 🍽️ **NEW FEATURE**
+  - [ ] Database schema for lunch allowance rates (configurable amount per day)
+  - [ ] Business logic to detect double shifts (morning + afternoon same day)
+  - [ ] Automatic lunch allowance calculation in payroll calculations
+  - [ ] Admin settings to configure lunch allowance rates
+  - [ ] Display lunch allowance as separate line item in payroll breakdown
+  - [ ] Update PayrollDailyBreakdown to show lunch allowance per qualifying day
+  - [ ] Integration with existing payroll period locking system
+  - [ ] Vietnamese localization for lunch allowance terminology
 
 ---
 
@@ -251,8 +266,10 @@
 3. ~~**Scheduling System** - Complete shift management with assignment and deletion~~ ✅ **COMPLETED**
 4. ~~**User Profile & Settings** - Change password, profile editing~~ ✅ **COMPLETED**
 5. ~~**Payroll & Salary System** - Complete schedule-based payroll with period management~~ ✅ **COMPLETED**
-6. **Advanced Features** - CSV export, advanced timekeeping, shift notifications
-7. **PWA Enhancements** - Offline functionality, push notifications, app shell
+6. **Lunch Allowance Bonus System** - Automatic bonus for employees working double shifts (morning + afternoon) 🍽️ **TOP PRIORITY**
+7. **Payroll UX Enhancement** - Employee list view for admins, individual detail pages, improved navigation ⚠️ **HIGH PRIORITY**
+8. **Advanced Features** - CSV export, advanced timekeeping, shift notifications
+9. **PWA Enhancements** - Offline functionality, push notifications, app shell
 
 ---
 
