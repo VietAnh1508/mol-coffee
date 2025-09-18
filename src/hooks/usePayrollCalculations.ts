@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 import type { User, Activity } from "../types";
+import { createMonthDateRange, formatDateLocal } from "../utils/dateUtils";
 
 export interface PayrollEmployeeSummary {
   employee: User;
@@ -33,9 +34,7 @@ export function usePayrollCalculations(yearMonth: string | null, userId?: string
       if (!yearMonth) return [];
 
       // Parse year-month to create date range
-      const [year, month] = yearMonth.split("-");
-      const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
+      const { startDate: startDateStr, endDate: endDateStr } = createMonthDateRange(yearMonth);
 
       let query = supabase
         .from("schedule_shifts")
@@ -46,8 +45,8 @@ export function usePayrollCalculations(yearMonth: string | null, userId?: string
           users!schedule_shifts_user_id_fkey(id, name, email, phone, role, status, auth_user_id, created_at, updated_at),
           activities!schedule_shifts_activity_id_fkey(id, name, is_active, created_at, updated_at)
         `)
-        .gte("start_ts", startDate.toISOString())
-        .lte("start_ts", endDate.toISOString());
+        .gte("start_ts", startDateStr)
+        .lte("start_ts", endDateStr);
 
       // If userId is provided (employee view), filter to that user only
       if (userId) {
@@ -158,9 +157,7 @@ export function usePayrollDailyBreakdown(yearMonth: string | null, userId?: stri
       if (!yearMonth) return [];
 
       // Parse year-month to create date range
-      const [year, month] = yearMonth.split("-");
-      const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-      const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
+      const { startDate: startDateStr, endDate: endDateStr } = createMonthDateRange(yearMonth);
 
       let query = supabase
         .from("schedule_shifts")
@@ -171,8 +168,8 @@ export function usePayrollDailyBreakdown(yearMonth: string | null, userId?: stri
           users!schedule_shifts_user_id_fkey(id, name, email, phone, role, status, auth_user_id, created_at, updated_at),
           activities!schedule_shifts_activity_id_fkey(id, name, is_active, created_at, updated_at)
         `)
-        .gte("start_ts", startDate.toISOString())
-        .lte("start_ts", endDate.toISOString())
+        .gte("start_ts", startDateStr)
+        .lte("start_ts", endDateStr)
         .order("start_ts", { ascending: true });
 
       // If userId is provided (employee view), filter to that user only
@@ -223,7 +220,7 @@ export function usePayrollDailyBreakdown(yearMonth: string | null, userId?: stri
         const subtotal = hours * rate;
 
         return {
-          date: startTime.toISOString().split('T')[0], // YYYY-MM-DD format
+          date: formatDateLocal(startTime),
           employee: user,
           activity: activity,
           hours: Math.round(hours * 100) / 100, // Round to 2 decimal places
