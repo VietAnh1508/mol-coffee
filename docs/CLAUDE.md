@@ -155,7 +155,7 @@ SELECT promote_user_to_admin('EMAIL');
 
 ## 📚 REFERENCE DOCUMENTS
 
-- **`requirements.md`** - Original detailed specification
+- **`features/`** - Feature-specific documentation with detailed specifications
 - **`PROGRESS.md`** - Current development status and roadmap
 - **`DATABASE.md`** - Comprehensive database schema and RLS documentation
 - **`supabase/README.md`** - Database migration guide
@@ -163,4 +163,4 @@ SELECT promote_user_to_admin('EMAIL');
 
 ---
 
-**Last Updated:** September 18, 2025
+**Last Updated:** September 19, 2025

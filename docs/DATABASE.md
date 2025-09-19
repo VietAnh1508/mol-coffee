@@ -16,6 +16,14 @@
 - **Business rules enforcement** - Database-level constraints and triggers
 - **Vietnamese localization** - Default activities and currency in Vietnamese
 
+### 📚 Feature-Specific Documentation
+For detailed feature documentation, see:
+- **[Authentication System](features/authentication.md)** - User registration, login, and profile management
+- **[Employee Management](features/employee-management.md)** - Role-based user administration
+- **[Scheduling System](features/scheduling.md)** - Shift management and conflict prevention
+- **[Settings Management](features/settings.md)** - Activities and rates configuration
+- **[Payroll System](features/payroll.md)** - Salary calculation and period management
+
 ---
 
 ## 📋 COMPLETE SCHEMA
@@ -62,6 +70,10 @@ CREATE TABLE public.users (
 - Progressive profile completion (email+password → name+phone)
 - Placeholder phone system (`+84000000XXX`) until real number provided
 
+**Related Features:**
+- **[Authentication System](features/authentication.md)** - User registration and login implementation
+- **[Employee Management](features/employee-management.md)** - Role and status management
+
 #### 2. `activities` - Work Activity Types
 ```sql
 CREATE TABLE public.activities (
@@ -78,6 +90,9 @@ CREATE TABLE public.activities (
 - `Cà phê` (Coffee service) - 22,000 VND/hour
 - `Bánh mì` (Bread/food service) - 25,000 VND/hour
 - `Quản lý` (Management) - 28,000 VND/hour
+
+**Related Features:**
+- **[Settings Management](features/settings.md)** - Activities and rates configuration
 
 #### 3. `rates` - Activity-Based Hourly Rates
 ```sql
@@ -125,6 +140,10 @@ CREATE TABLE public.schedule_shifts (
 - No overlapping shifts per employee
 - Activity cannot change mid-shift
 
+**Related Features:**
+- **[Scheduling System](features/scheduling.md)** - Shift management and conflict prevention
+- **[Payroll System](features/payroll.md)** - Schedule-based salary calculation
+
 #### 5. `time_entries` - Future Timekeeping System
 ```sql
 CREATE TABLE public.time_entries (
@@ -169,6 +188,9 @@ CREATE TABLE public.payroll_periods (
 - Period locking prevents schedule changes after payroll finalization
 - Admin audit trail for period closures
 - Monthly organization (YYYY-MM format)
+
+**Related Features:**
+- **[Payroll System](features/payroll.md)** - Period management and salary calculation
 
 ---
 
@@ -406,5 +428,5 @@ const formatMoney = (amount: number) =>
 **For more information:**
 - Technical setup: `docs/CLAUDE.md`
 - Development progress: `docs/PROGRESS.md`
-- Business requirements: `docs/requirements.md`
+- Feature documentation: `docs/features/` directory
 - Migration files: `supabase/migrations/`

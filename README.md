@@ -85,10 +85,17 @@ SELECT create_admin_user('YOUR_EMAIL', 'YOUR_PASSWORD', 'Your Name');
 
 ## 📚 Documentation
 
-- **[docs/requirements.md](docs/requirements.md)** - Business requirements and features specification
+### Core Documentation
 - **[docs/PROGRESS.md](docs/PROGRESS.md)** - Current development status and completed features
 - **[docs/DATABASE.md](docs/DATABASE.md)** - Database schema, RLS policies, and technical details
 - **[docs/CLAUDE.md](docs/CLAUDE.md)** - Development context and architectural patterns
+
+### Feature-Specific Documentation
+- **[docs/features/authentication.md](docs/features/authentication.md)** - User registration, login, and profile management
+- **[docs/features/employee-management.md](docs/features/employee-management.md)** - Role-based user administration
+- **[docs/features/scheduling.md](docs/features/scheduling.md)** - Shift management and conflict prevention
+- **[docs/features/settings.md](docs/features/settings.md)** - Activities and rates configuration
+- **[docs/features/payroll.md](docs/features/payroll.md)** - Salary calculation and period management
 
 ## 🛠️ Development Commands
 
