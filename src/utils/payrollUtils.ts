@@ -12,8 +12,18 @@ export function generateMonthOptions(
   const currentYear = today.getFullYear();
 
   const monthNames = [
-    "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-    "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+    "Tháng 1",
+    "Tháng 2",
+    "Tháng 3",
+    "Tháng 4",
+    "Tháng 5",
+    "Tháng 6",
+    "Tháng 7",
+    "Tháng 8",
+    "Tháng 9",
+    "Tháng 10",
+    "Tháng 11",
+    "Tháng 12",
   ];
 
   // Start from the specified start year
@@ -23,7 +33,7 @@ export function generateMonthOptions(
       if (year === currentYear + 1 && month > monthsAhead) continue;
 
       const value = `${year}-${month.toString().padStart(2, "0")}`;
-      const label = `${monthNames[month - 1]} ${year}`;
+      const label = `${monthNames[month - 1]}/${year}`;
 
       options.push({ value, label });
     }
@@ -43,8 +53,18 @@ export function getCurrentYearMonth(): string {
 export function formatMonthName(yearMonth: string): string {
   const [year, month] = yearMonth.split("-");
   const monthNames = [
-    "Tháng 1", "Tháng 2", "Tháng 3", "Tháng 4", "Tháng 5", "Tháng 6",
-    "Tháng 7", "Tháng 8", "Tháng 9", "Tháng 10", "Tháng 11", "Tháng 12"
+    "Tháng 1",
+    "Tháng 2",
+    "Tháng 3",
+    "Tháng 4",
+    "Tháng 5",
+    "Tháng 6",
+    "Tháng 7",
+    "Tháng 8",
+    "Tháng 9",
+    "Tháng 10",
+    "Tháng 11",
+    "Tháng 12",
   ];
   return `${monthNames[parseInt(month) - 1]} ${year}`;
 }
@@ -59,7 +79,6 @@ export function formatCurrency(amount: number): string {
 export function formatMoney(amount: number): string {
   return amount.toLocaleString("vi-VN");
 }
-
 
 export function generateCSVContent(
   summaries: Array<{
@@ -81,7 +100,7 @@ export function generateCSVContent(
     "Lương theo giờ (VND)",
     "Thành tiền (VND)",
     "Tổng giờ",
-    "Tổng lương (VND)"
+    "Tổng lương (VND)",
   ];
 
   const rows: string[][] = [headers];
@@ -97,7 +116,7 @@ export function generateCSVContent(
         formatMoney(firstActivity.rate),
         formatMoney(firstActivity.subtotal),
         summary.totalHours.toFixed(1),
-        formatMoney(summary.totalSalary)
+        formatMoney(summary.totalSalary),
       ]);
 
       // Additional activities for the same employee
@@ -109,20 +128,20 @@ export function generateCSVContent(
           formatMoney(activity.rate),
           formatMoney(activity.subtotal),
           "", // Empty totals for subsequent rows
-          ""
+          "",
         ]);
       });
     }
   });
 
   // Convert to CSV format
-  return rows
-    .map(row => row.map(cell => `"${cell}"`).join(","))
-    .join("\n");
+  return rows.map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
 }
 
 export function downloadCSV(content: string, filename: string): void {
-  const blob = new Blob(["\uFEFF" + content], { type: "text/csv;charset=utf-8;" });
+  const blob = new Blob(["\uFEFF" + content], {
+    type: "text/csv;charset=utf-8;",
+  });
   const link = document.createElement("a");
 
   if (link.download !== undefined) {

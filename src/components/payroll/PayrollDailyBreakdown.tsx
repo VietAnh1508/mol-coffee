@@ -1,20 +1,17 @@
-import { useState } from "react";
-import { FaChevronDown, FaChevronUp } from "react-icons/fa";
 import { usePayrollDailyBreakdown } from "../../hooks";
 import { formatDate, formatHours, formatTime } from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
 import { Spinner } from "../Spinner";
 
 interface PayrollDailyBreakdownProps {
-  yearMonth: string;
-  userId?: string;
+  readonly yearMonth: string;
+  readonly userId?: string;
 }
 
 export function PayrollDailyBreakdown({
   yearMonth,
   userId,
 }: PayrollDailyBreakdownProps) {
-  const [isExpanded, setIsExpanded] = useState(false);
   const { data: dailyData, isLoading } = usePayrollDailyBreakdown(
     yearMonth,
     userId
@@ -49,25 +46,14 @@ export function PayrollDailyBreakdown({
     {} as Record<string, typeof dailyData>
   );
 
-  const sortedDates = Object.keys(groupedByDate).sort();
+  const sortedDates = Object.keys(groupedByDate).sort((a, b) => a.localeCompare(b));
 
   return (
     <div className="border-t border-gray-200">
-      <button
-        onClick={() => setIsExpanded(!isExpanded)}
-        className="w-full flex items-center justify-between p-4 text-left hover:bg-gray-50"
-      >
-        <span className="text-sm font-medium text-gray-700">
+      <div className="p-4">
+        <h4 className="text-sm font-medium text-gray-700 mb-4">
           Chi tiết theo ngày
-        </span>
-        {isExpanded ? (
-          <FaChevronUp className="h-4 w-4 text-gray-500" />
-        ) : (
-          <FaChevronDown className="h-4 w-4 text-gray-500" />
-        )}
-      </button>
-
-      {isExpanded && (
+        </h4>
         <div className="px-4 pb-4">
           <div className="space-y-3">
             {sortedDates.map((date) => {
@@ -126,29 +112,8 @@ export function PayrollDailyBreakdown({
               );
             })}
           </div>
-
-          {/* Summary */}
-          <div className="mt-4 pt-3 border-t border-gray-200">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-gray-700">
-                Tổng cộng ({sortedDates.length} ngày)
-              </span>
-              <div className="text-right">
-                <div className="font-bold text-gray-900">
-                  {formatCurrency(
-                    dailyData.reduce((sum, entry) => sum + entry.subtotal, 0)
-                  )}
-                </div>
-                <div className="text-xs text-gray-500">
-                  {formatHours(
-                    dailyData.reduce((sum, entry) => sum + entry.hours, 0)
-                  )}
-                </div>
-              </div>
-            </div>
-          </div>
         </div>
-      )}
+      </div>
     </div>
   );
 }

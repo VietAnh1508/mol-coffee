@@ -184,12 +184,13 @@
   - [x] Real-time payroll calculations with TanStack Query caching
   - [x] Optimized queries with proper indexing and joins
   - [x] Business rule enforcement (period locking prevents schedule modifications)
-- [ ] **UI/UX Improvements** ⚠️ **PENDING**
-  - [ ] Employee list view for admins (replace long scrolling page)
-  - [ ] Individual employee payroll detail page with dedicated route
-  - [ ] Click-to-navigate from employee list to detailed view
-  - [ ] Separate summary overview from individual employee details
-  - [ ] Improved mobile experience for payroll navigation
+- [x] **UI/UX Improvements** ✅ **COMPLETED**
+  - [x] Employee list view for admins (replace long scrolling page)
+  - [x] Individual employee payroll detail page with dedicated route
+  - [x] Click-to-navigate from employee list to detailed view
+  - [x] Separate summary overview from individual employee details
+  - [x] Improved mobile experience for payroll navigation
+  - [x] Role-based auto-redirect for employees to their detail page
 - [ ] **Lunch Allowance Bonus System** 🍽️ **NEW FEATURE**
   - [ ] Database schema for lunch allowance rates (configurable amount per day)
   - [ ] Business logic to detect double shifts (morning + afternoon same day)
@@ -273,43 +274,16 @@
 
 ---
 
-**Progress:** ~95% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management + Complete Payroll System ✅)
+**Progress:** ~98% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management + Complete Payroll System + Payroll UX Improvements ✅)
 
-### **Recent Achievements:**
-- ✅ **Smart Employee Assignment Logic** - ShiftAssignmentModal now excludes employees already assigned to the same shift template and date ✅ **NEW**
-- ✅ **Complete Payroll & Salary System** - Full schedule-based payroll calculation with period management and role-based access ✅ **NEW**
-- ✅ **PayrollPage Enhancement** - Replaced placeholder with comprehensive salary display and period management
-- ✅ **Payroll Period Management** - Create, lock, unlock, and delete monthly payroll periods with audit trail
-- ✅ **Daily Breakdown Component** - Expandable daily salary details with Vietnamese date and currency formatting
-- ✅ **Component Architecture** - Separated PayrollPeriodForm, PayrollDataDisplay, and PayrollDailyBreakdown for maintainability
-- ✅ **Utility Functions Refactoring** - Centralized formatMoney, formatMonthName, and formatHours utilities
-- ✅ **Schedule-Based Calculations** - Simplified payroll model using schedules as single source of truth
-- ✅ **Employee Schedule Visibility Enhancement** - Employees can now view all colleagues' schedules while maintaining admin-only modification rights
-- ✅ **Shift Hour Editing System** - Complete shift time and activity editing for real-world scenarios
-- ✅ **ShiftEditModal Component** - Intuitive modal for editing shift times, activities, and notes
-- ✅ **Custom Shift Removal** - Simplified system to morning/afternoon only, removing UI clutter
-- ✅ **Role-based Dashboard Menus** - Different titles for Admin vs Employee roles for better UX
-- ✅ **Database Schema Optimization** - Removed 'custom' enum value with clean migration script
-- ✅ **Template Preservation** - Edited shifts stay in original morning/afternoon sections
-- ✅ **User Profile & Password Management System** - Complete user profile editing and password change functionality
-- ✅ **User Profile Page** - Mobile-first profile editing with name/phone validation and success feedback
-- ✅ **Change Password Feature** - Secure password change with current password verification and policy enforcement
-- ✅ **Password Policy System** - Reusable PasswordPolicy component with centralized constants and consistent UX
-- ✅ **Navigation Integration** - User dropdown menu links to profile page for intuitive access
-- ✅ **Form Validation Excellence** - Vietnamese phone validation and comprehensive error handling
-- ✅ **Complete Scheduling System** - Full shift management with assignment, deletion, editing, and role-based access
-- ✅ **Employee Assignment Modal** - Intuitive shift assignment with employee and activity selection
-- ✅ **Shift Deletion with Confirmation** - Secure deletion workflow with confirmation dialogs
-- ✅ **Visual Design Improvements** - White cards with colored activity badges for better readability
-- ✅ **Auto-Selection Features** - Smart defaults when only one employee is available
-- ✅ **Shift Constants System** - Centralized time templates for consistency across the app
-- ✅ **Component Architecture** - Reusable ShiftCard and ConfirmationDialog components
-- ✅ **Settings Management Complete** - Full CRUD for Activities and Rates with real-time UI
-- ✅ **Employee Management Complete** - Mobile-first design with comprehensive admin controls
-- ✅ **Admin Safety Features** - Self-management prevention and last admin protection (Business Rule #7)
-- ✅ **Toast Notification System** - Reusable useToast hook with success/error/info feedback
-- ✅ **Mobile-First UX** - Card-based layout with modal details for optimal mobile experience
-- ✅ **Email Authentication Migration** - Converted from phone-based synthetic emails to direct email auth
+### **Recent Major Achievements:**
+- ✅ **Complete Payroll System** - Full schedule-based payroll calculation with period management and role-based access
+- ✅ **Payroll UI/UX Redesign** - New navigation flow with employee list view and dedicated detail pages for better UX
+- ✅ **Complete Scheduling System** - Full shift management with assignment, editing, deletion, and role-based access
+- ✅ **User Profile & Password Management** - Secure profile editing and password change functionality
+- ✅ **Employee Management System** - Mobile-first admin controls with role management and safety features
+- ✅ **Settings Management** - Full CRUD for activities and rates with real-time UI updates
+- ✅ **Email Authentication Migration** - Modern auth flow with progressive profile completion
 
 ---
 
