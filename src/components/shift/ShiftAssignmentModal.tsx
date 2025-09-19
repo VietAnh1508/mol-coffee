@@ -14,7 +14,6 @@ interface ShiftAssignmentModalProps {
   onClose: () => void;
   shiftTemplate: "morning" | "afternoon";
   selectedDate: Date;
-  onSuccess?: () => void;
 }
 
 export function ShiftAssignmentModal({
@@ -22,7 +21,6 @@ export function ShiftAssignmentModal({
   onClose,
   shiftTemplate,
   selectedDate,
-  onSuccess,
 }: ShiftAssignmentModalProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedActivityId, setSelectedActivityId] = useState<string>("");
@@ -74,7 +72,6 @@ export function ShiftAssignmentModal({
         template_name: shiftTemplate,
       });
 
-      onSuccess?.();
       onClose();
       setSelectedUserId("");
       setSelectedActivityId("");

@@ -8,14 +8,12 @@ interface ShiftEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   shift: ScheduleShift | null;
-  onSuccess?: () => void;
 }
 
 export function ShiftEditModal({
   isOpen,
   onClose,
   shift,
-  onSuccess,
 }: ShiftEditModalProps) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -72,7 +70,6 @@ export function ShiftEditModal({
       });
 
       showToast("Cập nhật ca làm việc thành công", "success");
-      onSuccess?.();
       onClose();
     } catch (error) {
       showToast("Có lỗi xảy ra khi cập nhật ca làm việc", "error");

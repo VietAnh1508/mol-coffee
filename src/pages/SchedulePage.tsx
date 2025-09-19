@@ -177,46 +177,17 @@ export function SchedulePage() {
         </div>
       </div>
 
-      {/* Legend */}
-      <div className="mt-6 bg-gray-50 rounded-lg p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-2">Chú thích:</h4>
-        <div className="flex flex-wrap gap-4 text-sm">
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-orange-400 rounded-full mr-2"></div>
-            <span className="text-gray-600">
-              Ca sáng ({SHIFT_TEMPLATES.morning.start}-
-              {SHIFT_TEMPLATES.morning.end})
-            </span>
-          </div>
-          <div className="flex items-center">
-            <div className="w-3 h-3 bg-blue-400 rounded-full mr-2"></div>
-            <span className="text-gray-600">
-              Ca chiều ({SHIFT_TEMPLATES.afternoon.start}-
-              {SHIFT_TEMPLATES.afternoon.end})
-            </span>
-          </div>
-        </div>
-      </div>
-
-      {/* Shift Assignment Modal */}
       <ShiftAssignmentModal
         isOpen={isModalOpen}
         onClose={handleCloseModal}
         shiftTemplate={selectedShiftTemplate}
         selectedDate={selectedDate}
-        onSuccess={() => {
-          // The data will automatically refresh due to TanStack Query
-        }}
       />
 
-      {/* Shift Edit Modal */}
       <ShiftEditModal
         isOpen={isEditModalOpen}
         onClose={handleEditModalClose}
         shift={selectedShift}
-        onSuccess={() => {
-          // The data will automatically refresh due to TanStack Query
-        }}
       />
     </div>
   );
