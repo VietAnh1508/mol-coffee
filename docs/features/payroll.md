@@ -232,20 +232,21 @@ Note: Payroll now reads the lunch allowance from the database (`allowance_rates`
 ## Business Rules
 
 ### Payroll Calculation Rules
-1. **Salary = sum(scheduled hours × applicable rate per activity)**
+1. **Salary = sum(scheduled hours × applicable rate per activity) + allowances**
 2. **Effective-dated rates:** Use rate valid for the work date
 3. **Activity-based calculation:** Different rates for different work types
-4. **Monthly organization:** Payroll calculated per calendar month
+4. **Lunch allowance eligibility:** Employees working ≥2 shifts in a day receive the daily lunch allowance sourced from `allowance_rates` (with safe client fallback)
+5. **Monthly organization:** Payroll calculated per calendar month
 
 ### Period Management Rules
-5. **Payroll locking:** Closed periods prevent schedule changes
-6. **Admin audit trail:** Track who closes/reopens periods
-7. **Period uniqueness:** One period per month (YYYY-MM format)
+6. **Payroll locking:** Closed periods prevent schedule changes
+7. **Admin audit trail:** Track who closes/reopens periods
+8. **Period uniqueness:** One period per month (YYYY-MM format)
 
 ### Access Control Rules
-8. **Role-based visibility:** Admins see all data, employees see own data only
-9. **Database-enforced privacy:** RLS prevents unauthorized access
-10. **Auto-redirect:** Employees automatically go to their detail page
+9. **Role-based visibility:** Admins see all data, employees see own data only
+10. **Database-enforced privacy:** RLS prevents unauthorized access
+11. **Auto-redirect:** Employees automatically go to their detail page
 
 ## API Reference
 
