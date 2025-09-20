@@ -76,8 +76,9 @@ export function formatCurrency(amount: number): string {
   }).format(amount);
 }
 
-export function formatMoney(amount: number): string {
-  return amount.toLocaleString("vi-VN");
+export function formatMoney(amount: number, currency = "đ"): string {
+  const formatted = amount.toLocaleString("vi-VN");
+  return `${formatted} ${currency}`.trim();
 }
 
 export function generateCSVContent(

@@ -36,7 +36,7 @@ export function PayrollEmployeeCard({ employee }: PayrollEmployeeCardProps) {
           <div className="flex items-center justify-between">
             <span className="text-sm text-gray-600">Tổng lương:</span>
             <span className="text-lg font-bold text-gray-900">
-              {formatMoney(Math.round(employee.totalSalary))} ₫
+              {formatMoney(Math.round(employee.totalSalary))}
             </span>
           </div>
 

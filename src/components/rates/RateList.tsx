@@ -61,7 +61,7 @@ export function RateList() {
                   </h3>
                   <div className="mt-1 text-sm text-gray-600">
                     <span className="font-medium">
-                      {formatMoney(rate.hourly_vnd)} VND/giờ
+                      {formatMoney(rate.hourly_vnd)}/giờ
                     </span>
                     {" • "}
                     <span>

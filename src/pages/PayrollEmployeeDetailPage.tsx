@@ -192,7 +192,7 @@ export function PayrollEmployeeDetailPage({
                   <div>
                     <div className="text-sm text-gray-500 mb-1">Tổng lương</div>
                     <div className="text-3xl font-bold text-gray-900">
-                      {formatMoney(Math.round(employeeData.totalSalary))} ₫
+                      {formatMoney(Math.round(employeeData.totalSalary))}
                     </div>
                   </div>
                   <div className="flex items-center justify-center space-x-8">
@@ -233,12 +233,11 @@ export function PayrollEmployeeDetailPage({
                         {activity.activity.name}
                       </span>
                       <div className="text-sm font-medium text-gray-900">
-                        {formatMoney(Math.round(activity.subtotal))} ₫
+                        {formatMoney(Math.round(activity.subtotal))}
                       </div>
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
-                      ({activity.hours.toFixed(1)} giờ ×{" "}
-                      {formatMoney(activity.rate)} ₫/giờ)
+                      ({activity.hours.toFixed(1)} giờ × {formatMoney(activity.rate)}/giờ)
                     </div>
                   </div>
                 ))}
@@ -253,8 +252,7 @@ export function PayrollEmployeeDetailPage({
                       <div className="text-sm font-medium text-gray-900">
                         {formatMoney(
                           Math.round(employeeData.lunchAllowanceTotal || 0)
-                        )}{" "}
-                        ₫
+                        )}
                       </div>
                     </div>
                     <div className="text-sm text-gray-500 mt-1">

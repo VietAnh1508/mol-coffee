@@ -45,8 +45,7 @@ export function PayrollDataDisplay({
                 Math.round(
                   payrollData.reduce((sum, emp) => sum + emp.totalSalary, 0)
                 )
-              )}{" "}
-              ₫
+              )}
             </div>
           </div>
         </div>
@@ -71,7 +70,7 @@ export function PayrollDataDisplay({
                 </div>
                 <div className="text-right">
                   <div className="text-2xl font-bold text-gray-900">
-                    {formatMoney(Math.round(employee.totalSalary))} ₫
+                    {formatMoney(Math.round(employee.totalSalary))}
                   </div>
                   <div className="text-sm text-gray-500">
                     {employee.totalHours.toFixed(1)} giờ
@@ -96,12 +95,11 @@ export function PayrollDataDisplay({
                         {activity.activity.name}
                       </span>
                       <span className="text-sm text-gray-500 ml-2">
-                        ({activity.hours.toFixed(1)} giờ ×{" "}
-                        {formatMoney(activity.rate)} ₫/giờ)
+                        ({activity.hours.toFixed(1)} giờ × {formatMoney(activity.rate)}/giờ)
                       </span>
                     </div>
                     <div className="text-sm font-medium text-gray-900">
-                      {formatMoney(Math.round(activity.subtotal))} ₫
+                      {formatMoney(Math.round(activity.subtotal))}
                     </div>
                   </div>
                 ))}
@@ -121,8 +119,7 @@ export function PayrollDataDisplay({
                       <div className="text-sm font-medium text-gray-900">
                         {formatMoney(
                           Math.round(employee.lunchAllowanceTotal || 0)
-                        )}{" "}
-                        ₫
+                        )}
                       </div>
                     </div>
                   )}
