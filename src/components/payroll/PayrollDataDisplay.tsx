@@ -1,3 +1,4 @@
+import { LUNCH_ALLOWANCE } from "../../constants/payroll";
 import type { PayrollEmployeeSummary } from "../../hooks/usePayrollCalculations";
 import { formatMoney } from "../../utils/payrollUtils";
 import { PayrollDailyBreakdown } from "./PayrollDailyBreakdown";
@@ -27,7 +28,9 @@ export function PayrollDataDisplay({
             </div>
           </div>
           <div className="bg-white rounded-lg shadow p-6">
-            <div className="text-sm font-medium text-gray-500">Tổng giờ làm</div>
+            <div className="text-sm font-medium text-gray-500">
+              Tổng giờ làm
+            </div>
             <div className="text-2xl font-bold text-gray-900">
               {payrollData
                 .reduce((sum, emp) => sum + emp.totalHours, 0)
@@ -103,6 +106,28 @@ export function PayrollDataDisplay({
                     </div>
                   </div>
                 ))}
+
+                {/* Lunch Allowance Summary */}
+                {employee.lunchAllowanceDays &&
+                  employee.lunchAllowanceDays > 0 && (
+                    <div className="flex items-center justify-between py-2 px-3 bg-gray-50 rounded-md">
+                      <div>
+                        <span className="text-sm font-medium text-gray-900">
+                          Phụ cấp ăn trưa
+                        </span>
+                        <span className="text-sm text-gray-500 ml-2">
+                          ({employee.lunchAllowanceDays} ngày ×{" "}
+                          {formatMoney(LUNCH_ALLOWANCE)} ₫)
+                        </span>
+                      </div>
+                      <div className="text-sm font-medium text-gray-900">
+                        {formatMoney(
+                          Math.round(employee.lunchAllowanceTotal || 0)
+                        )}{" "}
+                        ₫
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
 

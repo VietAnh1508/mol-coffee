@@ -1,3 +1,4 @@
+import { LUNCH_ALLOWANCE } from "../../constants/payroll";
 import { usePayrollDailyBreakdown } from "../../hooks";
 import { formatDate, formatHours, formatTime } from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
@@ -46,7 +47,9 @@ export function PayrollDailyBreakdown({
     {} as Record<string, typeof dailyData>
   );
 
-  const sortedDates = Object.keys(groupedByDate).sort((a, b) => a.localeCompare(b));
+  const sortedDates = Object.keys(groupedByDate).sort((a, b) =>
+    a.localeCompare(b)
+  );
 
   return (
     <div className="border-t border-gray-200">
@@ -91,20 +94,36 @@ export function PayrollDailyBreakdown({
                         key={entry.shiftId}
                         className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
                       >
-                        <div className="flex items-center space-x-2">
-                          {!userId && (
-                            <span className="font-medium text-gray-600">
-                              {entry.employee.name}
-                            </span>
-                          )}
-                          <span className="text-gray-700">
-                            {entry.activity.name} ({formatTime(entry.startTime)}{" "}
-                            - {formatTime(entry.endTime)})
-                          </span>
-                        </div>
-                        <div className="font-medium text-gray-900">
-                          {formatCurrency(entry.subtotal)}
-                        </div>
+                        {entry.type === "shift" ? (
+                          <>
+                            <div className="flex items-center space-x-2">
+                              {!userId && (
+                                <span className="font-medium text-gray-600">
+                                  {entry.employee.name}
+                                </span>
+                              )}
+                              <span className="text-gray-700">
+                                {entry.activity?.name} (
+                                {formatTime(entry.startTime!)} -{" "}
+                                {formatTime(entry.endTime!)})
+                              </span>
+                            </div>
+                            <div className="font-medium text-gray-900">
+                              {formatCurrency(entry.subtotal)}
+                            </div>
+                          </>
+                        ) : (
+                          <>
+                            <div className="flex items-center space-x-2">
+                              <span className="text-gray-700 font-medium">
+                                Phụ cấp ăn trưa
+                              </span>
+                            </div>
+                            <div className="font-medium text-gray-900">
+                              {formatCurrency(LUNCH_ALLOWANCE)}
+                            </div>
+                          </>
+                        )}
                       </div>
                     ))}
                   </div>

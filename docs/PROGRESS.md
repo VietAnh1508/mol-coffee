@@ -102,13 +102,13 @@ For detailed documentation of each feature, see:
 - Mobile-first responsive design
 - **[Details in Authentication →](features/authentication.md)**
 
-### 💰 **Payroll & Salary System** ✅ **COMPLETED** ⚠️ **ENHANCEMENT NEEDED**
+### 💰 **Payroll & Salary System** ✅ **COMPLETED**
 - Schedule-based payroll calculation with effective dating
 - Period management with locking mechanism
 - Enhanced UI with employee list and detail pages
 - Daily breakdown with Vietnamese currency formatting
 - Role-based access control (admins see all, employees see own)
-- **Next:** Lunch allowance bonus system for double shifts
+- ✅ Lunch allowance bonus for double shifts (fixed 50.000 ₫)
 - **[Full Details →](features/payroll.md)**
 
 ---
@@ -177,7 +177,7 @@ For detailed documentation of each feature, see:
 3. ~~**Scheduling System** - Complete shift management with assignment and deletion~~ ✅ **COMPLETED**
 4. ~~**User Profile & Settings** - Change password, profile editing~~ ✅ **COMPLETED**
 5. ~~**Payroll & Salary System** - Complete schedule-based payroll with period management~~ ✅ **COMPLETED**
-6. **Lunch Allowance Bonus System** - Automatic bonus for employees working double shifts (morning + afternoon) 🍽️ **TOP PRIORITY**
+6. ~~**Lunch Allowance Bonus System** - Automatic bonus for employees working double shifts (morning + afternoon) 🍽️ **TOP PRIORITY**~~ ✅ **COMPLETED** (Frontend, fixed amount)
 7. ~~**Payroll UX Enhancement** - Employee list view for admins, individual detail pages, improved navigation~~ ✅ **COMPLETED**
 8. **Advanced Features** - CSV export, advanced timekeeping, shift notifications
 9. **PWA Enhancements** - Offline functionality, push notifications, app shell

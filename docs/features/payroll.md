@@ -159,15 +159,17 @@ const formatMoney = (amount: number) =>
 
 ### 🚧 Future Enhancements (Phase 2)
 
-- [ ] **Lunch Allowance Bonus System** 🍽️ **NEW FEATURE**
+- [x] **Lunch Allowance Bonus System** 🍽️
+  - [x] Business logic to detect double shifts (morning + afternoon same day)
+  - [x] Automatic lunch allowance calculation in payroll calculations
+  - [x] Display lunch allowance as separate line item in payroll breakdown
+  - [x] Update PayrollDailyBreakdown to show lunch allowance per qualifying day
+  - [x] Vietnamese localization for lunch allowance terminology
   - [ ] Database schema for lunch allowance rates (configurable amount per day)
-  - [ ] Business logic to detect double shifts (morning + afternoon same day)
-  - [ ] Automatic lunch allowance calculation in payroll calculations
   - [ ] Admin settings to configure lunch allowance rates
-  - [ ] Display lunch allowance as separate line item in payroll breakdown
-  - [ ] Update PayrollDailyBreakdown to show lunch allowance per qualifying day
   - [ ] Integration with existing payroll period locking system
-  - [ ] Vietnamese localization for lunch allowance terminology
+  
+Note: Current implementation uses a fixed amount defined in `src/constants/payroll.ts` (`LUNCH_ALLOWANCE = 30,000`).
 
 - [ ] **CSV Export Functionality**
   - [ ] Export monthly payroll data to CSV format

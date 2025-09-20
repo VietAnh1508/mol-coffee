@@ -1,19 +1,32 @@
-import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
+import { useState } from "react";
 import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
-import { useAuth, usePayrollCalculations, usePayrollPeriod, usePayrollDailyBreakdown } from "../hooks";
-import { formatMonthName, formatMoney, generateMonthOptions } from "../utils/payrollUtils";
 import { Spinner } from "../components/Spinner";
+import { LUNCH_ALLOWANCE } from "../constants/payroll";
 import { USER_ROLES } from "../constants/userRoles";
+import {
+  useAuth,
+  usePayrollCalculations,
+  usePayrollDailyBreakdown,
+  usePayrollPeriod,
+} from "../hooks";
+import {
+  formatMoney,
+  formatMonthName,
+  generateMonthOptions,
+} from "../utils/payrollUtils";
 
 interface PayrollEmployeeDetailPageProps {
   readonly employeeId: string;
   readonly period: string;
 }
 
-export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmployeeDetailPageProps) {
+export function PayrollEmployeeDetailPage({
+  employeeId,
+  period,
+}: PayrollEmployeeDetailPageProps) {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [selectedPeriod, setSelectedPeriod] = useState(period);
@@ -28,14 +41,16 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
     });
   };
 
-  const { data: payrollData, isLoading: isLoadingPayroll } = usePayrollCalculations(
+  const { data: payrollData, isLoading: isLoadingPayroll } =
+    usePayrollCalculations(selectedPeriod, employeeId);
+
+  const { data: dailyData } = usePayrollDailyBreakdown(
     selectedPeriod,
     employeeId
   );
 
-  const { data: dailyData } = usePayrollDailyBreakdown(selectedPeriod, employeeId);
-
-  const { data: periodInfo, isLoading: isLoadingPeriod } = usePayrollPeriod(selectedPeriod);
+  const { data: periodInfo, isLoading: isLoadingPeriod } =
+    usePayrollPeriod(selectedPeriod);
 
   if (!user) return null;
 
@@ -45,8 +60,9 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
   const employeeData = payrollData?.[0];
 
   // Calculate total working days
-  const totalWorkingDays = dailyData ?
-    new Set(dailyData.map(entry => entry.date)).size : 0;
+  const totalWorkingDays = dailyData
+    ? new Set(dailyData.map((entry) => entry.date)).size
+    : 0;
 
   // Get month options for period selector
   const monthOptions = generateMonthOptions();
@@ -69,7 +85,11 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
       {/* Page Title */}
       <div className="mb-6">
         <PageTitle
-          title={employeeData ? `Bảng lương - ${employeeData.employee.name}` : "Bảng lương"}
+          title={
+            employeeData
+              ? `Bảng lương - ${employeeData.employee.name}`
+              : "Bảng lương"
+          }
           subtitle={
             isOwnData
               ? "Xem thông tin lương của bạn"
@@ -82,7 +102,10 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
         {/* Period Selector */}
         <div className="bg-white rounded-lg shadow p-4">
           <div className="flex items-center justify-between">
-            <label htmlFor="period-select" className="flex items-center text-sm font-medium text-gray-700">
+            <label
+              htmlFor="period-select"
+              className="flex items-center text-sm font-medium text-gray-700"
+            >
               <FaCalendarAlt className="w-4 h-4 mr-2" />
               Chọn kỳ lương
             </label>
@@ -103,24 +126,29 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
 
         {/* Period Status Banner */}
         {periodInfo && (
-          <div className={`rounded-lg p-4 ${
-            periodInfo.status === "closed"
-              ? "bg-orange-50 border border-orange-200"
-              : "bg-green-50 border border-green-200"
-          }`}>
+          <div
+            className={`rounded-lg p-4 ${
+              periodInfo.status === "closed"
+                ? "bg-orange-50 border border-orange-200"
+                : "bg-green-50 border border-green-200"
+            }`}
+          >
             <div className="flex items-center">
-              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                periodInfo.status === "closed"
-                  ? "bg-orange-100 text-orange-800"
-                  : "bg-green-100 text-green-800"
-              }`}>
+              <div
+                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                  periodInfo.status === "closed"
+                    ? "bg-orange-100 text-orange-800"
+                    : "bg-green-100 text-green-800"
+                }`}
+              >
                 {periodInfo.status === "closed" ? "Đã khóa" : "Đang mở"}
               </div>
               <span className="ml-3 text-sm text-gray-600">
                 Kỳ lương {formatMonthName(selectedPeriod)}
-                {periodInfo.status === "closed" && periodInfo.closed_by_user && (
-                  <> - Khóa bởi {periodInfo.closed_by_user.name}</>
-                )}
+                {periodInfo.status === "closed" &&
+                  periodInfo.closed_by_user && (
+                    <> - Khóa bởi {periodInfo.closed_by_user.name}</>
+                  )}
               </span>
             </div>
           </div>
@@ -131,7 +159,9 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
           <div className="bg-white rounded-lg shadow p-8">
             <div className="flex items-center justify-center">
               <Spinner />
-              <span className="ml-3 text-gray-600">Đang tải thông tin lương...</span>
+              <span className="ml-3 text-gray-600">
+                Đang tải thông tin lương...
+              </span>
             </div>
           </div>
         )}
@@ -141,12 +171,13 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
           <div className="bg-white rounded-lg shadow p-8">
             <div className="text-center text-gray-500">
               <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-lg font-medium mb-2">Chưa có dữ liệu lương</h3>
+              <h3 className="text-lg font-medium mb-2">
+                Chưa có dữ liệu lương
+              </h3>
               <p>
                 {isOwnData
                   ? "Bạn chưa có lịch làm việc nào trong kỳ này."
-                  : "Nhân viên này chưa có lịch làm việc nào trong kỳ này."
-                }
+                  : "Nhân viên này chưa có lịch làm việc nào trong kỳ này."}
               </p>
             </div>
           </div>
@@ -167,13 +198,17 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
                   </div>
                   <div className="flex items-center justify-center space-x-8">
                     <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">Tổng giờ làm</div>
+                      <div className="text-xs text-gray-500 mb-1">
+                        Tổng giờ làm
+                      </div>
                       <div className="text-lg font-medium text-gray-700">
                         {employeeData.totalHours.toFixed(1)} giờ
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">Tổng ngày làm</div>
+                      <div className="text-xs text-gray-500 mb-1">
+                        Tổng ngày làm
+                      </div>
                       <div className="text-lg font-medium text-gray-700">
                         {totalWorkingDays} ngày
                       </div>
@@ -203,10 +238,33 @@ export function PayrollEmployeeDetailPage({ employeeId, period }: PayrollEmploye
                       </div>
                     </div>
                     <div className="text-sm text-gray-500 mt-1">
-                      ({activity.hours.toFixed(1)} giờ × {formatMoney(activity.rate)} ₫/giờ)
+                      ({activity.hours.toFixed(1)} giờ ×{" "}
+                      {formatMoney(activity.rate)} ₫/giờ)
                     </div>
                   </div>
                 ))}
+
+                {/* Lunch Allowance Summary */}
+                {employeeData.lunchAllowanceDays &&
+                  employeeData.lunchAllowanceDays > 0 && (
+                    <div className="py-2 px-3 bg-gray-50 rounded-md">
+                      <div className="flex items-center justify-between">
+                        <span className="text-sm font-medium text-gray-900">
+                          Phụ cấp ăn trưa
+                        </span>
+                        <div className="text-sm font-medium text-gray-900">
+                          {formatMoney(
+                            Math.round(employeeData.lunchAllowanceTotal || 0)
+                          )}{" "}
+                          ₫
+                        </div>
+                      </div>
+                      <div className="text-sm text-gray-500 mt-1">
+                        ({employeeData.lunchAllowanceDays} ngày ×{" "}
+                        {formatMoney(LUNCH_ALLOWANCE)} ₫)
+                      </div>
+                    </div>
+                  )}
               </div>
             </div>
 
