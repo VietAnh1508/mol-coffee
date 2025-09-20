@@ -74,3 +74,15 @@ export interface PayrollPeriod {
   updated_at: string
   closed_by_user?: User
 }
+
+export type AllowanceType = 'lunch'
+
+export interface AllowanceRate {
+  id: string
+  type: AllowanceType
+  amount_vnd: number
+  effective_from: string
+  effective_to: string | null
+  created_at: string
+  updated_at: string
+}

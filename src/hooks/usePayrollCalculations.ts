@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { LUNCH_ALLOWANCE } from "../constants/payroll";
+import { LUNCH_ALLOWANCE } from "../constants/payroll"; // fallback only
 import { supabase } from "../lib/supabase";
 import type { Activity, User } from "../types";
 import { createMonthDateRange, formatDateLocal } from "../utils/dateUtils";
@@ -24,15 +24,34 @@ export interface PayrollDailyEntry {
   type: "shift" | "allowance";
   date: string;
   employee: User;
-  // Shift fields
   activity?: Activity;
   startTime?: string;
   endTime?: string;
-  // Common calculation fields
   hours: number;
   rate: number;
   subtotal: number;
   shiftId: string;
+}
+
+// Raw shift shape from Supabase select (with joined user/activity arrays)
+interface RawScheduleShift {
+  id: string;
+  start_ts: string;
+  end_ts: string;
+  users: User | User[];
+  activities: Activity | Activity[];
+}
+
+// Enriched shift used internally for calculations
+interface CalculatedShift {
+  id: string;
+  start_ts: string;
+  end_ts: string;
+  user: User;
+  activity: Activity;
+  hours: number;
+  rate: number;
+  subtotal: number;
 }
 
 export function usePayrollCalculations(
@@ -44,7 +63,6 @@ export function usePayrollCalculations(
     queryFn: async (): Promise<PayrollEmployeeSummary[]> => {
       if (!yearMonth) return [];
 
-      // Parse year-month to create date range
       const { startDate: startDateStr, endDate: endDateStr } =
         createMonthDateRange(yearMonth);
 
@@ -62,31 +80,25 @@ export function usePayrollCalculations(
         .gte("start_ts", startDateStr)
         .lte("start_ts", endDateStr);
 
-      // If userId is provided (employee view), filter to that user only
       if (userId) {
         query = query.eq("user_id", userId);
       }
 
       const { data: shifts, error: shiftsError } = await query;
+      if (shiftsError) throw shiftsError;
+      const rawShifts = (shifts ?? []) as RawScheduleShift[];
+      if (rawShifts.length === 0) return [];
 
-      if (shiftsError) {
-        throw shiftsError;
-      }
-
-      if (!shifts || shifts.length === 0) {
-        return [];
-      }
-
-      // Get rates for the period
       const { data: rates, error: ratesError } = await supabase
         .from("rates")
         .select("activity_id, hourly_vnd, effective_from, effective_to");
+      if (ratesError) throw ratesError;
 
-      if (ratesError) {
-        throw ratesError;
-      }
+      const { data: lunchAllowances } = await supabase
+        .from("allowance_rates")
+        .select("amount_vnd, effective_from, effective_to, type")
+        .eq("type", "lunch");
 
-      // Function to get applicable rate for a shift
       const getApplicableRate = (
         activityId: string,
         shiftDate: Date
@@ -103,12 +115,26 @@ export function usePayrollCalculations(
               new Date(b.effective_from).getTime() -
               new Date(a.effective_from).getTime()
           );
-
         return applicableRates?.[0]?.hourly_vnd || 0;
       };
 
-      // Calculate hours and salary for each shift
-      const calculatedShifts = shifts.map((shift) => {
+      const getApplicableLunchAllowance = (date: Date): number => {
+        const list = lunchAllowances || [];
+        const applicable = list
+          .filter(
+            (a) =>
+              new Date(a.effective_from) <= date &&
+              (!a.effective_to || new Date(a.effective_to) > date)
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.effective_from).getTime() -
+              new Date(a.effective_from).getTime()
+          );
+        return applicable[0]?.amount_vnd ?? LUNCH_ALLOWANCE;
+      };
+
+      const calculatedShifts: CalculatedShift[] = rawShifts.map((shift) => {
         const startTime = new Date(shift.start_ts);
         const endTime = new Date(shift.end_ts);
         const hours =
@@ -119,23 +145,12 @@ export function usePayrollCalculations(
           : shift.activities;
         const rate = getApplicableRate(activity.id, startTime);
         const subtotal = hours * rate;
-
-        return {
-          ...shift,
-          user,
-          activity,
-          hours,
-          rate,
-          subtotal,
-        };
+        return { id: shift.id, start_ts: shift.start_ts, end_ts: shift.end_ts, user, activity, hours, rate, subtotal };
       });
 
-      // Group by employee and activity
       const employeeMap = new Map<string, PayrollEmployeeSummary>();
-
       calculatedShifts.forEach((shift) => {
         const employeeId = shift.user.id;
-
         if (!employeeMap.has(employeeId)) {
           employeeMap.set(employeeId, {
             employee: shift.user,
@@ -146,16 +161,13 @@ export function usePayrollCalculations(
             lunchAllowanceTotal: 0,
           });
         }
-
         const employeeSummary = employeeMap.get(employeeId)!;
         employeeSummary.totalHours += shift.hours;
         employeeSummary.totalSalary += shift.subtotal;
 
-        // Find or create activity breakdown
         let activityBreakdown = employeeSummary.activities.find(
           (a) => a.activity.id === shift.activity.id
         );
-
         if (!activityBreakdown) {
           activityBreakdown = {
             activity: shift.activity,
@@ -165,27 +177,28 @@ export function usePayrollCalculations(
           };
           employeeSummary.activities.push(activityBreakdown);
         }
-
         activityBreakdown.hours += shift.hours;
         activityBreakdown.subtotal += shift.subtotal;
       });
 
-      // Compute lunch allowance per employee per day (2+ shifts in a day)
+      // Compute lunch allowance per employee-day (2+ shifts)
       const byEmployeeDate = new Map<string, number>();
       calculatedShifts.forEach((shift) => {
-        const dateKey = `${shift.user.id}|${formatDateLocal(new Date(shift.start_ts))}`;
-        byEmployeeDate.set(dateKey, (byEmployeeDate.get(dateKey) || 0) + 1);
+        const ymd = formatDateLocal(new Date(shift.start_ts));
+        const key = `${shift.user.id}|${ymd}`;
+        byEmployeeDate.set(key, (byEmployeeDate.get(key) || 0) + 1);
       });
 
       byEmployeeDate.forEach((count, key) => {
         if (count >= 2) {
-          const [empId] = key.split("|");
+          const [empId, ymd] = key.split("|");
           const summary = employeeMap.get(empId);
           if (summary) {
+            const amount = getApplicableLunchAllowance(new Date(ymd));
             summary.lunchAllowanceDays = (summary.lunchAllowanceDays || 0) + 1;
             summary.lunchAllowanceTotal =
-              (summary.lunchAllowanceTotal || 0) + LUNCH_ALLOWANCE;
-            summary.totalSalary += LUNCH_ALLOWANCE;
+              (summary.lunchAllowanceTotal || 0) + amount;
+            summary.totalSalary += amount;
           }
         }
       });
@@ -207,7 +220,6 @@ export function usePayrollDailyBreakdown(
     queryFn: async (): Promise<PayrollDailyEntry[]> => {
       if (!yearMonth) return [];
 
-      // Parse year-month to create date range
       const { startDate: startDateStr, endDate: endDateStr } =
         createMonthDateRange(yearMonth);
 
@@ -226,31 +238,24 @@ export function usePayrollDailyBreakdown(
         .lte("start_ts", endDateStr)
         .order("start_ts", { ascending: true });
 
-      // If userId is provided (employee view), filter to that user only
       if (userId) {
         query = query.eq("user_id", userId);
       }
 
       const { data: shifts, error: shiftsError } = await query;
+      if (shiftsError) throw shiftsError;
+      if (!shifts || shifts.length === 0) return [];
 
-      if (shiftsError) {
-        throw shiftsError;
-      }
-
-      if (!shifts || shifts.length === 0) {
-        return [];
-      }
-
-      // Get rates for the period
       const { data: rates, error: ratesError } = await supabase
         .from("rates")
         .select("activity_id, hourly_vnd, effective_from, effective_to");
+      if (ratesError) throw ratesError;
 
-      if (ratesError) {
-        throw ratesError;
-      }
+      const { data: lunchAllowances } = await supabase
+        .from("allowance_rates")
+        .select("amount_vnd, effective_from, effective_to, type")
+        .eq("type", "lunch");
 
-      // Function to get applicable rate for a shift
       const getApplicableRate = (
         activityId: string,
         shiftDate: Date
@@ -267,11 +272,25 @@ export function usePayrollDailyBreakdown(
               new Date(b.effective_from).getTime() -
               new Date(a.effective_from).getTime()
           );
-
         return applicableRates?.[0]?.hourly_vnd || 0;
       };
 
-      // Calculate base shift entries
+      const getApplicableLunchAllowance = (date: Date): number => {
+        const list = lunchAllowances || [];
+        const applicable = list
+          .filter(
+            (a) =>
+              new Date(a.effective_from) <= date &&
+              (!a.effective_to || new Date(a.effective_to) > date)
+          )
+          .sort(
+            (a, b) =>
+              new Date(b.effective_from).getTime() -
+              new Date(a.effective_from).getTime()
+          );
+        return applicable[0]?.amount_vnd ?? LUNCH_ALLOWANCE;
+      };
+
       const baseEntries = shifts.map((shift) => {
         const startTime = new Date(shift.start_ts);
         const endTime = new Date(shift.end_ts);
@@ -283,13 +302,12 @@ export function usePayrollDailyBreakdown(
           : shift.activities;
         const rate = getApplicableRate(activity.id, startTime);
         const subtotal = hours * rate;
-
         return {
           type: "shift" as const,
           date: formatDateLocal(startTime),
           employee: user,
-          activity: activity,
-          hours: Math.round(hours * 100) / 100, // Round to 2 decimal places
+          activity,
+          hours: Math.round(hours * 100) / 100,
           rate,
           subtotal: Math.round(subtotal),
           shiftId: shift.id,
@@ -298,28 +316,28 @@ export function usePayrollDailyBreakdown(
         };
       });
 
-      // If userId is provided (usual case), add lunch allowance entries when 2+ shifts in a day
       const results: PayrollDailyEntry[] = [...baseEntries];
 
       if (userId) {
-        const dailyPayrollsPerDay = new Map<string, PayrollDailyEntry[]>();
+        const byDate = new Map<string, PayrollDailyEntry[]>();
         results.forEach((entry) => {
-          const list = dailyPayrollsPerDay.get(entry.date) || [];
+          const list = byDate.get(entry.date) || [];
           list.push(entry);
-          dailyPayrollsPerDay.set(entry.date, list);
+          byDate.set(entry.date, list);
         });
 
-        dailyPayrollsPerDay.forEach((entries, date) => {
+        byDate.forEach((entries, date) => {
           const shiftCount = entries.filter((e) => e.type === "shift").length;
           if (shiftCount >= 2) {
             const employee = entries[0].employee;
+            const amount = getApplicableLunchAllowance(new Date(date));
             const allowance: PayrollDailyEntry = {
               type: "allowance",
               date,
               employee,
               hours: 0,
-              rate: LUNCH_ALLOWANCE,
-              subtotal: LUNCH_ALLOWANCE,
+              rate: amount,
+              subtotal: amount,
               shiftId: `allowance-${employee.id}-${date}`,
             };
             results.push(allowance);

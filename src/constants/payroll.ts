@@ -1,1 +1,2 @@
-export const LUNCH_ALLOWANCE = 30_000; // Phụ cấp ăn trưa khi làm 2 ca/ngày
+// Default fallback allowance amount (VND) if DB-configured rates are unavailable
+export const LUNCH_ALLOWANCE = 30_000;

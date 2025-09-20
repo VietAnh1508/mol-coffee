@@ -108,7 +108,7 @@ For detailed documentation of each feature, see:
 - Enhanced UI with employee list and detail pages
 - Daily breakdown with Vietnamese currency formatting
 - Role-based access control (admins see all, employees see own)
-- ✅ Lunch allowance bonus for double shifts (fixed 50.000 ₫)
+- ✅ Lunch allowance bonus for double shifts (DB-configured via allowance_rates)
 - **[Full Details →](features/payroll.md)**
 
 ---

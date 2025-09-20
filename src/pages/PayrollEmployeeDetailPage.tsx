@@ -4,7 +4,6 @@ import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { Spinner } from "../components/Spinner";
-import { LUNCH_ALLOWANCE } from "../constants/payroll";
 import { USER_ROLES } from "../constants/userRoles";
 import {
   useAuth,
@@ -245,26 +244,24 @@ export function PayrollEmployeeDetailPage({
                 ))}
 
                 {/* Lunch Allowance Summary */}
-                {employeeData.lunchAllowanceDays &&
-                  employeeData.lunchAllowanceDays > 0 && (
-                    <div className="py-2 px-3 bg-gray-50 rounded-md">
-                      <div className="flex items-center justify-between">
-                        <span className="text-sm font-medium text-gray-900">
-                          Phụ cấp ăn trưa
-                        </span>
-                        <div className="text-sm font-medium text-gray-900">
-                          {formatMoney(
-                            Math.round(employeeData.lunchAllowanceTotal || 0)
-                          )}{" "}
-                          ₫
-                        </div>
-                      </div>
-                      <div className="text-sm text-gray-500 mt-1">
-                        ({employeeData.lunchAllowanceDays} ngày ×{" "}
-                        {formatMoney(LUNCH_ALLOWANCE)} ₫)
+                {(employeeData.lunchAllowanceDays ?? 0) > 0 && (
+                  <div className="py-2 px-3 bg-gray-50 rounded-md">
+                    <div className="flex items-center justify-between">
+                      <span className="text-sm font-medium text-gray-900">
+                        Phụ cấp ăn trưa
+                      </span>
+                      <div className="text-sm font-medium text-gray-900">
+                        {formatMoney(
+                          Math.round(employeeData.lunchAllowanceTotal || 0)
+                        )}{" "}
+                        ₫
                       </div>
                     </div>
-                  )}
+                    <div className="text-sm text-gray-500 mt-1">
+                      ({employeeData.lunchAllowanceDays} ngày)
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 

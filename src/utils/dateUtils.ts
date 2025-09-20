@@ -7,6 +7,18 @@ export const formatDate = (date: Date) => {
   })
 }
 
+export const formatDateDMY = (date: Date): string => {
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
+  const yyyy = date.getFullYear();
+  return `${dd}/${mm}/${yyyy}`;
+}
+
+export const formatDateWeekdayDMY = (date: Date): string => {
+  const weekday = date.toLocaleDateString('vi-VN', { weekday: 'long' });
+  return `${weekday}, ${formatDateDMY(date)}`;
+}
+
 export const formatTime = (dateString: string) => {
   return new Date(dateString).toLocaleTimeString('vi-VN', {
     hour: '2-digit',

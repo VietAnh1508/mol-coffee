@@ -26,6 +26,7 @@ export {
   usePayrollCalculations,
   usePayrollDailyBreakdown,
 } from "./usePayrollCalculations";
+export { useAllowanceRates } from "./useAllowanceRates";
 export {
   usePayrollPeriods,
   usePayrollPeriod,

@@ -1,4 +1,3 @@
-import { LUNCH_ALLOWANCE } from "../../constants/payroll";
 import type { PayrollEmployeeSummary } from "../../hooks/usePayrollCalculations";
 import { formatMoney } from "../../utils/payrollUtils";
 import { PayrollDailyBreakdown } from "./PayrollDailyBreakdown";
@@ -116,8 +115,7 @@ export function PayrollDataDisplay({
                           Phụ cấp ăn trưa
                         </span>
                         <span className="text-sm text-gray-500 ml-2">
-                          ({employee.lunchAllowanceDays} ngày ×{" "}
-                          {formatMoney(LUNCH_ALLOWANCE)} ₫)
+                          ({employee.lunchAllowanceDays} ngày)
                         </span>
                       </div>
                       <div className="text-sm font-medium text-gray-900">

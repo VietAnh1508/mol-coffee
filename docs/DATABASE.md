@@ -45,6 +45,9 @@ CREATE TYPE time_entry_source AS ENUM ('schedule', 'manual');
 
 -- Payroll period status
 CREATE TYPE payroll_status AS ENUM ('open', 'closed');
+
+-- Allowance types (for per-day allowances like lunch)
+CREATE TYPE allowance_type AS ENUM ('lunch');
 ```
 
 ### Core Tables
@@ -191,6 +194,38 @@ CREATE TABLE public.payroll_periods (
 
 **Related Features:**
 - **[Payroll System](features/payroll.md)** - Period management and salary calculation
+
+#### 7. `allowance_rates` - Effective-Dated Allowances (Per-Day)
+```sql
+CREATE TABLE public.allowance_rates (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    type allowance_type NOT NULL,                   -- e.g., 'lunch'
+    amount_vnd INTEGER NOT NULL,                    -- VND amount per day
+    effective_from DATE NOT NULL,
+    effective_to DATE,                              -- NULL = current amount
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    CONSTRAINT allowance_rates_effective_period_check CHECK (effective_to IS NULL OR effective_to > effective_from)
+);
+```
+
+**Features:**
+- Effective-dated per-day allowances (initially lunch allowance)
+- Used in payroll to add bonus on qualifying days (2 shifts/day)
+
+**Access & RLS:**
+- RLS enabled
+- Everyone authenticated can `SELECT` for calculation and history
+- Admins can `INSERT/UPDATE/DELETE` via Settings
+
+**Example: Get applicable allowance for a date**
+```sql
+SELECT amount_vnd FROM allowance_rates
+WHERE type = 'lunch' AND effective_from <= $1::date
+  AND (effective_to IS NULL OR effective_to > $1::date)
+ORDER BY effective_from DESC
+LIMIT 1;
+```
 
 ---
 

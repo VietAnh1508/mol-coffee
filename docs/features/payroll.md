@@ -165,11 +165,11 @@ const formatMoney = (amount: number) =>
   - [x] Display lunch allowance as separate line item in payroll breakdown
   - [x] Update PayrollDailyBreakdown to show lunch allowance per qualifying day
   - [x] Vietnamese localization for lunch allowance terminology
-  - [ ] Database schema for lunch allowance rates (configurable amount per day)
+  - [x] Database schema for lunch allowance rates (configurable amount per day)
   - [ ] Admin settings to configure lunch allowance rates
   - [ ] Integration with existing payroll period locking system
   
-Note: Current implementation uses a fixed amount defined in `src/constants/payroll.ts` (`LUNCH_ALLOWANCE = 30,000`).
+Note: Payroll now reads the lunch allowance from the database (`allowance_rates`), effective-dated by day. If no applicable rate exists, a safe fallback is used on the client to avoid disruption.
 
 - [ ] **CSV Export Functionality**
   - [ ] Export monthly payroll data to CSV format

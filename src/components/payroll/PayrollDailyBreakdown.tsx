@@ -1,6 +1,5 @@
-import { LUNCH_ALLOWANCE } from "../../constants/payroll";
 import { usePayrollDailyBreakdown } from "../../hooks";
-import { formatDate, formatHours, formatTime } from "../../utils/dateUtils";
+import { formatDateWeekdayDMY, formatHours, formatTime } from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
 import { Spinner } from "../Spinner";
 
@@ -75,7 +74,7 @@ export function PayrollDailyBreakdown({
                   {/* Day Header with Total */}
                   <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
                     <h5 className="font-medium text-gray-900">
-                      {formatDate(new Date(date))}
+                      {formatDateWeekdayDMY(new Date(date))}
                     </h5>
                     <div className="text-right">
                       <div className="font-medium text-gray-900">
@@ -120,7 +119,7 @@ export function PayrollDailyBreakdown({
                               </span>
                             </div>
                             <div className="font-medium text-gray-900">
-                              {formatCurrency(LUNCH_ALLOWANCE)}
+                              {formatCurrency(entry.subtotal)}
                             </div>
                           </>
                         )}
