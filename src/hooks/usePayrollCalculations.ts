@@ -63,8 +63,7 @@ export function usePayrollCalculations(
     queryFn: async (): Promise<PayrollEmployeeSummary[]> => {
       if (!yearMonth) return [];
 
-      const { startDate: startDateStr, endDate: endDateStr } =
-        createMonthDateRange(yearMonth);
+      const { startDateStr, endDateStr } = createMonthDateRange(yearMonth);
 
       let query = supabase
         .from("schedule_shifts")
@@ -145,7 +144,16 @@ export function usePayrollCalculations(
           : shift.activities;
         const rate = getApplicableRate(activity.id, startTime);
         const subtotal = hours * rate;
-        return { id: shift.id, start_ts: shift.start_ts, end_ts: shift.end_ts, user, activity, hours, rate, subtotal };
+        return {
+          id: shift.id,
+          start_ts: shift.start_ts,
+          end_ts: shift.end_ts,
+          user,
+          activity,
+          hours,
+          rate,
+          subtotal,
+        };
       });
 
       const employeeMap = new Map<string, PayrollEmployeeSummary>();
@@ -220,8 +228,7 @@ export function usePayrollDailyBreakdown(
     queryFn: async (): Promise<PayrollDailyEntry[]> => {
       if (!yearMonth) return [];
 
-      const { startDate: startDateStr, endDate: endDateStr } =
-        createMonthDateRange(yearMonth);
+      const { startDateStr, endDateStr } = createMonthDateRange(yearMonth);
 
       let query = supabase
         .from("schedule_shifts")
