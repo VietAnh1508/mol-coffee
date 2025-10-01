@@ -93,7 +93,7 @@ const formatMoney = (amount: number) =>
 
 ### Data Display Components
 - **PayrollDataDisplay:** Organized presentation of salary information
-- **PayrollDailyBreakdown:** Expandable daily view with date-grouped details
+- **PayrollDailyBreakdown:** Expandable daily view with date-grouped details and quick navigation into the scheduling view for the selected day
 - **Period Status Banners:** Vietnamese localized status indicators
 - **Activity Breakdown:** Hour and rate details per activity type
 
@@ -139,6 +139,7 @@ const formatMoney = (amount: number) =>
   - [x] PayrollDailyBreakdown component with expandable daily views
   - [x] Date-grouped salary details with day totals
   - [x] Activity-specific hour and rate breakdowns per day
+  - [x] Tap-through navigation from each day into the schedule page pre-filtered to that date ✅ **NEW**
   - [x] Vietnamese date formatting and currency display
 
 - [x] **Utility Functions and Code Organization**
@@ -310,5 +311,5 @@ const { data: salaryBreakdown } = useSalaryBreakdown(yearMonth, userId);
 
 ---
 
-**Last Updated:** September 19, 2025
+**Last Updated:** October 1, 2025
 **Status:** Production Ready ✅ with Enhancement Opportunities

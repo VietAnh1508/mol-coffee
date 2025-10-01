@@ -1,18 +1,29 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { DateNavigation } from "../components/DateNavigation";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftCard } from "../components/shift/ShiftCard";
 import { ShiftEditModal } from "../components/shift/ShiftEditModal";
+import { normalizeDate, parseDateFromParam, isSameDay } from "../constants/schedule";
 import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth, useScheduleShifts } from "../hooks";
 import type { ScheduleShift } from "../types";
 
-export function SchedulePage() {
+interface SchedulePageProps {
+  readonly initialDate?: string;
+  readonly onDateChange?: (date: Date) => void;
+}
+
+export function SchedulePage({
+  initialDate,
+  onDateChange,
+}: SchedulePageProps = {}) {
   const { user } = useAuth();
-  const [selectedDate, setSelectedDate] = useState(new Date());
+  const [selectedDate, setSelectedDate] = useState(() =>
+    parseDateFromParam(initialDate)
+  );
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShiftTemplate, setSelectedShiftTemplate] = useState<
     "morning" | "afternoon"
@@ -25,6 +36,16 @@ export function SchedulePage() {
   const isAdmin = user?.role === USER_ROLES.ADMIN;
 
   const { data: shifts = [], isLoading } = useScheduleShifts(selectedDate);
+
+  useEffect(() => {
+    if (!initialDate) {
+      return;
+    }
+
+    const nextDate = parseDateFromParam(initialDate);
+
+    setSelectedDate((prev) => (isSameDay(prev, nextDate) ? prev : nextDate));
+  }, [initialDate]);
 
   // Group shifts by template (morning/afternoon)
   const groupedShifts = useMemo(() => {
@@ -46,6 +67,12 @@ export function SchedulePage() {
   }, [shifts]);
 
   if (!user) return null;
+
+  const updateSelectedDate = (date: Date) => {
+    const normalized = normalizeDate(date);
+    setSelectedDate(normalized);
+    onDateChange?.(normalized);
+  };
 
   const handleOpenModal = (shiftTemplate: "morning" | "afternoon") => {
     setSelectedShiftTemplate(shiftTemplate);
@@ -74,7 +101,7 @@ export function SchedulePage() {
 
       <DateNavigation
         selectedDate={selectedDate}
-        onDateChange={setSelectedDate}
+        onDateChange={updateSelectedDate}
       />
 
       {/* Schedule Grid */}

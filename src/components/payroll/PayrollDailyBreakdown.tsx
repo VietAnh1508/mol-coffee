@@ -1,3 +1,4 @@
+import { Link } from "@tanstack/react-router";
 import { usePayrollDailyBreakdown } from "../../hooks";
 import { formatDateWeekdayDMY, formatHours, formatTime } from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
@@ -70,7 +71,12 @@ export function PayrollDailyBreakdown({
               );
 
               return (
-                <div key={date} className="bg-gray-50 rounded-lg p-3">
+                <Link
+                  key={date}
+                  to="/schedule"
+                  search={{ date }}
+                  className="block bg-gray-50 rounded-lg p-3 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                >
                   {/* Day Header with Total */}
                   <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
                     <h5 className="font-medium text-gray-900">
@@ -88,13 +94,13 @@ export function PayrollDailyBreakdown({
 
                   {/* Shift Details */}
                   <div className="space-y-2">
-                    {dayEntries.map((entry) => (
-                      <div
-                        key={entry.shiftId}
-                        className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
-                      >
-                        {entry.type === "shift" ? (
-                          <>
+                    {dayEntries.map((entry) => {
+                      if (entry.type === "shift") {
+                        return (
+                          <div
+                            key={entry.shiftId}
+                            className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
+                          >
                             <div className="flex items-center space-x-2">
                               {!userId && (
                                 <span className="font-medium text-gray-600">
@@ -110,23 +116,28 @@ export function PayrollDailyBreakdown({
                             <div className="font-medium text-gray-900">
                               {formatCurrency(entry.subtotal)}
                             </div>
-                          </>
-                        ) : (
-                          <>
-                            <div className="flex items-center space-x-2">
-                              <span className="text-gray-700 font-medium">
-                                Phụ cấp ăn trưa
-                              </span>
-                            </div>
-                            <div className="font-medium text-gray-900">
-                              {formatCurrency(entry.subtotal)}
-                            </div>
-                          </>
-                        )}
-                      </div>
-                    ))}
+                          </div>
+                        );
+                      }
+
+                      return (
+                        <div
+                          key={entry.shiftId}
+                          className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
+                        >
+                          <div className="flex items-center space-x-2">
+                            <span className="text-gray-700 font-medium">
+                              Phụ cấp ăn trưa
+                            </span>
+                          </div>
+                          <div className="font-medium text-gray-900">
+                            {formatCurrency(entry.subtotal)}
+                          </div>
+                        </div>
+                      );
+                    })}
                   </div>
-                </div>
+                </Link>
               );
             })}
           </div>
