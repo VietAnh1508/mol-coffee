@@ -38,6 +38,44 @@ export function useScheduleShifts(date?: Date) {
   });
 }
 
+export function useNextScheduleShift(userId?: string) {
+  return useQuery({
+    queryKey: ["next-schedule-shift", userId],
+    enabled: Boolean(userId),
+    queryFn: async (): Promise<ScheduleShift | null> => {
+      if (!userId) {
+        return null;
+      }
+
+      const today = new Date().toISOString();
+
+      const { data, error } = await supabase
+        .from("schedule_shifts")
+        .select(
+          `
+          *,
+          user:users(id, name, email),
+          activity:activities(id, name)
+        `
+        )
+        .eq("user_id", userId)
+        .gte("start_ts", today)
+        .order("start_ts", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+
+      if (error) {
+        throw new Error(
+          `Failed to fetch next schedule shift: ${error.message}`
+        );
+      }
+
+      return data ?? null;
+    },
+    gcTime: 1000 * 60 * 30,
+  });
+}
+
 export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date) {
   return useQuery({
     queryKey: [

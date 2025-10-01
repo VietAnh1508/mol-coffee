@@ -11,7 +11,7 @@ The scheduling system provides comprehensive shift management for coffee shop em
 ## Key Features
 
 ### Schedule Visibility & Access Control
-- **Employee Access:** Can view all employees' schedules (read-only) for coordination
+- **Employee Access:** Can view all employees' schedules (read-only) for coordination and receive their next scheduled shift on the dashboard ✅ **NEW**
 - **Admin Access:** Full CRUD operations on all shifts
 - **Role-based UI:** Different interfaces based on user permissions
 - **Real-time Updates:** Live data synchronization with TanStack Query
@@ -77,6 +77,9 @@ RETURNS TRIGGER AS $$
 - **White Cards:** Clean shift cards with colored activity indicators
 - **Employee Names:** Clear identification of assigned employees
 
+### Employee Experience Enhancements ✅ **NEW**
+- **Dashboard Reminder:** Employees see "Ca làm tiếp theo" on the dashboard, showing morning/afternoon label and localized date for their upcoming shift (hidden when no future shift exists)
+
 ### Admin Features
 - **Shift Assignment Modal:** Employee and activity selection
 - **Shift Editing:** Time and activity adjustments with notes
@@ -130,9 +133,9 @@ RETURNS TRIGGER AS $$
   - [x] Activity assignment per shift
   - [x] Auto-selection when only one employee available
   - [x] Form validation and error handling
-  - [x] Smart employee filtering - excludes already assigned employees ✅ **NEW**
+  - [x] Smart employee filtering - excludes already assigned employees
 
-- [x] **Shift Editing** ✅ **NEW**
+- [x] **Shift Editing**
   - [x] ShiftEditModal for time and activity adjustments
   - [x] Handle real-world scenarios (late arrival, early departure)
   - [x] Activity switching within shifts
@@ -173,9 +176,9 @@ RETURNS TRIGGER AS $$
 - [x] Activity assignment per shift
 - [x] Auto-selection when only one employee available
 - [x] Form validation and error handling
-- [x] Smart employee filtering - excludes already assigned employees ✅ **NEW**
+- [x] Smart employee filtering - excludes already assigned employees
 
-#### **Shift Editing Capabilities** ✅ **NEW**
+#### **Shift Editing Capabilities**
 - [x] ShiftEditModal for time and activity adjustments
 - [x] Handle real-world scenarios (late arrival, early departure)
 - [x] Activity switching within shifts
@@ -278,5 +281,5 @@ const { data: activities } = useActivities();
 
 ---
 
-**Last Updated:** October 1, 2025
+**Last Updated:** October 2, 2025
 **Status:** Production Ready ✅

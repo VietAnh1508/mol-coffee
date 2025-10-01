@@ -9,6 +9,7 @@ export { useCreateRate, useUpdateRate } from "./useRateMutations";
 export { useRates } from "./useRates";
 export { useScheduleMutations } from "./useScheduleMutations";
 export {
+  useNextScheduleShift,
   useScheduleShifts,
   useScheduleShiftsByDateRange,
 } from "./useScheduleShifts";

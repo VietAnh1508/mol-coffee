@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
 import { FaCalendarAlt, FaCog, FaDollarSign, FaUsers } from "react-icons/fa";
+import { NextShiftNotice } from "../components/NextShiftNotice";
 import { USER_ROLES } from "../constants/userRoles";
 import { useAuth } from "../hooks";
 
@@ -14,6 +15,8 @@ export function DashboardPage() {
         <h1 className="text-2xl font-bold text-gray-900 mb-4">
           Xin chào, {user.name}!
         </h1>
+
+        <NextShiftNotice user={user} />
 
         <div className="grid grid-cols-2 gap-4 mt-8 max-w-sm mx-auto">
           {user.role === USER_ROLES.ADMIN && (
