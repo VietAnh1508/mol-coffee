@@ -105,6 +105,7 @@ pnpm dev                     # Start dev server
 pnpm build                   # Build for production
 pnpm preview                 # Preview production build
 pnpm lint                    # Run ESLint
+pnpm test                    # Run Vitest suite
 
 # Database Operations
 pnpm run db:push             # Apply migrations to remote

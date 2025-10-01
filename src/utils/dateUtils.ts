@@ -1,3 +1,5 @@
+import { VN_TIMEZONE_OFFSET_MINUTES } from "../constants/payroll";
+
 export const formatDate = (date: Date) => {
   return date.toLocaleDateString("vi-VN", {
     weekday: "long",
@@ -32,9 +34,25 @@ export const formatHours = (hours: number): string => {
 };
 
 export const createMonthDateRange = (yearMonth: string) => {
-  const [year, month] = yearMonth.split("-");
-  const startDate = new Date(parseInt(year), parseInt(month) - 1, 1);
-  const endDate = new Date(parseInt(year), parseInt(month), 0, 23, 59, 59);
+  const parts = yearMonth.split("-").map((part) => part.trim());
+  if (parts.length !== 2) {
+    throw new Error(`Invalid yearMonth value: ${yearMonth}`);
+  }
+
+  const [first, second] = parts;
+  const yearPart = first.length === 4 ? first : second;
+  const monthPart = first.length === 4 ? second : first;
+
+  const year = Number.parseInt(yearPart, 10);
+  const month = Number.parseInt(monthPart, 10);
+
+  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) {
+    throw new Error(`Invalid yearMonth value: ${yearMonth}`);
+  }
+
+  const offsetMs = VN_TIMEZONE_OFFSET_MINUTES * 60 * 1000;
+  const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0) - offsetMs);
+  const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999) - offsetMs);
 
   return {
     startDateStr: startDate.toISOString(),

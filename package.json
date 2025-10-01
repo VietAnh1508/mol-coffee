@@ -12,7 +12,8 @@
     "db:push": "supabase db push",
     "db:pull": "supabase db pull",
     "db:diff": "supabase db diff",
-    "db:migration": "supabase migration new"
+    "db:migration": "supabase migration new",
+    "test": "vitest"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.56.1",
@@ -40,6 +41,7 @@
     "typescript-eslint": "^8.39.1",
     "vite": "^7.1.2",
     "vite-plugin-pwa": "^1.0.3",
+    "vitest": "^3.2.4",
     "workbox-window": "^7.3.0"
   }
 }

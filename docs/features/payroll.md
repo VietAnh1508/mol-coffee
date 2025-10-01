@@ -63,6 +63,10 @@ WHERE u.id = ? AND DATE_TRUNC('month', ss.start_ts) = '2025-09-01'
   AND (r.effective_to IS NULL OR ss.start_ts <= r.effective_to);
 ```
 
+#### Month Boundary Handling
+- PostgreSQL stores `schedule_shifts.start_ts`/`end_ts` as `timestamptz`. To keep payroll periods aligned with Vietnam's local month we apply the `VN_TIMEZONE_OFFSET_MINUTES` (UTC+7) constant when building the ISO date range in `createMonthDateRange`.
+- The range is shifted by the offset before converting to ISO, so filtering on `start_ts` with `.gte(start)`/`.lte(end)` returns exactly the local month's shifts while still catching overnight jobs that finish after midnight.
+
 ### Vietnamese Currency Formatting
 ```typescript
 // Format: 25.000 ₫ (Vietnamese Dong formatting)
