@@ -27,6 +27,17 @@ The scheduling system provides comprehensive shift management for coffee shop em
 3. **Activities cannot change mid-shift**
 4. **Smart assignment:** Prevents double-booking employees to same shift template on same date
 
+### Pending: Payroll Period Lock Integration
+- [ ] Fetch the payroll period for the `selectedDate` in `SchedulePage` using the shared payroll utilities/hooks (mirror the month-derivation used in payroll pages).
+  - Treat "no matching payroll period" as **editable** to keep day-to-day scheduling unblocked.
+  - Guard against timezone drift; use the Vietnam-local helpers already defined in payroll utilities.
+- [ ] When the resolved period has `status = 'closed'`, make the scheduling UI read-only for admins:
+  - Disable/hide “+ Thêm người”, edit, and delete controls; prevent modals from opening if a lock is detected mid-flight.
+  - Surface a Vietnamese warning banner/toast (e.g., “Bảng lương tháng YYYY-MM đã khóa, vui lòng mở lại trước khi chỉnh sửa ca”).
+- [ ] Keep mutation-level safeguards: short-circuit the create/update/delete mutations when a lock is active so stale modals cannot push writes.
+- [ ] Coordinate with Supabase policies or triggers to reject schedule writes that fall inside a closed payroll period for defense in depth.
+- [ ] Update this document and `docs/features/payroll.md` once UI + policy enforcement land, flipping the pending checklist items back to completed.
+
 ## Technical Implementation
 
 ### Database Schema

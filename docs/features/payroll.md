@@ -23,7 +23,7 @@ The payroll system provides comprehensive salary calculation and management base
 
 ### Period Management
 - **Monthly Periods:** Organize payroll by month (YYYY-MM format)
-- **Period Locking:** Prevent schedule changes after payroll finalization
+- **Period Locking:** ⚠️ Pending — closed periods remain editable in the scheduling workflow
 - **Admin Audit Trail:** Track who closed/opened periods and when
 - **Status Tracking:** Open/closed period management
 
@@ -102,7 +102,7 @@ const formatMoney = (amount: number) =>
 ### Period Management
 - **PayrollPeriodManager:** Full CRUD operations for payroll periods
 - **PayrollPeriodForm:** Period creation with validation
-- **Period Locking System:** Prevents schedule modifications when closed
+- **Period Locking System:** ⚠️ To be enforced — scheduling/UI changes still allow edits
 - **Admin Controls:** Lock/unlock periods with audit trail
 
 ### Salary Calculation
@@ -123,7 +123,7 @@ const formatMoney = (amount: number) =>
 
 - [x] **Payroll Period Management (Admin only)**
   - [x] Create monthly payroll periods (YYYY-MM format)
-  - [x] Period locking/unlocking mechanism to prevent schedule changes
+  - [ ] Period locking/unlocking mechanism to prevent schedule changes *(pending UI + policy enforcement; see docs/features/scheduling.md ➜ “Pending: Payroll Period Lock Integration”)*
   - [x] Period status tracking with admin audit trail
   - [x] PayrollPeriodManager component with full CRUD operations
   - [x] PayrollPeriodForm component for period creation
@@ -152,7 +152,7 @@ const formatMoney = (amount: number) =>
   - [x] Leverages existing RLS policies for data access control
   - [x] Real-time payroll calculations with TanStack Query caching
   - [x] Optimized queries with proper indexing and joins
-  - [x] Business rule enforcement (period locking prevents schedule modifications)
+  - [ ] Business rule enforcement (period locking prevents schedule modifications — coordinate with scheduling plan noted above)
 
 - [x] **UI/UX Improvements** ✅ **COMPLETED**
   - [x] Employee list view for admins (replace long scrolling page)
@@ -196,7 +196,7 @@ Note: Payroll now reads the lunch allowance from the database (`allowance_rates`
 
 #### **Payroll Period Management (Admin only)**
 - [x] Create monthly payroll periods (YYYY-MM format)
-- [x] Period locking/unlocking mechanism to prevent schedule changes
+- [ ] Period locking/unlocking mechanism to prevent schedule changes *(implementation outstanding)*
 - [x] Period status tracking with admin audit trail
 - [x] PayrollPeriodManager component with full CRUD operations
 - [x] PayrollPeriodForm component for period creation
