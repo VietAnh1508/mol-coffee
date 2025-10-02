@@ -14,6 +14,7 @@ interface ShiftAssignmentModalProps {
   onClose: () => void;
   shiftTemplate: "morning" | "afternoon";
   selectedDate: Date;
+  isLocked?: boolean;
 }
 
 export function ShiftAssignmentModal({
@@ -21,6 +22,7 @@ export function ShiftAssignmentModal({
   onClose,
   shiftTemplate,
   selectedDate,
+  isLocked = false,
 }: ShiftAssignmentModalProps) {
   const [selectedUserId, setSelectedUserId] = useState<string>("");
   const [selectedActivityId, setSelectedActivityId] = useState<string>("");
@@ -58,6 +60,11 @@ export function ShiftAssignmentModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent submission if period is locked
+    if (isLocked) {
+      return;
+    }
 
     if (!selectedUserId || !selectedActivityId) {
       return;
@@ -106,6 +113,15 @@ export function ShiftAssignmentModal({
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-4 space-y-6">
+          {/* Lock Warning */}
+          {isLocked && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                ⚠️ Không thể thêm ca làm việc trong kỳ lương đã khóa
+              </p>
+            </div>
+          )}
+
           {/* Shift Info */}
           <div className="bg-gray-50 rounded-lg p-3">
             <h4 className="font-medium text-gray-900 mb-1">
@@ -199,7 +215,7 @@ export function ShiftAssignmentModal({
             <button
               type="submit"
               disabled={
-                !selectedUserId || !selectedActivityId || createShift.isPending
+                !selectedUserId || !selectedActivityId || createShift.isPending || isLocked
               }
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

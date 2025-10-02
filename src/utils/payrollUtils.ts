@@ -1,10 +1,27 @@
+import { VN_TIMEZONE_OFFSET_MINUTES } from "../constants/payroll";
+
 export interface MonthOption {
   value: string; // YYYY-MM format
   label: string; // Vietnamese month name
 }
 
+/**
+ * Derives the YYYY-MM format from a date using Vietnam timezone (UTC+7)
+ * Can accept either a Date object or an ISO date string
+ */
+export function deriveYearMonthVN(date: Date | string): string {
+  const dateObj = typeof date === "string" ? new Date(date) : date;
+  const offsetMs = VN_TIMEZONE_OFFSET_MINUTES * 60 * 1000;
+  const vnDate = new Date(dateObj.getTime() + offsetMs);
+
+  const year = vnDate.getUTCFullYear();
+  const month = String(vnDate.getUTCMonth() + 1).padStart(2, "0");
+
+  return `${year}-${month}`;
+}
+
 export function generateMonthOptions(
-  startYear = 2024,
+  startYear = 2025,
   monthsAhead = 12
 ): MonthOption[] {
   const options: MonthOption[] = [];

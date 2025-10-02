@@ -32,6 +32,7 @@ export {
   usePayrollPeriods,
   usePayrollPeriod,
 } from "./usePayrollPeriods";
+export { usePayrollPeriodForDate } from "./usePayrollPeriodForDate";
 export {
   useCreatePayrollPeriod,
   useClosePayrollPeriod,
