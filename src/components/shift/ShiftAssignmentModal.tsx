@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes, FaUser } from "react-icons/fa";
-import { SHIFT_TEMPLATES } from "../../constants/shifts";
+import { SHIFT_TEMPLATES, type ShiftTemplate } from "../../constants/shifts";
 import { USER_ROLES } from "../../constants/userRoles";
 import {
   useActiveUsers,
@@ -12,7 +12,7 @@ import {
 interface ShiftAssignmentModalProps {
   isOpen: boolean;
   onClose: () => void;
-  shiftTemplate: "morning" | "afternoon";
+  shiftTemplate: ShiftTemplate;
   selectedDate: Date;
   isLocked?: boolean;
 }

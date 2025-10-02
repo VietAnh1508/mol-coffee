@@ -1,3 +1,4 @@
+import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
 import { useNextScheduleShift } from "../hooks";
 import type { User } from "../types";
@@ -34,8 +35,7 @@ export function NextShiftNotice({ user }: NextShiftNoticeProps) {
     return null;
   }
 
-  const templateLabel =
-    nextShift.template_name === "morning" ? "ca sáng" : "ca chiều";
+  const templateLabel = SHIFT_TEMPLATES[nextShift.template_name].label;
   const shiftDateStr = formatDateDMY(new Date(nextShift.start_ts));
 
   return (

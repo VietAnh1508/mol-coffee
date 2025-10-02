@@ -3,13 +3,14 @@ import { supabase } from "../lib/supabase";
 import type { ScheduleShift } from "../types";
 import { deriveYearMonthVN } from "../utils/payrollUtils";
 import { SUPABASE_ERROR_CODE_NO_ROWS } from "../constants/supabase";
+import type { ShiftTemplate } from "../constants/shifts";
 
 interface CreateScheduleShiftData {
   user_id: string;
   activity_id: string;
   start_ts: string;
   end_ts: string;
-  template_name: "morning" | "afternoon" | "custom";
+  template_name: ShiftTemplate;
   note?: string;
 }
 
@@ -59,10 +60,7 @@ export function useScheduleMutations() {
 
       const { data: result, error } = await supabase
         .from("schedule_shifts")
-        .insert({
-          ...data,
-          is_manual: data.template_name === "custom",
-        })
+        .insert(data)
         .select(
           `
           *,
@@ -132,7 +130,6 @@ export function useScheduleMutations() {
         .from("schedule_shifts")
         .update({
           ...updateData,
-          is_manual: updateData.template_name === "custom",
           updated_at: new Date().toISOString(),
         })
         .eq("id", id)

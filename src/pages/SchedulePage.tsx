@@ -170,7 +170,9 @@ export function SchedulePage({
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
-                  <h4 className="font-medium text-gray-900">Ca sáng</h4>
+                  <h4 className="font-medium text-gray-900">
+                    {SHIFT_TEMPLATES.morning.label}
+                  </h4>
                   <span className="text-sm text-gray-500 ml-2">
                     {SHIFT_TEMPLATES.morning.start} -{" "}
                     {SHIFT_TEMPLATES.morning.end}
@@ -215,7 +217,9 @@ export function SchedulePage({
               <div className="flex justify-between items-center mb-3">
                 <div className="flex items-center">
                   <div className="w-4 h-4 bg-blue-400 rounded-full mr-3"></div>
-                  <h4 className="font-medium text-gray-900">Ca chiều</h4>
+                  <h4 className="font-medium text-gray-900">
+                    {SHIFT_TEMPLATES.afternoon.label}
+                  </h4>
                   <span className="text-sm text-gray-500 ml-2">
                     {SHIFT_TEMPLATES.afternoon.start} -{" "}
                     {SHIFT_TEMPLATES.afternoon.end}

@@ -1,4 +1,5 @@
 import type { UserRole } from '../constants/userRoles'
+import type { ShiftTemplate } from '../constants/shifts'
 
 export interface User {
   id: string
@@ -37,7 +38,7 @@ export interface ScheduleShift {
   activity_id: string
   start_ts: string
   end_ts: string
-  template_name: 'morning' | 'afternoon'
+  template_name: ShiftTemplate
   is_manual: boolean
   note?: string
   created_at: string
