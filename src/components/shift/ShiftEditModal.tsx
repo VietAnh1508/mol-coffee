@@ -8,12 +8,14 @@ interface ShiftEditModalProps {
   isOpen: boolean;
   onClose: () => void;
   shift: ScheduleShift | null;
+  isLocked?: boolean;
 }
 
 export function ShiftEditModal({
   isOpen,
   onClose,
   shift,
+  isLocked = false,
 }: ShiftEditModalProps) {
   const [startTime, setStartTime] = useState("");
   const [endTime, setEndTime] = useState("");
@@ -38,6 +40,11 @@ export function ShiftEditModal({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+
+    // Prevent submission if period is locked
+    if (isLocked) {
+      return;
+    }
 
     if (!shift || !startTime || !endTime || !selectedActivityId) return;
 
@@ -109,6 +116,15 @@ export function ShiftEditModal({
 
         {/* Content */}
         <form onSubmit={handleSubmit} className="p-4 space-y-6">
+          {/* Lock Warning */}
+          {isLocked && (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
+              <p className="text-sm text-yellow-800">
+                ⚠️ Không thể chỉnh sửa ca làm việc trong kỳ lương đã khóa
+              </p>
+            </div>
+          )}
+
           {/* Shift Info */}
           <div className="bg-gray-50 rounded-lg p-3">
             <h4 className="font-medium text-gray-900 mb-1">
@@ -206,7 +222,8 @@ export function ShiftEditModal({
                 !endTime ||
                 !selectedActivityId ||
                 hasTimeError ||
-                updateShift.isPending
+                updateShift.isPending ||
+                isLocked
               }
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
             >

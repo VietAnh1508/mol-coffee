@@ -10,15 +10,18 @@ import { CurrentUserBadge } from "../CurrentUserBadge";
 interface ShiftCardProps {
   shift: ScheduleShift;
   isAdmin: boolean;
+  isLocked?: boolean;
   onEdit?: (shift: ScheduleShift) => void;
 }
 
-export function ShiftCard({ shift, isAdmin, onEdit }: ShiftCardProps) {
+export function ShiftCard({ shift, isAdmin, isLocked = false, onEdit }: ShiftCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { deleteShift } = useScheduleMutations();
   const { showToast } = useToast();
 
   const handleDeleteClick = () => {
+    // Prevent deletion if period is locked
+    if (isLocked) return;
     setShowDeleteConfirm(true);
   };
 
@@ -55,7 +58,7 @@ export function ShiftCard({ shift, isAdmin, onEdit }: ShiftCardProps) {
             </span>
           )}
         </div>
-        {isAdmin && (
+        {isAdmin && !isLocked && (
           <div className="flex space-x-1">
             <button
               onClick={() => onEdit?.(shift)}

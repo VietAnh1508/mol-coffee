@@ -8,7 +8,8 @@ import { ShiftEditModal } from "../components/shift/ShiftEditModal";
 import { normalizeDate, parseDateFromParam, isSameDay } from "../constants/schedule";
 import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
-import { useAuth, useScheduleShifts } from "../hooks";
+import { useAuth, useScheduleShifts, usePayrollPeriodForDate } from "../hooks";
+import { formatMonthName } from "../utils/payrollUtils";
 import type { ScheduleShift } from "../types";
 
 interface SchedulePageProps {
@@ -36,6 +37,7 @@ export function SchedulePage({
   const isAdmin = user?.role === USER_ROLES.ADMIN;
 
   const { data: shifts = [], isLoading } = useScheduleShifts(selectedDate);
+  const { period, isLocked, yearMonth } = usePayrollPeriodForDate(selectedDate);
 
   useEffect(() => {
     if (!initialDate) {
@@ -75,6 +77,9 @@ export function SchedulePage({
   };
 
   const handleOpenModal = (shiftTemplate: "morning" | "afternoon") => {
+    // Prevent opening modal if period is locked
+    if (isLocked) return;
+
     setSelectedShiftTemplate(shiftTemplate);
     setIsModalOpen(true);
   };
@@ -84,6 +89,9 @@ export function SchedulePage({
   };
 
   const handleEditShift = (shift: ScheduleShift) => {
+    // Prevent editing if period is locked
+    if (isLocked) return;
+
     setSelectedShift(shift);
     setIsEditModalOpen(true);
   };
@@ -103,6 +111,27 @@ export function SchedulePage({
         selectedDate={selectedDate}
         onDateChange={updateSelectedDate}
       />
+
+      {/* Payroll Period Lock Warning */}
+      {isLocked && (
+        <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <div className="flex items-start">
+            <div className="flex-shrink-0">
+              <svg className="h-5 w-5 text-yellow-400" viewBox="0 0 20 20" fill="currentColor">
+                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
+              </svg>
+            </div>
+            <div className="ml-3">
+              <h3 className="text-sm font-medium text-yellow-800">
+                Bảng lương đã khóa
+              </h3>
+              <div className="mt-1 text-sm text-yellow-700">
+                Bảng lương tháng {formatMonthName(yearMonth)} đã khóa, vui lòng mở lại trước khi chỉnh sửa ca.
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Schedule Grid */}
       <div className="bg-white rounded-lg shadow">
@@ -137,7 +166,12 @@ export function SchedulePage({
                 {isAdmin && (
                   <button
                     onClick={() => handleOpenModal("morning")}
-                    className="text-blue-500 hover:text-blue-600 text-sm"
+                    disabled={isLocked}
+                    className={`text-sm ${
+                      isLocked
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-blue-500 hover:text-blue-600"
+                    }`}
                   >
                     + Thêm người
                   </button>
@@ -151,6 +185,7 @@ export function SchedulePage({
                       key={shift.id}
                       shift={shift}
                       isAdmin={isAdmin}
+                      isLocked={isLocked}
                       onEdit={handleEditShift}
                     />
                   ))
@@ -176,7 +211,12 @@ export function SchedulePage({
                 {isAdmin && (
                   <button
                     onClick={() => handleOpenModal("afternoon")}
-                    className="text-blue-500 hover:text-blue-600 text-sm"
+                    disabled={isLocked}
+                    className={`text-sm ${
+                      isLocked
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-blue-500 hover:text-blue-600"
+                    }`}
                   >
                     + Thêm người
                   </button>
@@ -190,6 +230,7 @@ export function SchedulePage({
                       key={shift.id}
                       shift={shift}
                       isAdmin={isAdmin}
+                      isLocked={isLocked}
                       onEdit={handleEditShift}
                     />
                   ))
@@ -209,12 +250,14 @@ export function SchedulePage({
         onClose={handleCloseModal}
         shiftTemplate={selectedShiftTemplate}
         selectedDate={selectedDate}
+        isLocked={isLocked}
       />
 
       <ShiftEditModal
         isOpen={isEditModalOpen}
         onClose={handleEditModalClose}
         shift={selectedShift}
+        isLocked={isLocked}
       />
     </div>
   );

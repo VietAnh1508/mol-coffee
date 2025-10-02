@@ -27,16 +27,16 @@ The scheduling system provides comprehensive shift management for coffee shop em
 3. **Activities cannot change mid-shift**
 4. **Smart assignment:** Prevents double-booking employees to same shift template on same date
 
-### Pending: Payroll Period Lock Integration
-- [ ] Fetch the payroll period for the `selectedDate` in `SchedulePage` using the shared payroll utilities/hooks (mirror the month-derivation used in payroll pages).
-  - Treat "no matching payroll period" as **editable** to keep day-to-day scheduling unblocked.
-  - Guard against timezone drift; use the Vietnam-local helpers already defined in payroll utilities.
-- [ ] When the resolved period has `status = 'closed'`, make the scheduling UI read-only for admins:
-  - Disable/hide “+ Thêm người”, edit, and delete controls; prevent modals from opening if a lock is detected mid-flight.
-  - Surface a Vietnamese warning banner/toast (e.g., “Bảng lương tháng YYYY-MM đã khóa, vui lòng mở lại trước khi chỉnh sửa ca”).
-- [ ] Keep mutation-level safeguards: short-circuit the create/update/delete mutations when a lock is active so stale modals cannot push writes.
-- [ ] Coordinate with Supabase policies or triggers to reject schedule writes that fall inside a closed payroll period for defense in depth.
-- [ ] Update this document and `docs/features/payroll.md` once UI + policy enforcement land, flipping the pending checklist items back to completed.
+### ✅ Payroll Period Lock Integration - COMPLETED
+- [x] Fetch the payroll period for the `selectedDate` in `SchedulePage` using the shared payroll utilities/hooks (mirror the month-derivation used in payroll pages).
+  - Treats "no matching payroll period" as **editable** to keep day-to-day scheduling unblocked.
+  - Guards against timezone drift using Vietnam-local helpers (`deriveYearMonthVN` with UTC+7 offset).
+- [x] When the resolved period has `status = 'closed'`, make the scheduling UI read-only for admins:
+  - Disables "+ Thêm người", edit, and delete controls; prevents modals from opening when lock is detected.
+  - Displays Vietnamese warning banner: "Bảng lương tháng {month}/{year} đã khóa, vui lòng mở lại trước khi chỉnh sửa ca".
+- [x] Mutation-level safeguards: short-circuits create/update/delete mutations when a lock is active to prevent stale modal writes.
+- [x] Database trigger enforcement: Supabase triggers reject schedule writes that fall inside a closed payroll period (migration `20251002140953_payroll_period_lock_enforcement.sql`).
+- [x] Documentation updated to reflect completed implementation.
 
 ## Technical Implementation
 
@@ -293,4 +293,4 @@ const { data: activities } = useActivities();
 ---
 
 **Last Updated:** October 2, 2025
-**Status:** Production Ready ✅
+**Status:** Production Ready ✅ with Payroll Period Lock Integration

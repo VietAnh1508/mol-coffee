@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { deriveYearMonthVN } from '../utils/payrollUtils'
 import type { ScheduleShift } from '../types'
 
 interface CreateScheduleShiftData {
@@ -15,11 +16,40 @@ interface UpdateScheduleShiftData extends Partial<CreateScheduleShiftData> {
   id: string
 }
 
+/**
+ * Checks if a payroll period is locked for a given date
+ */
+async function checkPeriodLock(dateString: string): Promise<{ isLocked: boolean; yearMonth: string }> {
+  const yearMonth = deriveYearMonthVN(dateString);
+
+  const { data, error } = await supabase
+    .from('payroll_periods')
+    .select('status')
+    .eq('year_month', yearMonth)
+    .maybeSingle();
+
+  if (error && error.code !== 'PGRST116') {
+    throw error;
+  }
+
+  return {
+    isLocked: data?.status === 'closed',
+    yearMonth
+  };
+}
+
 export function useScheduleMutations() {
   const queryClient = useQueryClient()
 
   const createShift = useMutation({
     mutationFn: async (data: CreateScheduleShiftData): Promise<ScheduleShift> => {
+      // Check if the period is locked before creating
+      const { isLocked, yearMonth } = await checkPeriodLock(data.start_ts);
+
+      if (isLocked) {
+        throw new Error(`Không thể thêm ca làm việc trong kỳ lương đã khóa (${yearMonth})`);
+      }
+
       const { data: result, error } = await supabase
         .from('schedule_shifts')
         .insert({
@@ -47,6 +77,29 @@ export function useScheduleMutations() {
   const updateShift = useMutation({
     mutationFn: async (data: UpdateScheduleShiftData): Promise<ScheduleShift> => {
       const { id, ...updateData } = data
+
+      // Check if the period is locked before updating
+      // Use the new start_ts if provided, otherwise fetch the existing shift's date
+      let dateToCheck = updateData.start_ts;
+
+      if (!dateToCheck) {
+        const { data: existingShift } = await supabase
+          .from('schedule_shifts')
+          .select('start_ts')
+          .eq('id', id)
+          .single();
+
+        dateToCheck = existingShift?.start_ts;
+      }
+
+      if (dateToCheck) {
+        const { isLocked, yearMonth } = await checkPeriodLock(dateToCheck);
+
+        if (isLocked) {
+          throw new Error(`Không thể chỉnh sửa ca làm việc trong kỳ lương đã khóa (${yearMonth})`);
+        }
+      }
+
       const { data: result, error } = await supabase
         .from('schedule_shifts')
         .update({
@@ -75,6 +128,24 @@ export function useScheduleMutations() {
 
   const deleteShift = useMutation({
     mutationFn: async (id: string): Promise<void> => {
+      // First, fetch the shift to check its date
+      const { data: shift, error: fetchError } = await supabase
+        .from('schedule_shifts')
+        .select('start_ts')
+        .eq('id', id)
+        .single();
+
+      if (fetchError) {
+        throw new Error(`Failed to fetch shift: ${fetchError.message}`);
+      }
+
+      // Check if the period is locked before deleting
+      const { isLocked, yearMonth } = await checkPeriodLock(shift.start_ts);
+
+      if (isLocked) {
+        throw new Error(`Không thể xóa ca làm việc trong kỳ lương đã khóa (${yearMonth})`);
+      }
+
       const { error } = await supabase
         .from('schedule_shifts')
         .delete()
