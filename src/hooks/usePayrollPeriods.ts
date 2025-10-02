@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
+import { SUPABASE_ERROR_CODE_NO_ROWS } from "../constants/supabase";
 import type { PayrollPeriod } from "../types";
 
 export function usePayrollPeriods() {
@@ -39,8 +40,8 @@ export function usePayrollPeriod(yearMonth: string | null) {
         .single();
 
       if (error) {
-        if (error.code === "PGRST116") {
-          // Period doesn't exist, return null
+        // Period doesn't exist, return null
+        if (error.code === SUPABASE_ERROR_CODE_NO_ROWS) {
           return null;
         }
         throw error;

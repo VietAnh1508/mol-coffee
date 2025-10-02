@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 import { deriveYearMonthVN } from "../utils/payrollUtils";
+import { SUPABASE_ERROR_CODE_NO_ROWS } from "../constants/supabase";
 import type { PayrollPeriod } from "../types";
 
 /**
@@ -23,8 +24,8 @@ export function usePayrollPeriodForDate(date: Date) {
         .maybeSingle();
 
       if (error) {
-        // PGRST116 = no rows returned, which is valid (no period created yet)
-        if (error.code === "PGRST116") {
+        // No rows returned, which is valid (no period created yet)
+        if (error.code === SUPABASE_ERROR_CODE_NO_ROWS) {
           return null;
         }
         throw error;
