@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
 import { USER_ROLES } from "../constants/userRoles";
-import { ToastProvider } from "../context/toastContext";
+import { ToastProvider } from "../context/ToastContext";
 import { useAuth, useToast } from "../hooks";
 import { ProfileCompletionModal } from "./ProfileCompletionModal";
 import { Toast } from "./Toast";
