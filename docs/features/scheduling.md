@@ -92,19 +92,20 @@ RETURNS TRIGGER AS $$
 - **Dashboard Reminder:** Employees see "Ca làm tiếp theo" on the dashboard, showing morning/afternoon label and localized date for their upcoming shift (hidden when no future shift exists)
 
 ### Admin Features
-- **Shift Assignment Modal:** Employee and activity selection
+- **Shift Assignment Modal:** Admin and employee selection with activity assignment
 - **Shift Editing:** Time and activity adjustments with notes
 - **Conflict Prevention:** Real-time validation and user feedback
-- **Smart Filtering:** Excludes already assigned employees from selection
+- **Smart Filtering:** Excludes already assigned users from selection
 
 ## Core Functionality
 
 ### Shift Assignment
-- **Employee Selection:** Dropdown with available employees
+- **Assignable User Selection:** Dropdown includes both admins and employees who are eligible
+- **Admin Self-Assignment:** Admins can take open shifts directly when coverage is needed
 - **Activity Assignment:** Choose work activity per shift
 - **Auto-selection:** When only one employee available
 - **Form Validation:** Comprehensive error handling and feedback
-- **Smart Employee Filtering:** Excludes employees already assigned to same shift template
+- **Smart User Filtering:** Excludes users already assigned to same shift template
 
 ### Shift Editing
 - **Time Adjustments:** Handle late arrivals and early departures
@@ -140,11 +141,11 @@ RETURNS TRIGGER AS $$
   - [x] Loading states and error handling
 
 - [x] **Shift Assignment**
-  - [x] Employee assignment modal with user selection
+  - [x] Admin/employee assignment modal with user selection
   - [x] Activity assignment per shift
   - [x] Auto-selection when only one employee available
   - [x] Form validation and error handling
-  - [x] Smart employee filtering - excludes already assigned employees
+  - [x] Smart user filtering - excludes already assigned users
 
 - [x] **Shift Editing**
   - [x] ShiftEditModal for time and activity adjustments
@@ -183,11 +184,11 @@ RETURNS TRIGGER AS $$
 - [x] Loading states and error handling
 
 #### **Shift Assignment System**
-- [x] Employee assignment modal with user selection
+- [x] Admin/employee assignment modal with user selection
 - [x] Activity assignment per shift
 - [x] Auto-selection when only one employee available
 - [x] Form validation and error handling
-- [x] Smart employee filtering - excludes already assigned employees
+- [x] Smart user filtering - excludes already assigned users
 
 #### **Shift Editing Capabilities**
 - [x] ShiftEditModal for time and activity adjustments

@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes, FaUser } from "react-icons/fa";
 import { SHIFT_TEMPLATES, type ShiftTemplate } from "../../constants/shifts";
-import { USER_ROLES } from "../../constants/userRoles";
 import {
   useActiveUsers,
   useActivities,
@@ -34,20 +33,20 @@ export function ShiftAssignmentModal({
 
   // Get users already assigned to this shift template on the selected date
   const assignedUserIds = existingShifts
-    .filter(shift => shift.template_name === shiftTemplate)
-    .map(shift => shift.user_id);
+    .filter((shift) => shift.template_name === shiftTemplate)
+    .map((shift) => shift.user_id);
 
-  const employeeUsers = activeUsers.filter(
-    (user) => user.role === USER_ROLES.EMPLOYEE && !assignedUserIds.includes(user.id)
+  const assignableUsers = activeUsers.filter(
+    (user) => !assignedUserIds.includes(user.id)
   );
   const activeActivities = activities.filter((activity) => activity.is_active);
 
-  // Auto-select employee if there's only one
+  // Auto-select user if there's only one option remaining
   useEffect(() => {
-    if (employeeUsers.length === 1 && !selectedUserId) {
-      setSelectedUserId(employeeUsers[0].id);
+    if (assignableUsers.length === 1 && !selectedUserId) {
+      setSelectedUserId(assignableUsers[0].id);
     }
-  }, [employeeUsers, selectedUserId]);
+  }, [assignableUsers, selectedUserId]);
 
   const shiftInfo = SHIFT_TEMPLATES[shiftTemplate];
 
@@ -133,13 +132,13 @@ export function ShiftAssignmentModal({
             </p>
           </div>
 
-          {/* Employee Selection */}
+          {/* User Selection */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Chọn nhân viên
+              Chọn người
             </label>
             <div className="space-y-2 max-h-40 overflow-y-auto">
-              {employeeUsers.map((user) => (
+              {assignableUsers.map((user) => (
                 <label
                   key={user.id}
                   className={`flex items-center p-3 border rounded-lg cursor-pointer transition-colors ${
@@ -172,12 +171,11 @@ export function ShiftAssignmentModal({
                   )}
                 </label>
               ))}
-              {employeeUsers.length === 0 && (
+              {assignableUsers.length === 0 && (
                 <div className="text-center py-8 text-gray-500">
                   {assignedUserIds.length > 0
-                    ? "Tất cả nhân viên đã được phân công vào ca này"
-                    : "Không có nhân viên nào khả dụng"
-                  }
+                    ? "Tất cả nhân sự đủ điều kiện đã được phân công vào ca này"
+                    : "Không có nhân sự nào khả dụng"}
                 </div>
               )}
             </div>
@@ -215,7 +213,10 @@ export function ShiftAssignmentModal({
             <button
               type="submit"
               disabled={
-                !selectedUserId || !selectedActivityId || createShift.isPending || isLocked
+                !selectedUserId ||
+                !selectedActivityId ||
+                createShift.isPending ||
+                isLocked
               }
               className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
             >
