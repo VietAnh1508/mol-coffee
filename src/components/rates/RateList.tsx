@@ -1,16 +1,18 @@
 import { useState } from "react";
-import { HiPencil, HiPlus } from "react-icons/hi2";
+import { FaEdit } from "react-icons/fa";
+import { HiPlus } from "react-icons/hi2";
 import { useRates } from "../../hooks";
 import type { Rate } from "../../types";
+import { formatMoney } from "../../utils/payrollUtils";
 import { Spinner } from "../Spinner";
 import { RateForm } from "./RateForm";
-import { formatMoney } from "../../utils/payrollUtils";
+import { formatDateDMY } from "../../utils/dateUtils";
 
 export function RateList() {
   const { data: rates = [], isLoading } = useRates();
 
   const [editingRate, setEditingRate] = useState<Rate | null>(null);
-  const [showForm, setShowForm] = useState(false);
+  const [showForm, setShowForm] = useState<boolean>(false);
 
   const handleEdit = (rate: Rate) => {
     setEditingRate(rate);
@@ -66,18 +68,13 @@ export function RateList() {
                     {" • "}
                     <span>
                       Có hiệu lực từ:{" "}
-                      {new Date(rate.effective_from).toLocaleDateString(
-                        "vi-VN"
-                      )}
+                      {formatDateDMY(new Date(rate.effective_from))}
                     </span>
                     {rate.effective_to && (
                       <>
                         {" • "}
                         <span>
-                          Đến:{" "}
-                          {new Date(rate.effective_to).toLocaleDateString(
-                            "vi-VN"
-                          )}
+                          Đến:{" "}{formatDateDMY(new Date(rate.effective_to))}
                         </span>
                       </>
                     )}
@@ -85,10 +82,10 @@ export function RateList() {
                 </div>
                 <button
                   onClick={() => handleEdit(rate)}
-                  className="text-blue-600 hover:text-blue-900 text-sm font-medium flex items-center gap-1"
+                  aria-label="Chỉnh sửa mức lương"
+                  className="p-1 hover:bg-white/50 rounded"
                 >
-                  <HiPencil className="w-4 h-4" />
-                  Sửa
+                  <FaEdit className="w-4 h-4" />
                 </button>
               </div>
             </li>
