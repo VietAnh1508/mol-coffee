@@ -1,6 +1,7 @@
 import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
 import { useAuth } from "../../hooks";
 import { Spinner } from "../../components/Spinner";
+import { Layout } from "../../components/Layout";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {
@@ -24,5 +25,9 @@ function AuthenticatedLayout() {
     return <Navigate to="/login" />;
   }
 
-  return <Outlet />;
+  return (
+    <Layout>
+      <Outlet />
+    </Layout>
+  );
 }

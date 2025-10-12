@@ -1,5 +1,4 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { Layout } from "../../../components/Layout";
 import { USER_ROLES } from "../../../constants/userRoles";
 import { useAuth } from "../../../hooks";
 import { PayrollEmployeeListPage } from "../../../pages/PayrollEmployeeListPage";
@@ -24,9 +23,5 @@ function PayrollIndexRoute() {
     );
   }
 
-  return (
-    <Layout>
-      <PayrollEmployeeListPage />
-    </Layout>
-  );
+  return <PayrollEmployeeListPage />;
 }

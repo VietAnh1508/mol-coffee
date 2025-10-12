@@ -1,5 +1,4 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { Layout } from "../../components/Layout";
 import { USER_ROLES } from "../../constants/userRoles";
 import { useAuth } from "../../hooks";
 import { SettingsPage } from "../../pages/SettingsPage";
@@ -15,9 +14,5 @@ function SettingsRoute() {
     return <Navigate to="/dashboard" />;
   }
 
-  return (
-    <Layout>
-      <SettingsPage />
-    </Layout>
-  );
+  return <SettingsPage />;
 }

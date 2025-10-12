@@ -1,41 +1,15 @@
-import { useState } from 'react';
+import { useContext } from "react";
+import {
+  ToastContext,
+  type ToastContextValue,
+} from "../context/ToastContextDefinition";
 
-export interface ToastState {
-  message: string;
-  type: 'success' | 'error' | 'info';
-  isVisible: boolean;
-}
+export function useToast(): ToastContextValue {
+  const context = useContext(ToastContext);
 
-export function useToast() {
-  const [toast, setToast] = useState<ToastState>({
-    message: '',
-    type: 'success',
-    isVisible: false
-  });
+  if (!context) {
+    throw new Error("useToast must be used within a ToastProvider");
+  }
 
-  const showToast = (message: string, type: 'success' | 'error' | 'info' = 'success') => {
-    setToast({
-      message,
-      type,
-      isVisible: true
-    });
-  };
-
-  const hideToast = () => {
-    setToast(prev => ({ ...prev, isVisible: false }));
-  };
-
-  // Convenience methods for different toast types
-  const showSuccess = (message: string) => showToast(message, 'success');
-  const showError = (message: string) => showToast(message, 'error');
-  const showInfo = (message: string) => showToast(message, 'info');
-
-  return {
-    toast,
-    showToast,
-    hideToast,
-    showSuccess,
-    showError,
-    showInfo
-  };
+  return context;
 }

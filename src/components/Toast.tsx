@@ -1,86 +1,96 @@
-import { useEffect } from 'react';
+import { useEffect } from "react";
 
 export interface ToastProps {
-  message: string;
-  type: 'success' | 'error' | 'info';
-  isVisible: boolean;
-  onClose: () => void;
-  duration?: number;
+  readonly message: string;
+  readonly type: "success" | "error" | "info";
+  readonly isVisible: boolean;
+  readonly onClose: () => void;
+  readonly duration?: number;
 }
 
-export function Toast({ message, type, isVisible, onClose, duration = 3000 }: ToastProps) {
+export function Toast({
+  message,
+  type,
+  isVisible,
+  onClose,
+  duration = 3000,
+}: ToastProps) {
   useEffect(() => {
-    if (isVisible) {
-      const timer = setTimeout(() => {
-        onClose();
-      }, duration);
+    if (!isVisible) return;
 
-      return () => clearTimeout(timer);
-    }
+    const timer = window.setTimeout(onClose, duration);
+    return () => window.clearTimeout(timer);
   }, [isVisible, onClose, duration]);
 
-  if (!isVisible) return null;
+  if (!isVisible) {
+    return null;
+  }
 
   const bgColor = {
-    success: 'bg-green-50 border-green-200',
-    error: 'bg-red-50 border-red-200',
-    info: 'bg-blue-50 border-blue-200'
-  }[type];
-
-  const textColor = {
-    success: 'text-green-800',
-    error: 'text-red-800',
-    info: 'text-blue-800'
+    success: "bg-emerald-600",
+    error: "bg-rose-600",
+    info: "bg-sky-600",
   }[type];
 
   const iconColor = {
-    success: 'text-green-400',
-    error: 'text-red-400',
-    info: 'text-blue-400'
+    success: "text-emerald-100",
+    error: "text-rose-100",
+    info: "text-sky-100",
   }[type];
 
   return (
-    <div className="fixed top-4 right-4 z-50 max-w-sm w-full">
-      <div className={`rounded-md p-4 border ${bgColor} shadow-lg transition-all duration-300 transform ${
-        isVisible ? 'translate-x-0 opacity-100' : 'translate-x-full opacity-0'
-      }`}>
-        <div className="flex">
-          <div className="flex-shrink-0">
-            {type === 'success' && (
-              <svg className={`h-5 w-5 ${iconColor}`} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-              </svg>
-            )}
-            {type === 'error' && (
-              <svg className={`h-5 w-5 ${iconColor}`} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-              </svg>
-            )}
-            {type === 'info' && (
-              <svg className={`h-5 w-5 ${iconColor}`} viewBox="0 0 20 20" fill="currentColor">
-                <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clipRule="evenodd" />
-              </svg>
-            )}
-          </div>
-          <div className="ml-3">
-            <p className={`text-sm font-medium ${textColor}`}>
-              {message}
-            </p>
-          </div>
-          <div className="ml-auto pl-3">
-            <div className="-mx-1.5 -my-1.5">
-              <button
-                onClick={onClose}
-                className={`inline-flex rounded-md p-1.5 ${textColor} hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-green-50 focus:ring-green-600`}
-              >
-                <span className="sr-only">Dismiss</span>
-                <svg className="h-4 w-4" viewBox="0 0 20 20" fill="currentColor">
-                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
-                </svg>
-              </button>
-            </div>
-          </div>
+    <div className="fixed inset-x-0 top-6 z-[1050] flex justify-center px-4 pointer-events-none">
+      <div
+        className={`pointer-events-auto flex w-full max-w-md items-start gap-3 rounded-2xl px-5 py-4 text-white shadow-xl shadow-black/10 transition-all duration-300 ${bgColor}`}
+      >
+        <span className={`mt-1 inline-flex h-6 w-6 items-center justify-center rounded-full bg-white/20 ${iconColor}`}>
+          {type === "success" && (
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.78-9.47a.75.75 0 00-1.06-1.06L9 11.19 7.28 9.47a.75.75 0 10-1.06 1.06l2.25 2.25a.75.75 0 001.06 0l4.25-4.25z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+          {type === "error" && (
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.28 7.22a.75.75 0 10-1.06 1.06L8.94 10l-1.72 1.72a.75.75 0 101.06 1.06L10 11.06l1.72 1.72a.75.75 0 101.06-1.06L11.06 10l1.72-1.72a.75.75 0 10-1.06-1.06L10 8.94 8.28 7.22z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+          {type === "info" && (
+            <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+              <path
+                fillRule="evenodd"
+                d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-5.25a1 1 0 100 2 1 1 0 000-2zM9 9a1 1 0 000 2h.25v3a1 1 0 001 1H11a1 1 0 100-2h-.75v-3A1 1 0 009 9z"
+                clipRule="evenodd"
+              />
+            </svg>
+          )}
+        </span>
+
+        <div className="flex-1">
+          <p className="text-sm font-medium">{message}</p>
         </div>
+
+        <button
+          type="button"
+          onClick={onClose}
+          className="mt-0.5 inline-flex h-8 w-8 items-center justify-center rounded-full bg-white/15 text-white transition hover:bg-white/25 focus:outline-none focus-visible:ring focus-visible:ring-white/50"
+        >
+          <span className="sr-only">Đóng thông báo</span>
+          <svg className="h-3.5 w-3.5" viewBox="0 0 20 20" fill="currentColor">
+            <path
+              fillRule="evenodd"
+              d="M4.22 4.22a.75.75 0 011.06 0L10 8.94l4.72-4.72a.75.75 0 111.06 1.06L11.06 10l4.72 4.72a.75.75 0 11-1.06 1.06L10 11.06l-4.72 4.72a.75.75 0 11-1.06-1.06L8.94 10 4.22 5.28a.75.75 0 010-1.06z"
+              clipRule="evenodd"
+            />
+          </svg>
+        </button>
       </div>
     </div>
   );

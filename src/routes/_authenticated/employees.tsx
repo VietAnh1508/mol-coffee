@@ -1,5 +1,4 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { Layout } from "../../components/Layout";
 import { USER_ROLES } from "../../constants/userRoles";
 import { useAuth } from "../../hooks";
 import { EmployeesPage } from "../../pages/EmployeesPage";
@@ -15,9 +14,5 @@ function EmployeesRoute() {
     return <Navigate to="/dashboard" />;
   }
 
-  return (
-    <Layout>
-      <EmployeesPage />
-    </Layout>
-  );
+  return <EmployeesPage />;
 }

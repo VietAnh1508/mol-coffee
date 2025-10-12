@@ -3,17 +3,28 @@ import type { ReactNode } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
 import { USER_ROLES } from "../constants/userRoles";
-import { useAuth } from "../hooks";
+import { ToastProvider } from "../context/toastContext";
+import { useAuth, useToast } from "../hooks";
 import { ProfileCompletionModal } from "./ProfileCompletionModal";
+import { Toast } from "./Toast";
 
 interface LayoutProps {
   readonly children: ReactNode;
 }
 
 export function Layout({ children }: LayoutProps) {
+  return (
+    <ToastProvider>
+      <LayoutContent>{children}</LayoutContent>
+    </ToastProvider>
+  );
+}
+
+function LayoutContent({ children }: LayoutProps) {
   const { user, signOut, isProfileComplete } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
+  const { toast, hideToast } = useToast();
 
   // Close dropdown when clicking outside
   useEffect(() => {
@@ -99,6 +110,12 @@ export function Layout({ children }: LayoutProps) {
         </nav>
       )}
       <main className="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">{children}</main>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 }

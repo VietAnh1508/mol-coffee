@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Layout } from "../../../../components/Layout";
 import { PayrollEmployeeDetailPage } from "../../../../pages/PayrollEmployeeDetailPage";
 import { getCurrentYearMonth } from "../../../../utils/payrollUtils";
 
@@ -25,8 +24,6 @@ function PayrollEmployeeDetailRoute() {
   const { period } = Route.useSearch();
 
   return (
-    <Layout>
-      <PayrollEmployeeDetailPage employeeId={employeeId} period={period!} />
-    </Layout>
+    <PayrollEmployeeDetailPage employeeId={employeeId} period={period!} />
   );
 }

@@ -1,5 +1,4 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { Layout } from "../../components/Layout";
 import { SchedulePage } from "../../pages/SchedulePage";
 import { formatDateLocal } from "../../utils/dateUtils";
 
@@ -50,9 +49,5 @@ function ScheduleRoute() {
     });
   };
 
-  return (
-    <Layout>
-      <SchedulePage initialDate={date} onDateChange={handleDateChange} />
-    </Layout>
-  );
+  return <SchedulePage initialDate={date} onDateChange={handleDateChange} />;
 }

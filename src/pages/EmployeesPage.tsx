@@ -4,9 +4,8 @@ import { CurrentUserBadge } from "../components/CurrentUserBadge";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
-import { Toast } from "../components/Toast";
 import { USER_ROLES } from "../constants/userRoles";
-import { useAuth, useToast, useUsers } from "../hooks";
+import { useAuth, useUsers } from "../hooks";
 
 export function EmployeesPage() {
   const { user } = useAuth();
@@ -15,7 +14,6 @@ export function EmployeesPage() {
     null
   );
   const [showInactive, setShowInactive] = useState(false);
-  const { toast, hideToast } = useToast();
 
   const filteredEmployees = showInactive
     ? employees
@@ -130,13 +128,6 @@ export function EmployeesPage() {
         employeeId={selectedEmployeeId}
         currentUser={user}
         onClose={closeModal}
-      />
-
-      <Toast
-        message={toast.message}
-        type={toast.type}
-        isVisible={toast.isVisible}
-        onClose={hideToast}
       />
     </div>
   );
