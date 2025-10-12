@@ -1,14 +1,16 @@
-import { FaTimes, FaExclamationTriangle } from 'react-icons/fa'
+import { FaExclamationTriangle, FaTimes } from "react-icons/fa";
 
 interface ConfirmationDialogProps {
-  isOpen: boolean
-  onClose: () => void
-  onConfirm: () => void
-  title: string
-  message: string
-  confirmText?: string
-  cancelText?: string
-  isLoading?: boolean
+  isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
+  title: string;
+  message: string;
+  confirmText?: string;
+  cancelText?: string;
+  isLoading?: boolean;
+  loadingText?: string;
+  actionType?: "danger" | "warning" | "success";
 }
 
 export function ConfirmationDialog({
@@ -17,15 +19,32 @@ export function ConfirmationDialog({
   onConfirm,
   title,
   message,
-  confirmText = 'Xác nhận',
-  cancelText = 'Hủy',
-  isLoading = false
+  confirmText = "Xác nhận",
+  cancelText = "Hủy",
+  isLoading = false,
+  loadingText = "Đang xóa...",
+  actionType = "danger",
 }: ConfirmationDialogProps) {
-  if (!isOpen) return null
+  if (!isOpen) return null;
 
   const handleConfirm = () => {
-    onConfirm()
-  }
+    onConfirm();
+  };
+
+  const actionStyles = {
+    danger: {
+      button: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
+    },
+    warning: {
+      button: "bg-orange-500 hover:bg-orange-600 focus:ring-orange-400",
+    },
+    success: {
+      button: "bg-green-600 hover:bg-green-700 focus:ring-green-500",
+    },
+  } as const;
+
+  const { button: actionButtonClasses } =
+    actionStyles[actionType] ?? actionStyles.danger;
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -64,12 +83,12 @@ export function ConfirmationDialog({
             type="button"
             onClick={handleConfirm}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-red-500"
+            className={`flex-1 px-4 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${actionButtonClasses}`}
           >
-            {isLoading ? 'Đang xóa...' : confirmText}
+            {isLoading ? loadingText : confirmText}
           </button>
         </div>
       </div>
     </div>
-  )
+  );
 }

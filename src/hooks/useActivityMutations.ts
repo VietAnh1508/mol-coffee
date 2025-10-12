@@ -6,10 +6,10 @@ export function useCreateActivity() {
   const queryClient = useQueryClient()
   
   return useMutation({
-    mutationFn: async (activityData: { name: string; is_active: boolean }) => {
+    mutationFn: async (activityData: { name: string }) => {
       const { data, error } = await supabase
         .from('activities')
-        .insert(activityData)
+        .insert({ ...activityData, is_active: true })
         .select()
         .single()
 

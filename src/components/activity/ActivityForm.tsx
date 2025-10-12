@@ -1,4 +1,4 @@
-import { useCreateActivity, useUpdateActivity } from "../../hooks";
+import { useCreateActivity, useToast, useUpdateActivity } from "../../hooks";
 import type { Activity } from "../../types";
 
 interface ActivityFormProps {
@@ -9,34 +9,34 @@ interface ActivityFormProps {
 export function ActivityForm({ activity, onClose }: ActivityFormProps) {
   const createActivityMutation = useCreateActivity();
   const updateActivityMutation = useUpdateActivity();
+  const { showToast } = useToast();
 
   const handleSave = async (formData: FormData) => {
     const name = formData.get("name") as string;
-    const isActive = formData.get("is_active") === "true";
 
     if (activity) {
       updateActivityMutation.mutate({
         id: activity.id,
-        name,
-        is_active: isActive
+        name
       }, {
         onSuccess: () => {
           onClose();
+          showToast("Cập nhật hoạt động thành công", "success");
         },
         onError: () => {
-          alert("Lỗi khi cập nhật hoạt động");
+          showToast("Có lỗi xảy ra khi cập nhật hoạt động", "error");
         }
       });
     } else {
       createActivityMutation.mutate({
-        name,
-        is_active: isActive
+        name
       }, {
         onSuccess: () => {
+          showToast("Đã tạo hoạt động mới", "success");
           onClose();
         },
         onError: () => {
-          alert("Lỗi khi tạo hoạt động");
+          showToast("Có lỗi xảy ra khi tạo hoạt động", "error");
         }
       });
     }
@@ -66,18 +66,6 @@ export function ActivityForm({ activity, onClose }: ActivityFormProps) {
               defaultValue={activity?.name || ""}
               className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
-          </div>
-          <div className="mb-4">
-            <label className="flex items-center">
-              <input
-                type="checkbox"
-                name="is_active"
-                value="true"
-                defaultChecked={activity?.is_active ?? true}
-                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-              />
-              <span className="ml-2 text-sm text-gray-700">Hoạt động</span>
-            </label>
           </div>
           <div className="flex justify-end space-x-3">
             <button

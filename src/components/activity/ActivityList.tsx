@@ -1,23 +1,24 @@
 import { useState } from "react";
-import { HiPause, HiPencil, HiPlay, HiPlus } from "react-icons/hi2";
-import { useActivities, useToggleActivity } from "../../hooks";
+import { FaEdit } from "react-icons/fa";
+import { HiPause, HiPlay, HiPlus } from "react-icons/hi2";
+import { useActivities, useToast, useToggleActivity } from "../../hooks";
 import type { Activity } from "../../types";
+import { ConfirmationDialog } from "../ConfirmationDialog";
 import { Spinner } from "../Spinner";
 import { ActivityForm } from "./ActivityForm";
 
 export function ActivityList() {
   const { data: activities = [], isLoading } = useActivities();
   const toggleActivityMutation = useToggleActivity();
+  const { showToast } = useToast();
 
   const [editingActivity, setEditingActivity] = useState<Activity | null>(null);
   const [showForm, setShowForm] = useState(false);
+  const [pendingToggleActivity, setPendingToggleActivity] =
+    useState<Activity | null>(null);
 
-  const handleToggleActivity = (activity: Activity) => {
-    toggleActivityMutation.mutate(activity, {
-      onError: () => {
-        alert("Lỗi khi cập nhật trạng thái hoạt động");
-      },
-    });
+  const handleRequestToggleActivity = (activity: Activity) => {
+    setPendingToggleActivity(activity);
   };
 
   const handleEdit = (activity: Activity) => {
@@ -33,6 +34,31 @@ export function ActivityList() {
   const handleCloseForm = () => {
     setEditingActivity(null);
     setShowForm(false);
+  };
+
+  const handleConfirmToggleActivity = async () => {
+    if (!pendingToggleActivity) return;
+
+    const toggledActivity = pendingToggleActivity;
+
+    try {
+      await toggleActivityMutation.mutateAsync(toggledActivity);
+      showToast(
+        toggledActivity.is_active
+          ? `Đã vô hiệu hóa hoạt động "${toggledActivity.name}"`
+          : `Đã kích hoạt hoạt động "${toggledActivity.name}"`,
+        "success"
+      );
+      setPendingToggleActivity(null);
+    } catch (error) {
+      showToast("Có lỗi xảy ra khi cập nhật trạng thái hoạt động", "error");
+      console.error("Failed to toggle activity:", error);
+    }
+  };
+
+  const handleCancelToggleActivity = () => {
+    if (toggleActivityMutation.isPending) return;
+    setPendingToggleActivity(null);
   };
 
   if (isLoading) {
@@ -80,32 +106,30 @@ export function ActivityList() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEdit(activity)}
-                    className="text-blue-600 hover:text-blue-900 text-sm font-medium flex items-center gap-1"
+                    className="p-1 hover:bg-white/50 rounded"
                   >
-                    <HiPencil className="w-4 h-4" />
-                    Sửa
+                    <FaEdit className="text-sm" />
                   </button>
                   <button
-                    onClick={() => handleToggleActivity(activity)}
+                    onClick={() => handleRequestToggleActivity(activity)}
                     disabled={toggleActivityMutation.isPending}
-                    className={`text-sm font-medium disabled:opacity-50 flex items-center gap-1 ${
+                    aria-label={
+                      activity.is_active
+                        ? "Vô hiệu hóa hoạt động"
+                        : "Kích hoạt hoạt động"
+                    }
+                    className={`p-1 rounded hover:bg-white/50 disabled:opacity-50 ${
                       activity.is_active
                         ? "text-red-600 hover:text-red-900"
                         : "text-green-600 hover:text-green-900"
                     }`}
                   >
                     {toggleActivityMutation.isPending ? (
-                      "Đang xử lý..."
+                      <Spinner size="sm" className="h-4 w-4" />
                     ) : activity.is_active ? (
-                      <>
-                        <HiPause className="w-4 h-4" />
-                        Vô hiệu hóa
-                      </>
+                      <HiPause className="w-4 h-4" />
                     ) : (
-                      <>
-                        <HiPlay className="w-4 h-4" />
-                        Kích hoạt
-                      </>
+                      <HiPlay className="w-4 h-4" />
                     )}
                   </button>
                 </div>
@@ -118,6 +142,27 @@ export function ActivityList() {
       {(showForm || editingActivity) && (
         <ActivityForm activity={editingActivity} onClose={handleCloseForm} />
       )}
+
+      <ConfirmationDialog
+        isOpen={Boolean(pendingToggleActivity)}
+        onClose={handleCancelToggleActivity}
+        onConfirm={handleConfirmToggleActivity}
+        title="Xác nhận cập nhật trạng thái"
+        message={
+          pendingToggleActivity
+            ? `Bạn có chắc chắn muốn ${
+                pendingToggleActivity.is_active ? "vô hiệu hóa" : "kích hoạt"
+              } hoạt động "${pendingToggleActivity.name}" không?`
+            : ""
+        }
+        confirmText={
+          pendingToggleActivity?.is_active ? "Vô hiệu hóa" : "Kích hoạt"
+        }
+        cancelText="Hủy"
+        isLoading={toggleActivityMutation.isPending}
+        loadingText="Đang cập nhật..."
+        actionType={pendingToggleActivity?.is_active ? "warning" : "success"}
+      />
     </div>
   );
 }
