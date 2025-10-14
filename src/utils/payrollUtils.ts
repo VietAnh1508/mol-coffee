@@ -20,13 +20,11 @@ export function deriveYearMonthVN(date: Date | string): string {
   return `${year}-${month}`;
 }
 
-export function generateMonthOptions(
-  startYear = 2025,
-  monthsAhead = 12
-): MonthOption[] {
+export function generateMonthOptions(startYear = 2025): MonthOption[] {
   const options: MonthOption[] = [];
   const today = new Date();
   const currentYear = today.getFullYear();
+  const currentMonth = today.getMonth() + 1; // 0-based in JS
 
   const monthNames = [
     "Tháng 1",
@@ -44,11 +42,8 @@ export function generateMonthOptions(
   ];
 
   // Start from the specified start year
-  for (let year = startYear; year <= currentYear + 1; year++) {
-    for (let month = 1; month <= 12; month++) {
-      // Skip months that are too far in the future
-      if (year === currentYear + 1 && month > monthsAhead) continue;
-
+  for (let year = startYear; year <= currentYear; year++) {
+    for (let month = 1; month <= currentMonth; month++) {
       const value = `${year}-${month.toString().padStart(2, "0")}`;
       const label = `${monthNames[month - 1]}/${year}`;
 

@@ -100,27 +100,32 @@ export function ChangePasswordPage() {
   };
 
   return (
-    <div className="max-w-md mx-auto px-4">
-      <div className="mb-6">
+    <div className="mx-auto max-w-xl px-4 text-primary">
+      <div className="mb-8">
         <Link
           to="/profile"
-          className="inline-flex items-center text-sm text-gray-600 hover:text-gray-900 mb-4"
+          className="mb-4 inline-flex items-center gap-2 text-sm font-medium text-subtle transition hover:text-primary"
         >
-          <HiArrowLeft className="w-4 h-4 mr-1" />
+          <span className="inline-flex h-6 w-6 items-center justify-center rounded-full bg-surface-muted text-blue-400">
+            <HiArrowLeft className="h-3.5 w-3.5" />
+          </span>
           Quay lại thông tin cá nhân
         </Link>
 
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <HiLockClosed className="w-8 h-8 mr-2" />
-          Đổi mật khẩu
-        </h1>
-        <p className="mt-2 text-gray-600">
-          Nhập mật khẩu hiện tại và mật khẩu mới để thay đổi
-        </p>
+        <div className="flex items-center gap-3">
+          <span className="inline-flex h-12 w-12 items-center justify-center rounded-full bg-blue-500/15 text-blue-400">
+            <HiLockClosed className="h-6 w-6" />
+          </span>
+          <div>
+            <h1 className="text-3xl font-semibold text-primary sm:text-4xl">
+              Đổi mật khẩu
+            </h1>
+          </div>
+        </div>
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <form onSubmit={handleSubmit} className="p-6 space-y-6">
+      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
+        <form onSubmit={handleSubmit} className="space-y-6 p-6 sm:p-8">
           <PasswordInput
             label="Mật khẩu hiện tại"
             value={currentPassword}
@@ -150,7 +155,7 @@ export function ChangePasswordPage() {
           <button
             type="submit"
             disabled={isLoading}
-            className="w-full bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full rounded-xl bg-blue-600 px-4 py-3 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
             {isLoading ? "Đang đổi mật khẩu..." : "Đổi mật khẩu"}
           </button>
@@ -160,7 +165,7 @@ export function ChangePasswordPage() {
       <PasswordPolicy
         title="Lưu ý bảo mật"
         variant="notice"
-        className="mt-6"
+        className="mt-6 rounded-2xl border border-subtle bg-surface px-6 py-5"
       />
     </div>
   );

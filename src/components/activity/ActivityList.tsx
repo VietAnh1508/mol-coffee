@@ -71,33 +71,36 @@ export function ActivityList() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-primary">
           Quản lý hoạt động
         </h2>
         <button
           onClick={handleAdd}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
         >
           <HiPlus className="w-4 h-4" />
           Thêm hoạt động
         </button>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {activities.map((activity) => (
-            <li key={activity.id} className="px-6 py-4">
+      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/5">
+        <ul>
+          {activities.map((activity, index) => (
+            <li
+              key={activity.id}
+              className={`px-6 py-4 ${index < activities.length - 1 ? "border-b border-subtle" : ""}`}
+            >
               <div className="flex items-center justify-between">
                 <div className="flex items-center">
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-semibold text-primary">
                     {activity.name}
                   </h3>
                   <span
-                    className={`ml-3 inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    className={`ml-3 inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                       activity.is_active
-                        ? "bg-green-100 text-green-800"
-                        : "bg-red-100 text-red-800"
+                        ? "bg-emerald-500/15 text-emerald-400"
+                        : "bg-rose-500/15 text-rose-300"
                     }`}
                   >
                     {activity.is_active ? "Hoạt động" : "Ngừng hoạt động"}
@@ -106,7 +109,7 @@ export function ActivityList() {
                 <div className="flex space-x-2">
                   <button
                     onClick={() => handleEdit(activity)}
-                    className="p-1 hover:bg-white/50 rounded"
+                    className="rounded-md p-1 text-muted transition hover:bg-surface-muted hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                   >
                     <FaEdit className="text-sm" />
                   </button>
@@ -118,10 +121,10 @@ export function ActivityList() {
                         ? "Vô hiệu hóa hoạt động"
                         : "Kích hoạt hoạt động"
                     }
-                    className={`p-1 rounded hover:bg-white/50 disabled:opacity-50 ${
+                    className={`rounded-md p-1 transition disabled:opacity-50 ${
                       activity.is_active
-                        ? "text-red-600 hover:text-red-900"
-                        : "text-green-600 hover:text-green-900"
+                        ? "text-rose-400 hover:bg-rose-500/10 hover:text-rose-300"
+                        : "text-emerald-400 hover:bg-emerald-500/10 hover:text-emerald-300"
                     }`}
                   >
                     {toggleActivityMutation.isPending ? (

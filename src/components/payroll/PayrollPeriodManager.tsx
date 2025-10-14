@@ -79,14 +79,14 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
   }
 
   return (
-    <div className="bg-white rounded-lg shadow p-4">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-gray-900">Quản lý kỳ lương</h3>
+    <div className="rounded-2xl border border-subtle bg-surface p-5 shadow-lg shadow-black/5">
+      <div className="mb-4 flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-primary">Quản lý kỳ lương</h3>
         <button
           onClick={() => setShowCreateForm(true)}
-          className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700"
+          className="inline-flex items-center rounded-xl bg-blue-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
         >
-          <FaPlus className="h-4 w-4 mr-1" />
+          <FaPlus className="mr-1 h-4 w-4" />
           Tạo kỳ mới
         </button>
       </div>
@@ -102,10 +102,10 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
         {periods?.map((period) => (
           <div
             key={period.id}
-            className={`flex items-center justify-between p-3 rounded-md border ${
+            className={`flex items-center justify-between rounded-xl border p-3 transition ${
               selectedPeriod === period.year_month
-                ? "border-indigo-500 bg-indigo-50"
-                : "border-gray-200 hover:border-gray-300"
+                ? "border-blue-400 bg-blue-500/10"
+                : "border-subtle hover:bg-surface-muted"
             }`}
           >
             <div className="flex-1">
@@ -113,19 +113,19 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
                 onClick={() => onPeriodSelect(period.year_month)}
                 className="text-left w-full"
               >
-                <div className="font-medium text-gray-900">
+                <div className="font-semibold text-primary">
                   {formatMonthName(period.year_month)}
                 </div>
-                <div className="text-sm text-gray-500">
+                <div className="text-sm text-subtle">
                   {period.status === "closed" ? (
                     <span className="inline-flex items-center">
-                      <FaLock className="h-4 w-4 mr-1" />
+                      <FaLock className="mr-1 h-4 w-4" />
                       Đã khóa
                       {period.closed_by_user && ` bởi ${period.closed_by_user.name}`}
                     </span>
                   ) : (
                     <span className="inline-flex items-center">
-                      <FaLockOpen className="h-4 w-4 mr-1" />
+                      <FaLockOpen className="mr-1 h-4 w-4" />
                       Đang mở
                     </span>
                   )}
@@ -141,7 +141,7 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
                     periodId: period.id,
                     periodName: period.year_month
                   })}
-                  className="p-2 text-orange-600 hover:bg-orange-50 rounded-md"
+                  className="rounded-lg p-2 text-amber-300 transition hover:bg-amber-500/15"
                   title="Khóa kỳ lương"
                 >
                   <FaLock className="h-4 w-4" />
@@ -153,7 +153,7 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
                     periodId: period.id,
                     periodName: period.year_month
                   })}
-                  className="p-2 text-green-600 hover:bg-green-50 rounded-md"
+                  className="rounded-lg p-2 text-emerald-300 transition hover:bg-emerald-500/15"
                   title="Mở lại kỳ lương"
                 >
                   <FaLockOpen className="h-4 w-4" />
@@ -166,7 +166,7 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
                   periodId: period.id,
                   periodName: period.year_month
                 })}
-                className="p-2 text-red-600 hover:bg-red-50 rounded-md"
+                className="rounded-lg p-2 text-rose-300 transition hover:bg-rose-500/15"
                 title="Xóa kỳ lương"
               >
                 <FaTrash className="h-4 w-4" />
@@ -176,7 +176,7 @@ export function PayrollPeriodManager({ onPeriodSelect, selectedPeriod }: Payroll
         ))}
 
         {(!periods || periods.length === 0) && (
-          <div className="text-center py-8 text-gray-500">
+          <div className="py-8 text-center text-sm text-subtle">
             <p>Chưa có kỳ lương nào</p>
             <p className="text-sm">Tạo kỳ lương đầu tiên để bắt đầu</p>
           </div>

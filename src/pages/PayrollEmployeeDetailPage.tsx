@@ -73,9 +73,9 @@ export function PayrollEmployeeDetailPage({
         <div className="mb-4">
           <Link
             to="/payroll"
-            className="inline-flex items-center text-gray-600 hover:text-gray-900 transition-colors"
+            className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition hover:text-primary"
           >
-            <FaArrowLeft className="w-4 h-4 mr-2" />
+            <FaArrowLeft className="h-4 w-4" />
             Quay lại danh sách
           </Link>
         </div>
@@ -99,11 +99,11 @@ export function PayrollEmployeeDetailPage({
 
       <div className="space-y-6">
         {/* Period Selector */}
-        <div className="bg-white rounded-lg shadow p-4">
+        <div className="rounded-2xl border border-subtle bg-surface p-4 shadow-lg shadow-black/5">
           <div className="flex items-center justify-between">
             <label
               htmlFor="period-select"
-              className="flex items-center text-sm font-medium text-gray-700"
+              className="flex items-center text-sm font-medium text-subtle"
             >
               <FaCalendarAlt className="w-4 h-4 mr-2" />
               Chọn kỳ lương
@@ -112,7 +112,7 @@ export function PayrollEmployeeDetailPage({
               id="period-select"
               value={selectedPeriod}
               onChange={(e) => handlePeriodChange(e.target.value)}
-              className="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              className="rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
             >
               {monthOptions.map((option) => (
                 <option key={option.value} value={option.value}>
@@ -126,51 +126,49 @@ export function PayrollEmployeeDetailPage({
         {/* Period Status Banner */}
         {periodInfo && (
           <div
-            className={`rounded-lg p-4 ${
+            className={`rounded-2xl border p-4 ${
               periodInfo.status === "closed"
-                ? "bg-orange-50 border border-orange-200"
-                : "bg-green-50 border border-green-200"
+                ? "border-amber-400/40 bg-amber-500/10"
+                : "border-emerald-400/40 bg-emerald-500/10"
             }`}
           >
-            <div className="flex items-center">
+            <div className="flex flex-wrap items-center gap-3">
               <div
-                className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                className={`inline-flex min-w-[5.5rem] items-center justify-center rounded-full px-3 py-1 text-xs font-semibold ${
                   periodInfo.status === "closed"
-                    ? "bg-orange-100 text-orange-800"
-                    : "bg-green-100 text-green-800"
+                    ? "bg-amber-500/25 text-amber-500"
+                    : "bg-emerald-500/25 text-emerald-500"
                 }`}
               >
                 {periodInfo.status === "closed" ? "Đã khóa" : "Đang mở"}
               </div>
-              <span className="ml-3 text-sm text-gray-600">
-                Kỳ lương {formatMonthName(selectedPeriod)}
+              <div className="text-sm text-subtle">
+                <div>Kỳ lương {formatMonthName(selectedPeriod)}</div>
                 {periodInfo.status === "closed" &&
                   periodInfo.closed_by_user && (
-                    <> - Khóa bởi {periodInfo.closed_by_user.name}</>
+                    <div>Khóa bởi {periodInfo.closed_by_user.name}</div>
                   )}
-              </span>
+              </div>
             </div>
           </div>
         )}
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-white rounded-lg shadow p-8">
-            <div className="flex items-center justify-center">
+          <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-lg shadow-black/5">
+            <div className="flex items-center justify-center text-subtle">
               <Spinner />
-              <span className="ml-3 text-gray-600">
-                Đang tải thông tin lương...
-              </span>
+              <span className="ml-3">Đang tải thông tin lương...</span>
             </div>
           </div>
         )}
 
         {/* No Data State */}
         {!isLoading && (!payrollData || payrollData.length === 0) && (
-          <div className="bg-white rounded-lg shadow p-8">
-            <div className="text-center text-gray-500">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-lg font-medium mb-2">
+          <div className="rounded-2xl border border-subtle bg-surface p-8 text-center text-subtle shadow-lg shadow-black/5">
+            <div>
+              <div className="mb-4 text-4xl">📊</div>
+              <h3 className="mb-2 text-lg font-semibold text-primary">
                 Chưa có dữ liệu lương
               </h3>
               <p>
@@ -184,31 +182,31 @@ export function PayrollEmployeeDetailPage({
 
         {/* Employee Payroll Details */}
         {!isLoading && employeeData && (
-          <div className="bg-white rounded-lg shadow">
+          <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/5">
             {/* Employee Header */}
-            <div className="p-6 border-b border-gray-200">
+            <div className="border-b border-subtle p-6">
               <div className="flex items-center justify-center">
-                <div className="text-center space-y-4">
+                <div className="space-y-4 text-center">
                   <div>
-                    <div className="text-sm text-gray-500 mb-1">Tổng lương</div>
-                    <div className="text-3xl font-bold text-gray-900">
+                    <div className="mb-1 text-sm text-subtle">Tổng lương</div>
+                    <div className="text-3xl font-semibold text-primary">
                       {formatMoney(Math.round(employeeData.totalSalary))}
                     </div>
                   </div>
-                  <div className="flex items-center justify-center space-x-8">
+                  <div className="flex items-center justify-center space-x-8 text-subtle">
                     <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">
+                      <div className="mb-1 text-xs uppercase tracking-wide">
                         Tổng giờ làm
                       </div>
-                      <div className="text-lg font-medium text-gray-700">
+                      <div className="text-lg font-semibold text-primary">
                         {employeeData.totalHours.toFixed(1)} giờ
                       </div>
                     </div>
                     <div className="text-center">
-                      <div className="text-xs text-gray-500 mb-1">
+                      <div className="mb-1 text-xs uppercase tracking-wide">
                         Tổng ngày làm
                       </div>
-                      <div className="text-lg font-medium text-gray-700">
+                      <div className="text-lg font-semibold text-primary">
                         {totalWorkingDays} ngày
                       </div>
                     </div>
@@ -219,43 +217,44 @@ export function PayrollEmployeeDetailPage({
 
             {/* Activity Breakdown */}
             <div className="p-6">
-              <h4 className="text-sm font-medium text-gray-700 mb-3">
+              <h4 className="mb-3 text-sm font-semibold text-subtle">
                 Chi tiết theo hoạt động
               </h4>
               <div className="space-y-2">
                 {employeeData.activities.map((activity) => (
                   <div
                     key={activity.activity.id}
-                    className="py-2 px-3 bg-gray-50 rounded-md"
+                    className="rounded-xl border border-subtle bg-surface-muted px-3 py-2"
                   >
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-semibold text-primary">
                         {activity.activity.name}
                       </span>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-semibold text-primary">
                         {formatMoney(Math.round(activity.subtotal))}
                       </div>
                     </div>
-                    <div className="text-sm text-gray-500 mt-1">
-                      ({activity.hours.toFixed(1)} giờ × {formatMoney(activity.rate)}/giờ)
+                    <div className="mt-1 text-sm text-subtle">
+                      ({activity.hours.toFixed(1)} giờ ×{" "}
+                      {formatMoney(activity.rate)}/giờ)
                     </div>
                   </div>
                 ))}
 
                 {/* Lunch Allowance Summary */}
                 {(employeeData.lunchAllowanceDays ?? 0) > 0 && (
-                  <div className="py-2 px-3 bg-gray-50 rounded-md">
+                  <div className="rounded-xl border border-subtle bg-surface-muted px-3 py-2">
                     <div className="flex items-center justify-between">
-                      <span className="text-sm font-medium text-gray-900">
+                      <span className="text-sm font-semibold text-primary">
                         Phụ cấp ăn trưa
                       </span>
-                      <div className="text-sm font-medium text-gray-900">
+                      <div className="text-sm font-semibold text-primary">
                         {formatMoney(
                           Math.round(employeeData.lunchAllowanceTotal || 0)
                         )}
                       </div>
                     </div>
-                    <div className="text-sm text-gray-500 mt-1">
+                    <div className="mt-1 text-sm text-subtle">
                       ({employeeData.lunchAllowanceDays} ngày)
                     </div>
                   </div>

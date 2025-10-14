@@ -39,29 +39,32 @@ export function RateList() {
 
   return (
     <div>
-      <div className="flex justify-between items-center mb-6">
-        <h2 className="text-xl font-semibold text-gray-900">
+      <div className="mb-6 flex items-center justify-between">
+        <h2 className="text-xl font-semibold text-primary">
           Quản lý mức lương
         </h2>
         <button
           onClick={handleAdd}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-md text-sm font-medium flex items-center gap-2"
+          className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
         >
           <HiPlus className="w-4 h-4" />
           Thêm mức lương
         </button>
       </div>
 
-      <div className="bg-white shadow overflow-hidden sm:rounded-md">
-        <ul className="divide-y divide-gray-200">
-          {rates.map((rate) => (
-            <li key={rate.id} className="px-6 py-4">
+      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/5">
+        <ul>
+          {rates.map((rate, index) => (
+            <li
+              key={rate.id}
+              className={`px-6 py-4 ${index < rates.length - 1 ? "border-b border-subtle" : ""}`}
+            >
               <div className="flex items-center justify-between">
                 <div>
-                  <h3 className="text-lg font-medium text-gray-900">
+                  <h3 className="text-lg font-semibold text-primary">
                     {rate.activity?.name}
                   </h3>
-                  <div className="mt-1 text-sm text-gray-600">
+                  <div className="mt-1 text-sm text-subtle">
                     <span className="font-medium">
                       {formatMoney(rate.hourly_vnd)}/giờ
                     </span>
@@ -83,7 +86,7 @@ export function RateList() {
                 <button
                   onClick={() => handleEdit(rate)}
                   aria-label="Chỉnh sửa mức lương"
-                  className="p-1 hover:bg-white/50 rounded"
+                  className="rounded-md p-1 text-muted transition hover:bg-surface-muted hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                 >
                   <FaEdit className="w-4 h-4" />
                 </button>

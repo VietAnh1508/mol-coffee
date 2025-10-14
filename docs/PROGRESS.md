@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** September 19, 2025
+**Last Updated:** October 14, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -56,7 +56,7 @@ For detailed documentation of each feature, see:
 - [x] Success/error message display
 - [x] Auth context provider (optimized with useMemo)
 - [x] Dashboard with role-based navigation
-  - [x] Role-based menu titles (Admin vs Employee) ✅ **NEW**
+  - [x] Role-based menu titles (Admin vs Employee)
   - [x] Consistent menu layout without sub-titles
 - [x] Settings page with tab navigation
 - [x] TanStack Query hooks for data fetching (useActivities, useRates, useUsers, etc.)
@@ -68,6 +68,7 @@ For detailed documentation of each feature, see:
   - [x] Custom useToast hook for clean state management
   - [x] Auto-dismiss functionality with manual close option
   - [x] Non-intrusive positioning and smooth animations
+- [x] System-driven dark mode styling across core pages and modals ✅ **NEW**
 
 ---
 

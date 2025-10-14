@@ -1,5 +1,5 @@
-import { useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { useState } from "react";
 import {
   HiCheck,
   HiEnvelope,
@@ -80,29 +80,35 @@ export function ProfilePage() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4">
-      <div className="flex justify-between items-center mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 flex items-center">
-          <HiUser className="w-8 h-8 mr-2" />
-          Thông tin cá nhân
-        </h1>
+    <div className="mx-auto max-w-3xl px-4 text-primary">
+      <div className="mb-8 flex flex-wrap items-start justify-between gap-4">
+        <div>
+          <h1 className="mt-2 flex items-center text-3xl font-semibold sm:text-4xl">
+            <span className="mr-3 inline-flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-blue-400">
+              <HiUser className="h-6 w-6" />
+            </span>
+            <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-sky-500 bg-clip-text text-transparent">
+              Thông tin cá nhân
+            </span>
+          </h1>
+        </div>
         {!isEditing && (
           <button
             onClick={handleEdit}
-            className="bg-blue-600 text-white px-4 py-2 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 flex items-center"
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
           >
-            <HiPencil className="w-4 h-4 mr-1" />
+            <HiPencil className="h-4 w-4" />
             Chỉnh sửa
           </button>
         )}
       </div>
 
-      <div className="bg-white rounded-lg shadow-sm border border-gray-200 overflow-hidden">
-        <div className="p-6">
+      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
+        <div className="p-6 sm:p-8">
           {/* Avatar placeholder */}
-          <div className="flex justify-center mb-6">
-            <div className="w-24 h-24 bg-gray-100 rounded-full flex items-center justify-center">
-              <HiUser className="w-12 h-12 text-gray-400" />
+          <div className="mb-6 flex justify-center">
+            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-surface-muted text-muted">
+              <HiUser className="h-12 w-12" />
             </div>
           </div>
 
@@ -110,8 +116,8 @@ export function ProfilePage() {
           <div className="space-y-6">
             {/* Name field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <HiUser className="inline w-4 h-4 mr-1" />
+              <label className="mb-2 block text-sm font-medium text-subtle">
+                <HiUser className="mr-1 inline h-4 w-4" />
                 Họ và tên
               </label>
               {isEditing ? (
@@ -120,10 +126,10 @@ export function ProfilePage() {
                     type="text"
                     value={editedName}
                     onChange={(e) => setEditedName(e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 ${
+                    className={`w-full rounded-xl border px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface ${
                       errors.name
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-400"
+                        : "border-subtle focus:border-blue-500 focus:ring-blue-400"
                     }`}
                     placeholder="Nhập họ và tên"
                   />
@@ -132,7 +138,7 @@ export function ProfilePage() {
                   )}
                 </div>
               ) : (
-                <p className="text-gray-900 py-2 px-3 bg-gray-50 rounded-md">
+                <p className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-primary">
                   {user.name}
                 </p>
               )}
@@ -140,8 +146,8 @@ export function ProfilePage() {
 
             {/* Phone field */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <HiPhone className="inline w-4 h-4 mr-1" />
+              <label className="mb-2 block text-sm font-medium text-subtle">
+                <HiPhone className="mr-1 inline h-4 w-4" />
                 Số điện thoại
               </label>
               {isEditing ? (
@@ -150,10 +156,10 @@ export function ProfilePage() {
                     type="tel"
                     value={editedPhone}
                     onChange={(e) => setEditedPhone(e.target.value)}
-                    className={`w-full px-3 py-2 border rounded-md text-sm focus:outline-none focus:ring-1 ${
+                    className={`w-full rounded-xl border px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface ${
                       errors.phone
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-500"
-                        : "border-gray-300 focus:border-blue-500 focus:ring-blue-500"
+                        ? "border-red-300 focus:border-red-500 focus:ring-red-400"
+                        : "border-subtle focus:border-blue-500 focus:ring-blue-400"
                     }`}
                     placeholder="0xxxxxxxxx"
                   />
@@ -162,7 +168,7 @@ export function ProfilePage() {
                   )}
                 </div>
               ) : (
-                <p className="text-gray-900 py-2 px-3 bg-gray-50 rounded-md">
+                <p className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-primary">
                   {user.phone}
                 </p>
               )}
@@ -170,33 +176,33 @@ export function ProfilePage() {
 
             {/* Email field (read-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <HiEnvelope className="inline w-4 h-4 mr-1" />
+              <label className="mb-2 block text-sm font-medium text-subtle">
+                <HiEnvelope className="mr-1 inline h-4 w-4" />
                 Email
               </label>
-              <p className="text-gray-600 py-2 px-3 bg-gray-50 rounded-md text-sm">
+              <p className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-subtle">
                 {user.email}
               </p>
             </div>
 
             {/* Role field (read-only) */}
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
+              <label className="mb-2 block text-sm font-medium text-subtle">
                 Vai trò
               </label>
-              <p className="text-gray-600 py-2 px-3 bg-gray-50 rounded-md text-sm">
+              <p className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-subtle">
                 {user.role === "admin" ? "Quản trị viên" : "Nhân viên"}
               </p>
             </div>
 
             {/* Change Password Section */}
-            <div className="pt-4 border-t border-gray-200">
-              <h3 className="text-sm font-medium text-gray-700 mb-3">Bảo mật</h3>
+            <div className="border-t border-subtle pt-4">
+              <h3 className="mb-3 text-sm font-medium text-subtle">Bảo mật</h3>
               <Link
                 to="/change-password"
-                className="inline-flex items-center px-4 py-2 text-sm font-medium text-blue-600 bg-blue-50 border border-blue-200 rounded-md hover:bg-blue-100 hover:text-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 transition-colors"
+                className="inline-flex items-center gap-2 rounded-xl border border-blue-400/50 bg-blue-500/10 px-4 py-2 text-sm font-semibold text-blue-400 transition hover:bg-blue-500/20 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
               >
-                <HiLockClosed className="w-4 h-4 mr-2" />
+                <HiLockClosed className="h-4 w-4" />
                 Đổi mật khẩu
               </Link>
             </div>
@@ -204,24 +210,22 @@ export function ProfilePage() {
 
           {/* Action buttons */}
           {isEditing && (
-            <div className="flex space-x-3 mt-6">
+            <div className="mt-8 flex gap-3">
               <button
                 onClick={handleCancel}
                 disabled={updateProfileMutation.isPending}
-                className="flex-1 bg-gray-200 text-gray-800 py-2 px-4 rounded-md text-sm font-medium hover:bg-gray-300 focus:outline-none focus:ring-1 focus:ring-gray-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <HiXMark className="w-4 h-4 mr-1" />
+                <HiXMark className="h-4 w-4" />
                 Hủy
               </button>
               <button
                 onClick={handleSave}
                 disabled={updateProfileMutation.isPending}
-                className="flex-1 bg-blue-600 text-white py-2 px-4 rounded-md text-sm font-medium hover:bg-blue-700 focus:outline-none focus:ring-1 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+                className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <HiCheck className="w-4 h-4 mr-1" />
-                {updateProfileMutation.isPending
-                  ? "Đang lưu..."
-                  : "Lưu thay đổi"}
+                <HiCheck className="h-4 w-4" />
+                {updateProfileMutation.isPending ? "Đang lưu..." : "Lưu"}
               </button>
             </div>
           )}

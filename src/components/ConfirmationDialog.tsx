@@ -33,13 +33,16 @@ export function ConfirmationDialog({
 
   const actionStyles = {
     danger: {
-      button: "bg-red-600 hover:bg-red-700 focus:ring-red-500",
+      button:
+        "bg-rose-600 hover:bg-rose-500 focus:ring-rose-400 focus:ring-offset-surface",
     },
     warning: {
-      button: "bg-orange-500 hover:bg-orange-600 focus:ring-orange-400",
+      button:
+        "bg-amber-500 hover:bg-amber-400 focus:ring-amber-300 focus:ring-offset-surface",
     },
     success: {
-      button: "bg-green-600 hover:bg-green-700 focus:ring-green-500",
+      button:
+        "bg-emerald-600 hover:bg-emerald-500 focus:ring-emerald-400 focus:ring-offset-surface",
     },
   } as const;
 
@@ -47,17 +50,17 @@ export function ConfirmationDialog({
     actionStyles[actionType] ?? actionStyles.danger;
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-subtle bg-surface shadow-2xl shadow-black/30">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <div className="flex items-center">
-            <FaExclamationTriangle className="text-yellow-500 mr-2" />
-            <h3 className="text-lg font-medium text-gray-900">{title}</h3>
+        <div className="flex items-center justify-between border-b border-subtle px-6 py-4">
+          <div className="flex items-center gap-2">
+            <FaExclamationTriangle className="text-amber-300" />
+            <h3 className="text-lg font-semibold text-primary">{title}</h3>
           </div>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="rounded-full p-2 text-muted transition hover:bg-surface-muted hover:text-primary"
             disabled={isLoading}
           >
             <FaTimes />
@@ -65,17 +68,15 @@ export function ConfirmationDialog({
         </div>
 
         {/* Content */}
-        <div className="p-4">
-          <p className="text-gray-600">{message}</p>
-        </div>
+        <div className="px-6 py-5 text-sm text-subtle">{message}</div>
 
         {/* Actions */}
-        <div className="flex space-x-3 p-4 border-t border-gray-200">
+        <div className="flex gap-3 border-t border-subtle px-6 py-4">
           <button
             type="button"
             onClick={onClose}
             disabled={isLoading}
-            className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="flex-1 rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
             {cancelText}
           </button>
@@ -83,7 +84,7 @@ export function ConfirmationDialog({
             type="button"
             onClick={handleConfirm}
             disabled={isLoading}
-            className={`flex-1 px-4 py-2 text-white rounded-lg disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 ${actionButtonClasses}`}
+            className={`flex-1 rounded-xl px-4 py-2 text-sm font-semibold text-white transition focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-60 ${actionButtonClasses}`}
           >
             {isLoading ? loadingText : confirmText}
           </button>

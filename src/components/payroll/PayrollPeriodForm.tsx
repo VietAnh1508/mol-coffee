@@ -29,19 +29,19 @@ export function PayrollPeriodForm({ onSuccess, onCancel }: PayrollPeriodFormProp
   };
 
   return (
-    <div className="mb-4 p-3 bg-gray-50 rounded-md">
+    <div className="mb-4 rounded-xl border border-subtle bg-surface-muted p-3">
       <div className="flex items-center gap-2">
         <input
           type="text"
           value={newPeriod}
           onChange={(e) => setNewPeriod(e.target.value)}
           placeholder="YYYY-MM (ví dụ: 2025-01)"
-          className="flex-1 px-3 py-2 border border-gray-300 rounded-md text-sm"
+          className="flex-1 rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
         />
         <button
           onClick={handleCreatePeriod}
           disabled={createPeriod.isPending}
-          className="px-3 py-2 bg-green-600 text-white text-sm rounded-md hover:bg-green-700 disabled:opacity-50"
+          className="rounded-xl bg-emerald-600 px-3 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
         >
           {createPeriod.isPending ? "Đang tạo..." : "Tạo"}
         </button>
@@ -50,7 +50,7 @@ export function PayrollPeriodForm({ onSuccess, onCancel }: PayrollPeriodFormProp
             onCancel();
             setNewPeriod("");
           }}
-          className="px-3 py-2 bg-gray-600 text-white text-sm rounded-md hover:bg-gray-700"
+          className="rounded-xl border border-subtle px-3 py-2 text-sm font-semibold text-subtle transition hover:bg-surface focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
         >
           Hủy
         </button>

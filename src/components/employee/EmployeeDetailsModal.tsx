@@ -1,5 +1,12 @@
-import { useToast, useToggleUserRole, useToggleUserStatus, useUser, useUsers } from "../../hooks";
+import type { ReactNode } from "react";
 import { USER_ROLES } from "../../constants/userRoles";
+import {
+  useToast,
+  useToggleUserRole,
+  useToggleUserStatus,
+  useUser,
+  useUsers,
+} from "../../hooks";
 import type { User } from "../../types";
 import { CurrentUserBadge } from "../CurrentUserBadge";
 import { Spinner } from "../Spinner";
@@ -45,46 +52,56 @@ export function EmployeeDetailsModal({
 
   if (!employeeId) return null;
 
+  const renderOverlay = (content: ReactNode) => (
+    <div
+      className="fixed inset-0 z-50 flex h-full w-full items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm"
+      onClick={onClose}
+    >
+      <div
+        className="w-full max-w-lg rounded-2xl border border-subtle bg-surface p-6 shadow-2xl shadow-black/30"
+        onClick={(e) => e.stopPropagation()}
+      >
+        {content}
+      </div>
+    </div>
+  );
+
   if (isLoading) {
-    return (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-        <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-          <div className="flex items-center justify-center py-12">
-            <Spinner />
-            <span className="ml-3">Đang tải...</span>
-          </div>
-        </div>
+    return renderOverlay(
+      <div className="flex items-center justify-center py-12 text-subtle">
+        <Spinner />
+        <span className="ml-3 text-sm">Đang tải...</span>
       </div>
     );
   }
 
   if (error || !employee) {
-    return (
-      <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50" onClick={onClose}>
-        <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white" onClick={(e) => e.stopPropagation()}>
-          <div className="text-center py-12">
-            <p className="text-red-600">Có lỗi xảy ra khi tải thông tin nhân viên</p>
-            <button
-              onClick={onClose}
-              className="mt-4 px-4 py-2 bg-gray-100 rounded-md hover:bg-gray-200"
-            >
-              Đóng
-            </button>
-          </div>
-        </div>
+    return renderOverlay(
+      <div className="text-center">
+        <p className="text-sm text-rose-300">
+          Có lỗi xảy ra khi tải thông tin nhân viên
+        </p>
+        <button
+          onClick={onClose}
+          className="mt-4 rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
+        >
+          Đóng
+        </button>
       </div>
     );
   }
 
-
   const isLastAdmin = (emp: User) => {
     if (emp.role !== USER_ROLES.ADMIN) return false;
-    const adminCount = employees.filter((e) => e.role === USER_ROLES.ADMIN).length;
+    const adminCount = employees.filter(
+      (e) => e.role === USER_ROLES.ADMIN
+    ).length;
     return adminCount === 1;
   };
 
   const canToggleRole = (emp: User) => {
-    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN) return false;
+    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN)
+      return false;
     if (isLastAdmin(emp)) return false;
     return true;
   };
@@ -94,153 +111,145 @@ export function EmployeeDetailsModal({
     return true;
   };
 
-  return (
-    <div
-      className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50"
-      onClick={onClose}
-    >
-      <div
-        className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white"
-        onClick={(e) => e.stopPropagation()}
-      >
-        <div className="mt-3">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">
-              Thông tin nhân viên
-            </h3>
-            <button
-              onClick={onClose}
-              className="text-gray-400 hover:text-gray-600"
+  return renderOverlay(
+    <div className="space-y-6">
+      <div className="flex items-center justify-between">
+        <h3 className="text-lg font-semibold text-primary">
+          Thông tin nhân viên
+        </h3>
+        <button
+          onClick={onClose}
+          className="rounded-full p-2 text-muted transition hover:bg-surface-muted hover:text-primary"
+        >
+          <span className="sr-only">Đóng</span>
+          <svg
+            className="h-5 w-5"
+            fill="none"
+            viewBox="0 0 24 24"
+            stroke="currentColor"
+          >
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M6 18L18 6M6 6l12 12"
+            />
+          </svg>
+        </button>
+      </div>
+
+      <div className="space-y-4 text-sm">
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
+            Tên
+          </label>
+          <p className="mt-1 text-primary">
+            {employee.name}
+            <CurrentUserBadge user={employee} className="ml-2" />
+          </p>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
+            Email
+          </label>
+          <p className="mt-1 text-primary">{employee.email}</p>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
+            Số điện thoại
+          </label>
+          <p className="mt-1 text-primary">{employee.phone}</p>
+        </div>
+
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
+            Vai trò
+          </label>
+          <div className="mt-1 flex items-center justify-between">
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                employee.role === USER_ROLES.ADMIN
+                  ? "bg-purple-500/15 text-purple-400"
+                  : "bg-blue-500/15 text-blue-400"
+              }`}
             >
-              <span className="sr-only">Đóng</span>
-              <svg
-                className="h-6 w-6"
-                fill="none"
-                viewBox="0 0 24 24"
-                stroke="currentColor"
+              {employee.role === USER_ROLES.ADMIN
+                ? "Quản trị viên"
+                : "Nhân viên"}
+            </span>
+            {canToggleRole(employee) && (
+              <button
+                onClick={() => toggleRoleMutation.mutate(employee)}
+                disabled={toggleRoleMutation.isPending}
+                className="text-sm font-semibold text-blue-400 transition hover:text-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
               >
-                <path
-                  strokeLinecap="round"
-                  strokeLinejoin="round"
-                  strokeWidth={2}
-                  d="M6 18L18 6M6 6l12 12"
-                />
-              </svg>
-            </button>
-          </div>
-
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Tên
-              </label>
-              <p className="mt-1 text-sm text-gray-900">
-                {employee.name}
-                <CurrentUserBadge user={employee} className="ml-2" />
-              </p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email
-              </label>
-              <p className="mt-1 text-sm text-gray-900">{employee.email}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Số điện thoại
-              </label>
-              <p className="mt-1 text-sm text-gray-900">{employee.phone}</p>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Vai trò
-              </label>
-              <div className="mt-1 flex items-center justify-between">
-                <span
-                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                    employee.role === USER_ROLES.ADMIN
-                      ? "bg-purple-100 text-purple-800"
-                      : "bg-blue-100 text-blue-800"
-                  }`}
-                >
-                  {employee.role === USER_ROLES.ADMIN ? "Quản trị viên" : "Nhân viên"}
-                </span>
-                {canToggleRole(employee) && (
-                  <button
-                    onClick={() => toggleRoleMutation.mutate(employee)}
-                    disabled={toggleRoleMutation.isPending}
-                    className="text-sm text-indigo-600 hover:text-indigo-900 disabled:opacity-50"
-                  >
-                    {employee.role === USER_ROLES.ADMIN ? "Hạ cấp" : "Thăng chức"}
-                  </button>
-                )}
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Trạng thái
-              </label>
-              <div className="mt-1 flex items-center justify-between">
-                <span
-                  className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold ${
-                    employee.status === "active"
-                      ? "bg-green-100 text-green-800"
-                      : "bg-red-100 text-red-800"
-                  }`}
-                >
-                  {employee.status === "active" ? "Hoạt động" : "Không hoạt động"}
-                </span>
-                {canToggleStatus(employee) && (
-                  <div className="flex items-center">
-                    <button
-                      onClick={() => {
-                        toggleStatusMutation.mutate(employee);
-                      }}
-                      disabled={toggleStatusMutation.isPending}
-                      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-50 ${
-                        employee.status === "active"
-                          ? "bg-green-600"
-                          : "bg-gray-200"
-                      }`}
-                    >
-                      {toggleStatusMutation.isPending ? (
-                        <div className="absolute inset-0 flex items-center justify-center">
-                          <Spinner size="sm" color="white" />
-                        </div>
-                      ) : (
-                        <span
-                          className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
-                            employee.status === "active"
-                              ? "translate-x-6"
-                              : "translate-x-1"
-                          }`}
-                        />
-                      )}
-                    </button>
-                    <span className="ml-2 text-sm text-gray-600">
-                      {toggleStatusMutation.isPending
-                        ? "Đang cập nhật..."
-                        : (employee.status === "active" ? "Hoạt động" : "Tạm dừng")}
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-
-          <div className="mt-6 flex justify-end">
-            <button
-              onClick={onClose}
-              className="inline-flex justify-center px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 border border-transparent rounded-md hover:bg-gray-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500"
-            >
-              Đóng
-            </button>
+                {employee.role === USER_ROLES.ADMIN ? "Hạ cấp" : "Thăng chức"}
+              </button>
+            )}
           </div>
         </div>
+
+        <div>
+          <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
+            Trạng thái
+          </label>
+          <div className="mt-1 flex items-center justify-between">
+            <span
+              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
+                employee.status === "active"
+                  ? "bg-emerald-500/15 text-emerald-400"
+                  : "bg-rose-500/15 text-rose-400"
+              }`}
+            >
+              {employee.status === "active" ? "Hoạt động" : "Không hoạt động"}
+            </span>
+            {canToggleStatus(employee) && (
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => toggleStatusMutation.mutate(employee)}
+                  disabled={toggleStatusMutation.isPending}
+                  className={`relative inline-flex h-6 w-11 items-center rounded-full transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60 ${
+                    employee.status === "active"
+                      ? "bg-emerald-500/60"
+                      : "bg-surface-muted"
+                  }`}
+                >
+                  {toggleStatusMutation.isPending ? (
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <Spinner size="sm" />
+                    </div>
+                  ) : (
+                    <span
+                      className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                        employee.status === "active"
+                          ? "translate-x-6"
+                          : "translate-x-1"
+                      }`}
+                    />
+                  )}
+                </button>
+                <span className="text-sm text-subtle">
+                  {toggleStatusMutation.isPending
+                    ? "Đang cập nhật..."
+                    : employee.status === "active"
+                      ? "Hoạt động"
+                      : "Tạm dừng"}
+                </span>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+
+      <div className="flex justify-end">
+        <button
+          onClick={onClose}
+          className="rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
+        >
+          Đóng
+        </button>
       </div>
     </div>
   );

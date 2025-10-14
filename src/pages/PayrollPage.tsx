@@ -28,7 +28,7 @@ export function PayrollPage() {
   const isLoading = isLoadingPayroll || isLoadingPeriod;
 
   return (
-    <div className="px-4 py-6 sm:px-0">
+    <div className="px-4 py-6 text-primary sm:px-0">
       <PageTitle
         title="Bảng lương"
         subtitle={
@@ -49,15 +49,18 @@ export function PayrollPage() {
 
         {/* Period Selector for Employees */}
         {!isAdmin && (
-          <div className="bg-white rounded-lg shadow p-4">
-            <label htmlFor="period-select" className="block text-sm font-medium text-gray-700 mb-2">
+          <div className="rounded-2xl border border-subtle bg-surface p-4 shadow-lg shadow-black/5">
+            <label
+              htmlFor="period-select"
+              className="mb-2 block text-sm font-medium text-subtle"
+            >
               Chọn kỳ lương
             </label>
             <select
               id="period-select"
               value={selectedPeriod}
               onChange={(e) => setSelectedPeriod(e.target.value)}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md"
+              className="w-full rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
             >
               <option value={getCurrentYearMonth()}>
                 {formatMonthName(getCurrentYearMonth())}
@@ -69,20 +72,20 @@ export function PayrollPage() {
 
         {/* Period Status Banner */}
         {periodInfo && (
-          <div className={`rounded-lg p-4 ${
+          <div className={`rounded-2xl border p-4 ${
             periodInfo.status === "closed"
-              ? "bg-orange-50 border border-orange-200"
-              : "bg-green-50 border border-green-200"
+              ? "border-amber-400/40 bg-amber-500/10"
+              : "border-emerald-400/40 bg-emerald-500/10"
           }`}>
             <div className="flex items-center">
-              <div className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+              <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                 periodInfo.status === "closed"
-                  ? "bg-orange-100 text-orange-800"
-                  : "bg-green-100 text-green-800"
+                  ? "bg-amber-500/25 text-amber-200"
+                  : "bg-emerald-500/25 text-emerald-200"
               }`}>
                 {periodInfo.status === "closed" ? "Đã khóa" : "Đang mở"}
               </div>
-              <span className="ml-3 text-sm text-gray-600">
+              <span className="ml-3 text-sm text-subtle">
                 Kỳ lương {formatMonthName(selectedPeriod)}
                 {periodInfo.status === "closed" && periodInfo.closed_by_user && (
                   <> - Khóa bởi {periodInfo.closed_by_user.name}</>
@@ -94,21 +97,23 @@ export function PayrollPage() {
 
         {/* Loading State */}
         {isLoading && (
-          <div className="bg-white rounded-lg shadow p-8">
-            <div className="flex items-center justify-center">
+          <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-lg shadow-black/5">
+            <div className="flex items-center justify-center text-subtle">
               <Spinner />
-              <span className="ml-3 text-gray-600">Đang tính toán bảng lương...</span>
+              <span className="ml-3">Đang tính toán bảng lương...</span>
             </div>
           </div>
         )}
 
         {/* No Data State */}
         {!isLoading && (!payrollData || payrollData.length === 0) && (
-          <div className="bg-white rounded-lg shadow p-8">
-            <div className="text-center text-gray-500">
-              <div className="text-4xl mb-4">📊</div>
-              <h3 className="text-lg font-medium mb-2">Chưa có dữ liệu lương</h3>
-              <p>
+          <div className="rounded-2xl border border-subtle bg-surface p-8 text-center text-subtle shadow-lg shadow-black/5">
+            <div>
+              <div className="mb-4 text-4xl">📊</div>
+              <h3 className="mb-2 text-lg font-semibold text-primary">
+                Chưa có dữ liệu lương
+              </h3>
+              <p className="text-sm">
                 {isAdmin
                   ? "Chưa có lịch làm việc nào trong kỳ này."
                   : "Bạn chưa có lịch làm việc nào trong kỳ này."

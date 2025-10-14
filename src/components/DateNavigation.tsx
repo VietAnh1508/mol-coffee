@@ -58,11 +58,11 @@ export function DateNavigation({
   };
 
   return (
-    <div className="bg-white rounded-lg shadow p-4 mb-6">
+    <div className="mb-6 rounded-2xl border border-subtle bg-surface p-4 shadow-lg shadow-black/5">
       <div className="flex items-center justify-between">
         <button
           onClick={goToPreviousDay}
-          className="p-2 text-gray-500 hover:text-gray-700"
+          className="rounded-full p-2 text-muted transition hover:bg-surface-muted hover:text-primary"
         >
           ←
         </button>
@@ -70,7 +70,7 @@ export function DateNavigation({
         <div className="text-center relative" ref={datePickerRef}>
           <button
             onClick={() => setShowDatePicker(!showDatePicker)}
-            className="flex items-center space-x-2 text-lg font-semibold text-gray-900 hover:text-blue-600 transition-colors"
+            className="flex items-center space-x-2 text-lg font-semibold text-primary transition hover:text-blue-400"
           >
             <span>{formatDate(selectedDate)}</span>
             <HiCalendarDays className="h-5 w-5" />
@@ -78,12 +78,12 @@ export function DateNavigation({
 
           {/* Date Picker Dropdown */}
           {showDatePicker && (
-            <div className="absolute top-full mt-2 left-1/2 transform -translate-x-1/2 bg-white border border-gray-300 rounded-md shadow-lg z-10">
+            <div className="absolute left-1/2 top-full z-10 mt-2 w-56 -translate-x-1/2 rounded-xl border border-subtle bg-surface shadow-lg shadow-black/15">
               <input
                 type="date"
                 value={selectedDate.toISOString().split("T")[0]}
                 onChange={handleDateInputChange}
-                className="p-3 border-0 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full rounded-xl border-0 bg-transparent px-4 py-3 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400"
               />
             </div>
           )}
@@ -91,7 +91,7 @@ export function DateNavigation({
 
         <button
           onClick={goToNextDay}
-          className="p-2 text-gray-500 hover:text-gray-700"
+          className="rounded-full p-2 text-muted transition hover:bg-surface-muted hover:text-primary"
         >
           →
         </button>
@@ -99,7 +99,7 @@ export function DateNavigation({
 
       <button
         onClick={goToToday}
-        className="w-full mt-3 text-blue-500 hover:text-blue-600 text-sm"
+        className="mt-3 w-full text-sm font-semibold text-blue-400 transition hover:text-blue-300"
       >
         Hôm nay
       </button>

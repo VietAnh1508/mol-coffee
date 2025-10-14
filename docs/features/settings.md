@@ -86,6 +86,7 @@ ORDER BY effective_from DESC LIMIT 1;
 - **Mobile-Responsive:** Optimized for mobile coffee shop management
 - **Real-time Data:** Live updates with TanStack Query integration
 - **Action Buttons:** React Icons integration for intuitive controls
+- **Dark Mode Ready:** Token-based colors adapt to the system theme for consistent contrast
 
 ### Activities Management UI
 - **Activity List:** Display all activities with status indicators
@@ -264,5 +265,5 @@ const { isAdmin } = useAuth(); // Access control
 
 ---
 
-**Last Updated:** September 19, 2025
+**Last Updated:** October 14, 2025
 **Status:** Production Ready ✅

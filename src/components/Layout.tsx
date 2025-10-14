@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import type { ReactNode } from "react";
+import type { PropsWithChildren } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
 import { USER_ROLES } from "../constants/userRoles";
@@ -8,11 +8,7 @@ import { useAuth, useToast } from "../hooks";
 import { ProfileCompletionModal } from "./ProfileCompletionModal";
 import { Toast } from "./Toast";
 
-interface LayoutProps {
-  readonly children: ReactNode;
-}
-
-export function Layout({ children }: LayoutProps) {
+export function Layout({ children }: PropsWithChildren) {
   return (
     <ToastProvider>
       <LayoutContent>{children}</LayoutContent>
@@ -20,7 +16,7 @@ export function Layout({ children }: LayoutProps) {
   );
 }
 
-function LayoutContent({ children }: LayoutProps) {
+function LayoutContent({ children }: PropsWithChildren) {
   const { user, signOut, isProfileComplete } = useAuth();
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -44,66 +40,76 @@ function LayoutContent({ children }: LayoutProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-page text-primary transition-colors">
       {user && !isProfileComplete && <ProfileCompletionModal user={user} />}
 
       {user && (
-        <nav className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between h-16">
-              <div className="flex items-center space-x-8">
-                <Link
-                  to="/dashboard"
-                  className="flex items-center space-x-2 text-xl font-semibold text-gray-900 hover:text-blue-600"
-                >
-                  <img
-                    src="/mol-house-logo.jpg"
-                    alt="MoL House Logo"
-                    className="w-8 h-8 rounded-full object-cover"
-                  />
-                  <span>MoL Coffee</span>
-                </Link>
+        <nav className="border-b border-subtle bg-surface/90 backdrop-blur">
+          <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
+            <Link
+              to="/dashboard"
+              className="flex items-center gap-3 rounded-full border border-transparent px-3 py-1.5 transition hover:border-blue-200 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+            >
+              <img
+                src="/mol-house-logo.jpg"
+                alt="MoL House Logo"
+                className="h-9 w-9 rounded-full object-cover shadow-md shadow-black/10"
+              />
+              <div className="flex flex-col">
+                <span className="text-lg font-semibold text-primary">
+                  MoL Coffee
+                </span>
               </div>
-              <div className="flex items-center">
-                <div className="relative" ref={dropdownRef}>
-                  <button
-                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                    className="flex items-center space-x-1 p-2 rounded-full hover:bg-gray-100 transition-colors"
-                  >
-                    <HiUser className="w-5 h-5 text-gray-600" />
-                    <HiChevronDown
-                      className={`w-4 h-4 text-gray-600 transform transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
+            </Link>
 
-                  {isDropdownOpen && (
-                    <div className="absolute right-0 mt-2 w-48 bg-white rounded-md shadow-lg ring-1 ring-black ring-opacity-5 z-50">
-                      <div className="py-1">
-                        <Link
-                          to="/profile"
-                          onClick={() => setIsDropdownOpen(false)}
-                          className="block px-4 py-2 text-sm text-gray-700 border-b border-gray-100 hover:bg-gray-50"
-                        >
-                          <div className="font-medium">{user.name}</div>
-                          <div className="text-xs text-gray-500 capitalize">
-                            {user.role === USER_ROLES.ADMIN
-                              ? "Quản trị viên"
-                              : "Nhân viên"}
-                          </div>
-                        </Link>
-                        <button
-                          onClick={() => {
-                            signOut();
-                            setIsDropdownOpen(false);
-                          }}
-                          className="block w-full text-left px-4 py-2 text-sm text-red-600 hover:bg-red-50 hover:text-red-700"
-                        >
-                          Đăng xuất
-                        </button>
-                      </div>
+            <div className="flex items-center">
+              <div className="relative" ref={dropdownRef}>
+                <button
+                  onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                  className="flex items-center gap-2 rounded-full border border-transparent px-3 py-2 text-sm font-medium text-muted transition hover:border-blue-200 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
+                  aria-expanded={isDropdownOpen}
+                >
+                  <HiUser className="h-5 w-5 text-blue-500" />
+                  <span className="hidden sm:inline text-primary">
+                    {user.name}
+                  </span>
+                  <HiChevronDown
+                    className={`h-4 w-4 text-muted transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                  />
+                </button>
+
+                {isDropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-56 overflow-hidden rounded-2xl border border-subtle bg-surface shadow-xl shadow-black/10">
+                    <div className="border-b border-subtle bg-surface px-4 py-3">
+                      <p className="text-sm font-semibold text-primary">
+                        {user.name}
+                      </p>
+                      <p className="text-xs uppercase tracking-wide text-subtle">
+                        {user.role === USER_ROLES.ADMIN
+                          ? "Quản trị viên"
+                          : "Nhân viên"}
+                      </p>
                     </div>
-                  )}
-                </div>
+                    <div className="py-1">
+                      <Link
+                        to="/profile"
+                        onClick={() => setIsDropdownOpen(false)}
+                        className="block px-4 py-2 text-sm text-primary transition hover:bg-surface-muted"
+                      >
+                        Thông tin cá nhân
+                      </Link>
+                      <button
+                        onClick={() => {
+                          signOut();
+                          setIsDropdownOpen(false);
+                        }}
+                        className="flex w-full items-center gap-2 px-4 py-2 text-sm font-medium text-red-500 transition hover:bg-red-500/10"
+                      >
+                        Đăng xuất
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           </div>

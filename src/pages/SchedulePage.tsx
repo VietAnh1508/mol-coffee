@@ -106,7 +106,7 @@ export function SchedulePage({
   };
 
   return (
-    <div className="px-4 py-6 sm:px-0">
+    <div className="px-4 py-6 text-primary sm:px-0">
       <PageTitle
         title={isAdmin ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
       />
@@ -118,11 +118,11 @@ export function SchedulePage({
 
       {/* Payroll Period Lock Warning */}
       {isLocked && (
-        <div className="mb-4 bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+        <div className="mb-4 rounded-2xl border border-amber-400/40 bg-amber-500/10 p-4 text-amber-100">
           <div className="flex items-start">
             <div className="flex-shrink-0">
               <svg
-                className="h-5 w-5 text-yellow-400"
+                className="h-5 w-5 text-amber-300"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -134,10 +134,10 @@ export function SchedulePage({
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-medium text-yellow-800">
+              <h3 className="text-sm font-semibold">
                 Bảng lương đã khóa
               </h3>
-              <div className="mt-1 text-sm text-yellow-700">
+              <div className="mt-1 text-sm">
                 Bảng lương tháng {formatMonthName(yearMonth)} đã khóa, vui lòng
                 mở lại trước khi chỉnh sửa ca.
               </div>
@@ -147,18 +147,18 @@ export function SchedulePage({
       )}
 
       {/* Schedule Grid */}
-      <div className="bg-white rounded-lg shadow">
-        <div className="p-4 border-b border-gray-200">
-          <div className="flex justify-between items-center">
-            <h3 className="font-medium text-gray-900">Ca làm việc</h3>
+      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
+        <div className="border-b border-subtle p-4">
+          <div className="flex items-center justify-between">
+            <h3 className="font-semibold text-primary">Ca làm việc</h3>
           </div>
         </div>
 
-        <div className="p-4 relative">
+        <div className="relative p-4">
           {/* Loading Overlay */}
           {isLoading && (
-            <div className="absolute inset-0 bg-white/80 backdrop-blur-sm rounded-b-lg flex items-center justify-center z-10">
-              <div className="flex flex-col items-center space-y-3">
+            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-b-2xl border-t border-subtle bg-surface/80 backdrop-blur-sm">
+              <div className="flex flex-col items-center space-y-3 text-subtle">
                 <Spinner />
               </div>
             </div>
@@ -166,14 +166,14 @@ export function SchedulePage({
 
           <div className={`space-y-4 ${isLoading ? "blur-sm" : ""}`}>
             {/* Morning Shift */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
+            <div className="rounded-xl border border-subtle p-4">
+              <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-orange-400 rounded-full mr-3"></div>
-                  <h4 className="font-medium text-gray-900">
+                  <div className="mr-3 h-3 w-3 rounded-full bg-orange-400"></div>
+                  <h4 className="font-semibold text-primary">
                     {SHIFT_TEMPLATES.morning.label}
                   </h4>
-                  <span className="text-sm text-gray-500 ml-2">
+                  <span className="ml-2 text-sm text-subtle">
                     {SHIFT_TEMPLATES.morning.start} -{" "}
                     {SHIFT_TEMPLATES.morning.end}
                   </span>
@@ -182,10 +182,10 @@ export function SchedulePage({
                   <button
                     onClick={() => handleOpenModal("morning")}
                     disabled={isLocked}
-                    className={`text-sm ${
+                    className={`text-sm font-semibold ${
                       isLocked
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-blue-500 hover:text-blue-600"
+                        ? "cursor-not-allowed text-subtle"
+                        : "text-blue-400 hover:text-blue-300"
                     }`}
                   >
                     + Thêm người
@@ -205,7 +205,7 @@ export function SchedulePage({
                     />
                   ))
                 ) : (
-                  <div className="text-sm text-gray-500 text-center py-8">
+                  <div className="py-8 text-center text-sm text-subtle">
                     Chưa có ca làm việc nào được lên lịch
                   </div>
                 )}
@@ -213,14 +213,14 @@ export function SchedulePage({
             </div>
 
             {/* Afternoon Shift */}
-            <div className="border border-gray-200 rounded-lg p-4">
-              <div className="flex justify-between items-center mb-3">
+            <div className="rounded-xl border border-subtle p-4">
+              <div className="mb-3 flex items-center justify-between">
                 <div className="flex items-center">
-                  <div className="w-4 h-4 bg-blue-400 rounded-full mr-3"></div>
-                  <h4 className="font-medium text-gray-900">
+                  <div className="mr-3 h-3 w-3 rounded-full bg-blue-400"></div>
+                  <h4 className="font-semibold text-primary">
                     {SHIFT_TEMPLATES.afternoon.label}
                   </h4>
-                  <span className="text-sm text-gray-500 ml-2">
+                  <span className="ml-2 text-sm text-subtle">
                     {SHIFT_TEMPLATES.afternoon.start} -{" "}
                     {SHIFT_TEMPLATES.afternoon.end}
                   </span>
@@ -229,10 +229,10 @@ export function SchedulePage({
                   <button
                     onClick={() => handleOpenModal("afternoon")}
                     disabled={isLocked}
-                    className={`text-sm ${
+                    className={`text-sm font-semibold ${
                       isLocked
-                        ? "text-gray-400 cursor-not-allowed"
-                        : "text-blue-500 hover:text-blue-600"
+                        ? "cursor-not-allowed text-subtle"
+                        : "text-blue-400 hover:text-blue-300"
                     }`}
                   >
                     + Thêm người
@@ -252,7 +252,7 @@ export function SchedulePage({
                     />
                   ))
                 ) : (
-                  <div className="text-sm text-gray-500 text-center py-8">
+                  <div className="py-8 text-center text-sm text-subtle">
                     Chưa có ca làm việc nào được lên lịch
                   </div>
                 )}

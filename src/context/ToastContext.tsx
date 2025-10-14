@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState, type ReactNode } from "react";
+import { useCallback, useMemo, useState, type PropsWithChildren } from "react";
 import {
   ToastContext,
   type ToastState,
@@ -11,7 +11,7 @@ const initialToastState: ToastState = {
   isVisible: false,
 };
 
-export function ToastProvider({ children }: { children: ReactNode }) {
+export function ToastProvider({ children }: PropsWithChildren) {
   const [toast, setToast] = useState<ToastState>(initialToastState);
 
   const showToast = useCallback(

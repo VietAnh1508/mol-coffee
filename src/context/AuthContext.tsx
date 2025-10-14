@@ -3,8 +3,8 @@ import type {
   Session,
   User as SupabaseUser,
 } from "@supabase/supabase-js";
-import type { ReactNode } from "react";
-import { useEffect, useMemo, useState } from "react";
+import type { PropsWithChildren } from "react";
+import { useCallback, useEffect, useMemo, useState } from "react";
 import { isPlaceholderPhone } from "../constants/userDefaults";
 import { useUserProfile } from "../hooks";
 import { supabase } from "../lib/supabase";
@@ -13,11 +13,7 @@ import { AuthContext } from "./AuthContextDefinition";
 // Re-export the context type for convenience
 export type { AuthContextType } from "./AuthContextDefinition";
 
-interface AuthProviderProps {
-  children: ReactNode;
-}
-
-export function AuthProvider({ children }: AuthProviderProps) {
+export function AuthProvider({ children }: PropsWithChildren) {
   const [supabaseUser, setSupabaseUser] = useState<SupabaseUser | null>(null);
   const [authLoading, setAuthLoading] = useState(true);
 
@@ -77,7 +73,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     }
   }, [profileError]);
 
-  const signIn = async (email: string, password: string) => {
+  const signIn = useCallback(async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signInWithPassword({
         email,
@@ -91,9 +87,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         error instanceof Error ? error : new Error("Unknown error");
       return { error: authError as AuthError };
     }
-  };
+  }, []);
 
-  const signUp = async (email: string, password: string) => {
+  const signUp = useCallback(async (email: string, password: string) => {
     try {
       const { error } = await supabase.auth.signUp({
         email,
@@ -112,9 +108,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
         error instanceof Error ? error : new Error("Unknown error");
       return { error: authError as AuthError };
     }
-  };
+  }, []);
 
-  const signOut = async () => {
+  const signOut = useCallback(async () => {
     try {
       // Clear local state immediately
       setSupabaseUser(null);
@@ -123,9 +119,9 @@ export function AuthProvider({ children }: AuthProviderProps) {
     } catch (error) {
       console.error("Error signing out:", error);
     }
-  };
+  }, []);
 
-  const isProfileComplete = (userData: typeof user): boolean => {
+  const isProfileComplete = useCallback((userData: typeof user): boolean => {
     if (!userData) return false;
     // Check if name exists and phone is not a placeholder
     return Boolean(
@@ -134,7 +130,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         userData.phone &&
         !isPlaceholderPhone(userData.phone)
     );
-  };
+  }, []);
 
   const value = useMemo(
     () => ({
@@ -146,7 +142,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       signUp,
       signOut,
     }),
-    [user, supabaseUser, loading]
+    [user, supabaseUser, loading, isProfileComplete, signIn, signUp, signOut]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

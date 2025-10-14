@@ -9,50 +9,51 @@ interface PayrollEmployeeCardProps {
 
 export function PayrollEmployeeCard({ employee }: PayrollEmployeeCardProps) {
   return (
-    <div className="bg-white rounded-lg shadow hover:shadow-md transition-shadow duration-200 border border-gray-200 hover:border-gray-300">
+    <div className="rounded-2xl border border-subtle bg-surface shadow-sm shadow-black/5 transition hover:shadow-lg">
       <div className="p-6">
         {/* Employee Info */}
-        <div className="flex items-start justify-between mb-4">
+        <div className="mb-4 flex items-start justify-between">
           <div className="flex items-center space-x-3">
             <div className="flex-shrink-0">
-              <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center">
-                <FaUser className="w-5 h-5 text-gray-500" />
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-surface-muted text-muted">
+                <FaUser className="h-5 w-5" />
               </div>
             </div>
             <div className="min-w-0 flex-1">
-              <h3 className="text-lg font-medium text-gray-900 truncate">
+              <h3 className="truncate text-lg font-semibold text-primary">
                 {employee.employee.name}
               </h3>
-              <p className="text-sm text-gray-500 truncate">
+              <p className="truncate text-sm text-subtle">
                 {employee.employee.email}
               </p>
             </div>
           </div>
-          <FaChevronRight className="w-4 h-4 text-gray-400 flex-shrink-0 mt-2" />
+          <FaChevronRight className="mt-2 h-4 w-4 flex-shrink-0 text-subtle" />
         </div>
 
         {/* Salary Summary */}
         <div className="space-y-3">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Tổng lương:</span>
-            <span className="text-lg font-bold text-gray-900">
+            <span className="text-sm text-subtle">Tổng lương:</span>
+            <span className="text-lg font-semibold text-primary">
               {formatMoney(Math.round(employee.totalSalary))}
             </span>
           </div>
 
           <div className="flex items-center justify-between">
-            <span className="text-sm text-gray-600">Tổng giờ:</span>
-            <span className="text-sm font-medium text-gray-700">
+            <span className="text-sm text-subtle">Tổng giờ:</span>
+            <span className="text-sm font-semibold text-primary">
               {employee.totalHours.toFixed(1)} giờ
             </span>
           </div>
-
         </div>
 
         {/* Activity Summary */}
         {employee.activities.length > 0 && (
-          <div className="mt-4 pt-4 border-t border-gray-100">
-            <div className="text-xs text-gray-500 mb-2">Hoạt động chính:</div>
+          <div className="mt-4 border-t border-subtle pt-4">
+            <div className="mb-2 text-xs font-semibold uppercase tracking-wide text-subtle">
+              Hoạt động chính:
+            </div>
             <div className="flex flex-wrap gap-1">
               {employee.activities.slice(0, 3).map((activity) => (
                 <span
@@ -63,7 +64,7 @@ export function PayrollEmployeeCard({ employee }: PayrollEmployeeCardProps) {
                 </span>
               ))}
               {employee.activities.length > 3 && (
-                <span className="inline-flex items-center px-2 py-1 rounded-full text-xs bg-gray-100 text-gray-700">
+                <span className="inline-flex items-center rounded-full bg-surface-muted px-2 py-1 text-xs font-semibold text-subtle">
                   +{employee.activities.length - 3}
                 </span>
               )}

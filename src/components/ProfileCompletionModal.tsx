@@ -45,13 +45,11 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
   };
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white rounded-lg p-6 w-full max-w-md mx-4">
-        <div className="mb-4">
-          <h2 className="text-xl font-semibold text-gray-900">
-            Hoàn tất thông tin cá nhân
-          </h2>
-          <p className="text-sm text-gray-600 mt-1">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+      <div className="w-full max-w-md rounded-2xl border border-subtle bg-surface px-6 py-7 shadow-2xl shadow-black/30">
+        <div className="mb-5 space-y-2 text-primary">
+          <h2 className="text-xl font-semibold">Hoàn tất thông tin cá nhân</h2>
+          <p className="text-sm text-subtle">
             Vui lòng cung cấp tên và số điện thoại để tiếp tục
           </p>
         </div>
@@ -60,7 +58,7 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
           <div>
             <label
               htmlFor="name"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-subtle"
             >
               Tên
             </label>
@@ -71,7 +69,7 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
               required
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full rounded-xl border border-subtle bg-surface px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
               placeholder="Nhập tên của bạn"
             />
           </div>
@@ -79,7 +77,7 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
           <div>
             <label
               htmlFor="phone"
-              className="block text-sm font-medium text-gray-700"
+              className="block text-sm font-medium text-subtle"
             >
               Số điện thoại
             </label>
@@ -90,13 +88,13 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
               required
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1 block w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:outline-none focus:ring-blue-500 focus:border-blue-500 sm:text-sm"
+              className="mt-1 block w-full rounded-xl border border-subtle bg-surface px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
               placeholder="Nhập số điện thoại"
             />
           </div>
 
           {(validationError || updateProfileMutation.error) && (
-            <div className="text-red-600 text-sm">
+            <div className="rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
               {validationError ||
                 updateProfileMutation.error?.message ||
                 "Có lỗi xảy ra khi cập nhật thông tin"}
@@ -107,7 +105,7 @@ export function ProfileCompletionModal({ user }: ProfileCompletionModalProps) {
             <button
               type="submit"
               disabled={updateProfileMutation.isPending}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50"
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
             >
               {updateProfileMutation.isPending ? "Đang lưu..." : "Hoàn tất"}
             </button>

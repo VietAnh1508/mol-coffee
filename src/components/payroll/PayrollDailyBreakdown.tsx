@@ -1,6 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { usePayrollDailyBreakdown } from "../../hooks";
-import { formatDateWeekdayDMY, formatHours, formatTime } from "../../utils/dateUtils";
+import {
+  formatDateWeekdayDMY,
+  formatHours,
+  formatTime,
+} from "../../utils/dateUtils";
 import { formatCurrency } from "../../utils/payrollUtils";
 import { Spinner } from "../Spinner";
 
@@ -20,17 +24,17 @@ export function PayrollDailyBreakdown({
 
   if (isLoading) {
     return (
-      <div className="flex items-center justify-center py-4">
+      <div className="flex items-center justify-center py-4 text-subtle">
         <Spinner />
-        <span className="ml-2 text-sm text-gray-500">Đang tải chi tiết...</span>
+        <span className="ml-2 text-sm">Đang tải chi tiết...</span>
       </div>
     );
   }
 
   if (!dailyData || dailyData.length === 0) {
     return (
-      <div className="text-center py-4 text-gray-500">
-        <p className="text-sm">Không có dữ liệu chi tiết</p>
+      <div className="py-4 text-center text-sm text-subtle">
+        <p>Không có dữ liệu chi tiết</p>
       </div>
     );
   }
@@ -52,9 +56,9 @@ export function PayrollDailyBreakdown({
   );
 
   return (
-    <div className="border-t border-gray-200">
+    <div className="border-t border-subtle">
       <div className="p-4">
-        <h4 className="text-sm font-medium text-gray-700 mb-4">
+        <h4 className="mb-4 text-sm font-semibold text-subtle">
           Chi tiết theo ngày
         </h4>
         <div className="px-4 pb-4">
@@ -75,18 +79,18 @@ export function PayrollDailyBreakdown({
                   key={date}
                   to="/schedule"
                   search={{ date }}
-                  className="block bg-gray-50 rounded-lg p-3 transition-colors hover:bg-gray-100 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                  className="block rounded-xl border border-subtle bg-surface-muted p-3 transition hover:bg-surface focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                 >
                   {/* Day Header with Total */}
-                  <div className="flex items-center justify-between mb-3 pb-2 border-b border-gray-200">
-                    <h5 className="font-medium text-gray-900">
+                  <div className="mb-3 flex items-center justify-between border-b border-subtle pb-2">
+                    <h5 className="font-semibold text-primary">
                       {formatDateWeekdayDMY(new Date(date))}
                     </h5>
                     <div className="text-right">
-                      <div className="font-medium text-gray-900">
+                      <div className="font-semibold text-primary">
                         {formatCurrency(dayTotal)}
                       </div>
-                      <div className="text-xs text-gray-500">
+                      <div className="text-xs text-subtle">
                         {formatHours(dayHours)}
                       </div>
                     </div>
@@ -99,21 +103,21 @@ export function PayrollDailyBreakdown({
                         return (
                           <div
                             key={entry.shiftId}
-                            className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
+                            className="flex items-center justify-between rounded-xl border border-subtle bg-surface px-3 py-2 text-sm"
                           >
                             <div className="flex items-center space-x-2">
                               {!userId && (
-                                <span className="font-medium text-gray-600">
+                                <span className="font-semibold text-subtle">
                                   {entry.employee.name}
                                 </span>
                               )}
-                              <span className="text-gray-700">
+                              <span className="text-primary">
                                 {entry.activity?.name} (
                                 {formatTime(entry.startTime!)} -{" "}
                                 {formatTime(entry.endTime!)})
                               </span>
                             </div>
-                            <div className="font-medium text-gray-900">
+                            <div className="font-semibold text-primary">
                               {formatCurrency(entry.subtotal)}
                             </div>
                           </div>
@@ -123,14 +127,14 @@ export function PayrollDailyBreakdown({
                       return (
                         <div
                           key={entry.shiftId}
-                          className="flex items-center justify-between text-sm py-2 px-3 bg-white rounded-md"
+                          className="flex items-center justify-between rounded-xl border border-subtle bg-surface px-3 py-2 text-sm"
                         >
                           <div className="flex items-center space-x-2">
-                            <span className="text-gray-700 font-medium">
+                            <span className="text-primary">
                               Phụ cấp ăn trưa
                             </span>
                           </div>
-                          <div className="font-medium text-gray-900">
+                          <div className="font-semibold text-primary">
                             {formatCurrency(entry.subtotal)}
                           </div>
                         </div>

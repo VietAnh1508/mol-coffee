@@ -19,7 +19,7 @@ export function CurrentUserBadge({
 
   return (
     <span
-      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-yellow-100 text-yellow-800 ${className}`}
+      className={`inline-flex rounded-full px-2 py-1 text-xs font-semibold bg-amber-500/15 text-amber-400 ${className}`}
     >
       Bạn
     </span>

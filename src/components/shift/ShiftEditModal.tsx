@@ -99,67 +99,65 @@ export function ShiftEditModal({
         .reduce((a, b) => a * 60 + b);
 
   return (
-    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-      <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] overflow-y-auto">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 px-4 py-8 backdrop-blur-sm">
+      <div className="max-h-[90vh] w-full max-w-md overflow-y-auto rounded-2xl border border-subtle bg-surface shadow-2xl shadow-black/30">
         {/* Header */}
-        <div className="flex items-center justify-between p-4 border-b border-gray-200">
-          <h3 className="text-lg font-medium text-gray-900">
+        <div className="flex items-center justify-between border-b border-subtle px-6 py-4">
+          <h3 className="text-lg font-semibold text-primary">
             Chỉnh sửa ca làm việc
           </h3>
           <button
             onClick={onClose}
-            className="text-gray-400 hover:text-gray-600"
+            className="rounded-full p-2 text-muted transition hover:bg-surface-muted hover:text-primary"
           >
             <FaTimes />
           </button>
         </div>
 
         {/* Content */}
-        <form onSubmit={handleSubmit} className="p-4 space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6 px-6 py-5">
           {/* Lock Warning */}
           {isLocked && (
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3">
-              <p className="text-sm text-yellow-800">
-                ⚠️ Không thể chỉnh sửa ca làm việc trong kỳ lương đã khóa
-              </p>
+            <div className="rounded-xl border border-amber-400/40 bg-amber-500/10 p-3 text-sm text-amber-200">
+              ⚠️ Không thể chỉnh sửa ca làm việc trong kỳ lương đã khóa
             </div>
           )}
 
           {/* Shift Info */}
-          <div className="bg-gray-50 rounded-lg p-3">
-            <h4 className="font-medium text-gray-900 mb-1">
+          <div className="rounded-xl border border-subtle bg-surface-muted p-3">
+            <h4 className="mb-1 font-semibold text-primary">
               {shift.user?.name}
             </h4>
-            <p className="text-sm text-gray-600">
+            <p className="text-sm text-subtle">
               {formatDate(new Date(shift.start_ts))} • {shift.activity?.name}
             </p>
           </div>
 
           {/* Time Inputs */}
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <FaClock className="inline mr-1" />
+              <label className="mb-2 block text-sm font-medium text-subtle">
+                <FaClock className="mr-1 inline" />
                 Giờ bắt đầu
               </label>
               <input
                 type="time"
                 value={startTime}
                 onChange={(e) => setStartTime(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                 required
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-2">
-                <FaClock className="inline mr-1" />
+              <label className="mb-2 block text-sm font-medium text-subtle">
+                <FaClock className="mr-1 inline" />
                 Giờ kết thúc
               </label>
               <input
                 type="time"
                 value={endTime}
                 onChange={(e) => setEndTime(e.target.value)}
-                className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="w-full rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                 required
               />
             </div>
@@ -167,13 +165,13 @@ export function ShiftEditModal({
 
           {/* Activity Selection */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-subtle">
               Hoạt động
             </label>
             <select
               value={selectedActivityId}
               onChange={(e) => setSelectedActivityId(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              className="w-full rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
               required
             >
               <option value="">-- Chọn hoạt động --</option>
@@ -187,31 +185,31 @@ export function ShiftEditModal({
 
           {/* Time Error */}
           {hasTimeError && (
-            <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-red-700 text-sm">
+            <div className="rounded-xl border border-rose-400/40 bg-rose-500/10 p-3 text-sm text-rose-200">
               Giờ kết thúc phải sau giờ bắt đầu
             </div>
           )}
 
           {/* Note */}
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-2">
+            <label className="mb-2 block text-sm font-medium text-subtle">
               Ghi chú (tùy chọn)
             </label>
             <textarea
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={3}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none"
+              className="w-full resize-none rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
               placeholder="Ghi chú về ca làm việc (vd: đến muộn, về sớm)..."
             />
           </div>
 
           {/* Actions */}
-          <div className="flex space-x-3 pt-4">
+          <div className="flex gap-3 pt-4">
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 px-4 py-2 text-gray-700 bg-white border border-gray-300 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
             >
               Hủy
             </button>
@@ -225,7 +223,7 @@ export function ShiftEditModal({
                 updateShift.isPending ||
                 isLocked
               }
-              className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
             >
               {updateShift.isPending ? "Đang cập nhật..." : "Cập nhật"}
             </button>

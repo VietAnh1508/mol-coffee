@@ -41,11 +41,11 @@ export function ShiftCard({ shift, isAdmin, isLocked = false, onEdit }: ShiftCar
   };
 
   return (
-    <div className="bg-white border border-gray-200 rounded-lg p-3 shadow-sm">
-      <div className="flex justify-between items-start mb-2">
+    <div className="rounded-xl border border-subtle bg-surface p-3 shadow-sm shadow-black/5">
+      <div className="mb-2 flex items-start justify-between">
         <div className="flex-1">
-          <div className="flex items-center space-x-2 mb-1">
-            <span className="font-medium text-gray-900">
+          <div className="mb-1 flex items-center space-x-2">
+            <span className="font-semibold text-primary">
               {shift.user?.name || "Không xác định"}
             </span>
             {shift.user && <CurrentUserBadge user={shift.user} />}
@@ -62,25 +62,27 @@ export function ShiftCard({ shift, isAdmin, isLocked = false, onEdit }: ShiftCar
           <div className="flex space-x-1">
             <button
               onClick={() => onEdit?.(shift)}
-              className="p-1 hover:bg-white/50 rounded"
+              className="rounded-md p-1 text-muted transition hover:bg-surface-muted hover:text-primary"
             >
               <FaEdit className="text-sm" />
             </button>
             <button
               onClick={handleDeleteClick}
-              className="p-1 hover:bg-white/50 rounded text-red-600"
+              className="rounded-md p-1 text-rose-400 transition hover:bg-rose-500/10 hover:text-rose-300"
             >
               <FaTrash className="text-sm" />
             </button>
           </div>
         )}
       </div>
-      <div className="flex items-center text-sm text-gray-600">
+      <div className="flex items-center text-sm text-subtle">
         <FaClock className="mr-1" />
         {formatTime(shift.start_ts)} - {formatTime(shift.end_ts)}
       </div>
       {shift.note && (
-        <div className="text-xs mt-1 text-gray-500">Ghi chú: {shift.note}</div>
+        <div className="mt-1 text-xs text-subtle opacity-80">
+          Ghi chú: {shift.note}
+        </div>
       )}
 
       {/* Delete Confirmation Dialog */}

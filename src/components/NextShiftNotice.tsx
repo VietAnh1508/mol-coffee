@@ -22,12 +22,18 @@ export function NextShiftNotice({ user }: NextShiftNoticeProps) {
   }
 
   if (isLoading) {
-    return <p className="text-sm text-gray-600">Đang tải ca làm tiếp theo…</p>;
+    return (
+      <p className="inline-flex items-center rounded-xl border border-subtle bg-surface-muted px-3 py-2 text-sm text-subtle">
+        Đang tải ca làm tiếp theo…
+      </p>
+    );
   }
 
   if (isError) {
     return (
-      <p className="text-sm text-red-600">Không thể tải ca làm tiếp theo</p>
+      <p className="inline-flex items-center rounded-xl border border-rose-400/40 bg-rose-500/10 px-3 py-2 text-sm text-rose-200">
+        Không thể tải ca làm tiếp theo
+      </p>
     );
   }
 
@@ -39,7 +45,7 @@ export function NextShiftNotice({ user }: NextShiftNoticeProps) {
   const shiftDateStr = formatDateDMY(new Date(nextShift.start_ts));
 
   return (
-    <p className="text-sm text-gray-700">
+    <p className="inline-flex items-center rounded-xl border border-subtle bg-surface-muted px-3 py-2 text-sm text-primary">
       Ca làm tiếp theo: {templateLabel} ngày {shiftDateStr}
     </p>
   );

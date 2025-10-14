@@ -15,47 +15,57 @@ export function ActivityForm({ activity, onClose }: ActivityFormProps) {
     const name = formData.get("name") as string;
 
     if (activity) {
-      updateActivityMutation.mutate({
-        id: activity.id,
-        name
-      }, {
-        onSuccess: () => {
-          onClose();
-          showToast("Cập nhật hoạt động thành công", "success");
+      updateActivityMutation.mutate(
+        {
+          id: activity.id,
+          name,
         },
-        onError: () => {
-          showToast("Có lỗi xảy ra khi cập nhật hoạt động", "error");
+        {
+          onSuccess: () => {
+            onClose();
+            showToast("Cập nhật hoạt động thành công", "success");
+          },
+          onError: () => {
+            showToast("Có lỗi xảy ra khi cập nhật hoạt động", "error");
+          },
         }
-      });
+      );
     } else {
-      createActivityMutation.mutate({
-        name
-      }, {
-        onSuccess: () => {
-          showToast("Đã tạo hoạt động mới", "success");
-          onClose();
+      createActivityMutation.mutate(
+        {
+          name,
         },
-        onError: () => {
-          showToast("Có lỗi xảy ra khi tạo hoạt động", "error");
+        {
+          onSuccess: () => {
+            showToast("Đã tạo hoạt động mới", "success");
+            onClose();
+          },
+          onError: () => {
+            showToast("Có lỗi xảy ra khi tạo hoạt động", "error");
+          },
         }
-      });
+      );
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
-      <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
-        <h3 className="text-lg font-medium text-gray-900 mb-4">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-sm px-4 py-8">
+      <div className="w-full max-w-md rounded-2xl border border-subtle bg-surface p-6 shadow-2xl shadow-black/25">
+        <h3 className="text-xl font-semibold text-primary">
           {activity ? "Sửa hoạt động" : "Thêm hoạt động mới"}
         </h3>
         <form
+          className="mt-6 space-y-5"
           onSubmit={(e) => {
             e.preventDefault();
             handleSave(new FormData(e.target as HTMLFormElement));
           }}
         >
-          <div className="mb-4">
-            <label htmlFor="activity-name" className="block text-sm font-medium text-gray-700 mb-1">
+          <div>
+            <label
+              htmlFor="activity-name"
+              className="mb-2 block text-sm font-medium text-subtle"
+            >
               Tên hoạt động
             </label>
             <input
@@ -64,23 +74,30 @@ export function ActivityForm({ activity, onClose }: ActivityFormProps) {
               name="name"
               required
               defaultValue={activity?.name || ""}
-              className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full rounded-xl border border-subtle bg-surface px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
+              placeholder="Ví dụ: Pha chế, Thu ngân..."
             />
           </div>
-          <div className="flex justify-end space-x-3">
+          <div className="flex justify-end gap-3">
             <button
               type="button"
               onClick={onClose}
-              className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+              className="rounded-xl border border-subtle px-4 py-2 text-sm font-semibold text-subtle transition hover:bg-surface-muted focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface"
             >
               Hủy
             </button>
             <button
               type="submit"
-              disabled={createActivityMutation.isPending || updateActivityMutation.isPending}
-              className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-md hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={
+                createActivityMutation.isPending ||
+                updateActivityMutation.isPending
+              }
+              className="rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-300 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {(createActivityMutation.isPending || updateActivityMutation.isPending) ? "Đang lưu..." : "Lưu"}
+              {createActivityMutation.isPending ||
+              updateActivityMutation.isPending
+                ? "Đang lưu..."
+                : "Lưu"}
             </button>
           </div>
         </form>
