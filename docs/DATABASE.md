@@ -277,6 +277,7 @@ CREATE OR REPLACE FUNCTION check_shift_overlap()
 RETURNS TRIGGER AS $$
 -- Prevents overlapping shifts for same user
 -- Enforces maximum 2 shifts per day per employee
+-- Evaluates Asia/Ho_Chi_Minh local day to respect Vietnam schedule boundaries (Migration 20251021090000)
 ```
 
 #### 2. Admin Self-Management Prevention

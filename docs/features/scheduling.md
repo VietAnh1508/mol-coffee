@@ -71,6 +71,7 @@ RETURNS TRIGGER AS $$
 -- Database-level validation for shift conflicts
 -- Enforces maximum 2 shifts per day per employee
 -- Prevents overlapping time periods
+-- Uses Asia/Ho_Chi_Minh local day for 2-shift maximum
 ```
 
 ## User Interface
@@ -116,7 +117,7 @@ RETURNS TRIGGER AS $$
 
 ### Conflict Handling
 - **Overlap Prevention:** Database-level validation
-- **Maximum Shift Enforcement:** 2 shifts per day per employee
+- **Maximum Shift Enforcement:** 2 shifts per local day (Asia/Ho_Chi_Minh) per employee, even when shifts cross UTC midnight
 - **Template Conflicts:** Prevent double-booking same shift template
 - **Real-time Feedback:** Immediate user notification of conflicts
 
