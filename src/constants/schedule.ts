@@ -30,3 +30,28 @@ export const isSameDay = (a: Date, b: Date) =>
   a.getFullYear() === b.getFullYear() &&
   a.getMonth() === b.getMonth() &&
   a.getDate() === b.getDate();
+
+export const getWeekRange = (date: Date) => {
+  const normalized = normalizeDate(date);
+  const dayOfWeek = normalized.getDay(); // 0 Sunday, 1 Monday, ...
+  const diff = dayOfWeek === 0 ? -6 : 1 - dayOfWeek; // shift to Monday
+
+  const start = new Date(normalized);
+  start.setDate(start.getDate() + diff);
+
+  const days: Date[] = [];
+  for (let index = 0; index < 7; index += 1) {
+    const day = new Date(start);
+    day.setDate(start.getDate() + index);
+    days.push(day);
+  }
+
+  const endExclusive = new Date(start);
+  endExclusive.setDate(start.getDate() + 7);
+
+  return {
+    start,
+    endExclusive,
+    days,
+  };
+};

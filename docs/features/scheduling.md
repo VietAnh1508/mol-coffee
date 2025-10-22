@@ -78,7 +78,9 @@ RETURNS TRIGGER AS $$
 
 ### Schedule Calendar View
 - **Day View Layout:** Vietnamese interface with date navigation
-- **Deep Link Support:** Accepts `?date=YYYY-MM-DD` links (e.g., from payroll daily breakdown) and jumps directly to that day ✅ **NEW**
+- **View Mode Toggle:** Switch between day and compact week overview directly in the header ✅ **NEW**
+- **Week Overview (Read-only):** Summaries for morning/afternoon sessions with colored indicators; admins edit via day view while employees simply observe ✅ **NEW**
+- **Deep Link Support:** Accepts `?date=YYYY-MM-DD` links (e.g., from payroll daily breakdown) and jumps directly to that day
 - **Multi-column Display:** One column per employee for admin view
 - **Role-based Access:** Different UI capabilities for admin vs employee
 - **Vietnamese Date Formatting:** Proper localization for Vietnamese users
@@ -127,7 +129,8 @@ RETURNS TRIGGER AS $$
 
 - [x] **Schedule Calendar View**
   - [x] Day view layout with Vietnamese interface
-  - [x] Deep link handling to open specific dates from other features ✅ **NEW**
+  - [x] Week view toggle with compact read-only summary ✅ **NEW**
+  - [x] Deep link handling to open specific dates from other features
   - [x] Admin: multi-column view (all employees) with modification rights
   - [x] Employee: can view all employees' schedules (read-only access)
   - [x] Role-based access control and UI differences
@@ -294,5 +297,5 @@ const { data: activities } = useActivities();
 
 ---
 
-**Last Updated:** October 2, 2025
+**Last Updated:** October 22, 2025
 **Status:** Production Ready ✅ with Payroll Period Lock Integration

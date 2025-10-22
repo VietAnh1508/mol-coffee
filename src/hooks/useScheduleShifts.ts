@@ -76,13 +76,24 @@ export function useNextScheduleShift(userId?: string) {
   });
 }
 
-export function useScheduleShiftsByDateRange(startDate: Date, endDate: Date) {
+interface ScheduleShiftsRangeOptions {
+  readonly enabled?: boolean;
+}
+
+export function useScheduleShiftsByDateRange(
+  startDate: Date,
+  endDate: Date,
+  options: ScheduleShiftsRangeOptions = {}
+) {
+  const { enabled = true } = options;
+
   return useQuery({
     queryKey: [
       "schedule-shifts-range",
       startDate.toDateString(),
       endDate.toDateString(),
     ],
+    enabled,
     queryFn: async (): Promise<ScheduleShift[]> => {
       const query = supabase
         .from("schedule_shifts")

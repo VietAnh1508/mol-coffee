@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** October 14, 2025
+**Last Updated:** October 22, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -68,7 +68,7 @@ For detailed documentation of each feature, see:
   - [x] Custom useToast hook for clean state management
   - [x] Auto-dismiss functionality with manual close option
   - [x] Non-intrusive positioning and smooth animations
-- [x] System-driven dark mode styling across core pages and modals ✅ **NEW**
+- [x] System-driven dark mode styling across core pages and modals
 
 ---
 
@@ -90,6 +90,7 @@ For detailed documentation of each feature, see:
 
 ### 📅 **Scheduling System** ✅ **COMPLETED**
 - Day view calendar with Vietnamese interface
+- Week view toggle with compact weekly summary (read-only) ✅ **NEW**
 - Role-based access (employees view all, admins modify)
 - Morning/afternoon shift templates with conflict prevention
 - Smart assignment with employee filtering

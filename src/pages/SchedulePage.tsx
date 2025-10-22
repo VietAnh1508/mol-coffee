@@ -1,18 +1,17 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { DateNavigation } from "../components/DateNavigation";
 import { PageTitle } from "../components/PageTitle";
-import { Spinner } from "../components/Spinner";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
-import { ShiftCard } from "../components/shift/ShiftCard";
 import { ShiftEditModal } from "../components/shift/ShiftEditModal";
+import { DayScheduleView } from "../components/shift/DayScheduleView";
+import { WeekScheduleView } from "../components/shift/WeekScheduleView";
 import {
   isSameDay,
   normalizeDate,
   parseDateFromParam,
 } from "../constants/schedule";
-import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
-import { useAuth, usePayrollPeriodForDate, useScheduleShifts } from "../hooks";
+import { useAuth, usePayrollPeriodForDate } from "../hooks";
 import type { ScheduleShift } from "../types";
 import { formatMonthName } from "../utils/payrollUtils";
 
@@ -29,6 +28,7 @@ export function SchedulePage({
   const [selectedDate, setSelectedDate] = useState(() =>
     parseDateFromParam(initialDate)
   );
+  const [viewMode, setViewMode] = useState<"day" | "week">("day");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShiftTemplate, setSelectedShiftTemplate] = useState<
     "morning" | "afternoon"
@@ -40,7 +40,6 @@ export function SchedulePage({
 
   const isAdmin = user?.role === USER_ROLES.ADMIN;
 
-  const { data: shifts = [], isLoading } = useScheduleShifts(selectedDate);
   const { isLocked, yearMonth } = usePayrollPeriodForDate(selectedDate);
 
   useEffect(() => {
@@ -52,25 +51,6 @@ export function SchedulePage({
 
     setSelectedDate((prev) => (isSameDay(prev, nextDate) ? prev : nextDate));
   }, [initialDate]);
-
-  // Group shifts by template (morning/afternoon)
-  const groupedShifts = useMemo(() => {
-    const groups = {
-      morning: [] as ScheduleShift[],
-      afternoon: [] as ScheduleShift[],
-    };
-
-    shifts.forEach((shift) => {
-      if (
-        shift.template_name === "morning" ||
-        shift.template_name === "afternoon"
-      ) {
-        groups[shift.template_name].push(shift);
-      }
-    });
-
-    return groups;
-  }, [shifts]);
 
   if (!user) return null;
 
@@ -116,6 +96,35 @@ export function SchedulePage({
         onDateChange={updateSelectedDate}
       />
 
+      <div className="mb-4 flex justify-end">
+        <div className="inline-flex rounded-full bg-surface-muted p-1 text-sm font-semibold text-subtle">
+          <button
+            type="button"
+            onClick={() => setViewMode("day")}
+            className={`rounded-full px-4 py-2 transition ${
+              viewMode === "day"
+                ? "bg-surface text-primary shadow"
+                : "text-muted hover:text-primary"
+            }`}
+            aria-pressed={viewMode === "day"}
+          >
+            Ngày
+          </button>
+          <button
+            type="button"
+            onClick={() => setViewMode("week")}
+            className={`rounded-full px-4 py-2 transition ${
+              viewMode === "week"
+                ? "bg-surface text-primary shadow"
+                : "text-muted hover:text-primary"
+            }`}
+            aria-pressed={viewMode === "week"}
+          >
+            Tuần
+          </button>
+        </div>
+      </div>
+
       {/* Payroll Period Lock Warning */}
       {isLocked && (
         <div className="mb-4 rounded-2xl border border-amber-400/40 bg-amber-500/10 p-4 text-amber-100">
@@ -146,121 +155,17 @@ export function SchedulePage({
         </div>
       )}
 
-      {/* Schedule Grid */}
-      <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
-        <div className="border-b border-subtle p-4">
-          <div className="flex items-center justify-between">
-            <h3 className="font-semibold text-primary">Ca làm việc</h3>
-          </div>
-        </div>
-
-        <div className="relative p-4">
-          {/* Loading Overlay */}
-          {isLoading && (
-            <div className="absolute inset-0 z-10 flex items-center justify-center rounded-b-2xl border-t border-subtle bg-surface/80 backdrop-blur-sm">
-              <div className="flex flex-col items-center space-y-3 text-subtle">
-                <Spinner />
-              </div>
-            </div>
-          )}
-
-          <div className={`space-y-4 ${isLoading ? "blur-sm" : ""}`}>
-            {/* Morning Shift */}
-            <div className="rounded-xl border border-subtle p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="mr-3 h-3 w-3 rounded-full bg-orange-400"></div>
-                  <h4 className="font-semibold text-primary">
-                    {SHIFT_TEMPLATES.morning.label}
-                  </h4>
-                  <span className="ml-2 text-sm text-subtle">
-                    {SHIFT_TEMPLATES.morning.start} -{" "}
-                    {SHIFT_TEMPLATES.morning.end}
-                  </span>
-                </div>
-                {isAdmin && (
-                  <button
-                    onClick={() => handleOpenModal("morning")}
-                    disabled={isLocked}
-                    className={`text-sm font-semibold ${
-                      isLocked
-                        ? "cursor-not-allowed text-subtle"
-                        : "text-blue-400 hover:text-blue-300"
-                    }`}
-                  >
-                    + Thêm người
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                {groupedShifts.morning.length > 0 ? (
-                  groupedShifts.morning.map((shift) => (
-                    <ShiftCard
-                      key={shift.id}
-                      shift={shift}
-                      isAdmin={isAdmin}
-                      isLocked={isLocked}
-                      onEdit={handleEditShift}
-                    />
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-sm text-subtle">
-                    Chưa có ca làm việc nào được lên lịch
-                  </div>
-                )}
-              </div>
-            </div>
-
-            {/* Afternoon Shift */}
-            <div className="rounded-xl border border-subtle p-4">
-              <div className="mb-3 flex items-center justify-between">
-                <div className="flex items-center">
-                  <div className="mr-3 h-3 w-3 rounded-full bg-blue-400"></div>
-                  <h4 className="font-semibold text-primary">
-                    {SHIFT_TEMPLATES.afternoon.label}
-                  </h4>
-                  <span className="ml-2 text-sm text-subtle">
-                    {SHIFT_TEMPLATES.afternoon.start} -{" "}
-                    {SHIFT_TEMPLATES.afternoon.end}
-                  </span>
-                </div>
-                {isAdmin && (
-                  <button
-                    onClick={() => handleOpenModal("afternoon")}
-                    disabled={isLocked}
-                    className={`text-sm font-semibold ${
-                      isLocked
-                        ? "cursor-not-allowed text-subtle"
-                        : "text-blue-400 hover:text-blue-300"
-                    }`}
-                  >
-                    + Thêm người
-                  </button>
-                )}
-              </div>
-
-              <div className="space-y-2">
-                {groupedShifts.afternoon.length > 0 ? (
-                  groupedShifts.afternoon.map((shift) => (
-                    <ShiftCard
-                      key={shift.id}
-                      shift={shift}
-                      isAdmin={isAdmin}
-                      isLocked={isLocked}
-                      onEdit={handleEditShift}
-                    />
-                  ))
-                ) : (
-                  <div className="py-8 text-center text-sm text-subtle">
-                    Chưa có ca làm việc nào được lên lịch
-                  </div>
-                )}
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
+      {viewMode === "day" ? (
+        <DayScheduleView
+          isAdmin={isAdmin}
+          isLocked={isLocked}
+          selectedDate={selectedDate}
+          onOpenModal={handleOpenModal}
+          onEditShift={handleEditShift}
+        />
+      ) : (
+        <WeekScheduleView selectedDate={selectedDate} isAdmin={isAdmin} />
+      )}
 
       <ShiftAssignmentModal
         isOpen={isModalOpen}
