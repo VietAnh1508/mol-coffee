@@ -19,6 +19,7 @@ The payroll system provides comprehensive salary calculation and management base
 ### Role-Based Access Control
 - **Admin Access:** View all employees' salary data and manage payroll periods
 - **Employee Access:** View only own salary data with automatic redirection
+- **Supervisor Access:** Full visibility across payroll dashboards with read-only controls (no period mutations)
 - **Data Isolation:** Database-enforced privacy via Row Level Security
 
 ### Period Management
@@ -26,6 +27,7 @@ The payroll system provides comprehensive salary calculation and management base
 - **Period Locking:** ✅ Closed periods prevent schedule modifications (UI + database enforcement)
 - **Admin Audit Trail:** Track who closed/opened periods and when
 - **Status Tracking:** Open/closed period management
+- **Supervisor Oversight:** Supervisors can review period status and history without access to create, close, reopen, or delete periods
 
 ## Technical Implementation
 

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { PropsWithChildren } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
-import { USER_ROLES } from "../constants/userRoles";
+import { getRoleLabel } from "../constants/userRoles";
 import { ToastProvider } from "../context/ToastContext";
 import { useAuth, useToast } from "../hooks";
 import { ProfileCompletionModal } from "./ProfileCompletionModal";
@@ -85,9 +85,7 @@ function LayoutContent({ children }: PropsWithChildren) {
                         {user.name}
                       </p>
                       <p className="text-xs uppercase tracking-wide text-subtle">
-                        {user.role === USER_ROLES.ADMIN
-                          ? "Quản trị viên"
-                          : "Nhân viên"}
+                        {getRoleLabel(user.role)}
                       </p>
                     </div>
                     <div className="py-1">

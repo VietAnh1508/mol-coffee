@@ -62,6 +62,7 @@ const VIETNAMESE_PHONE_PATTERN = /^(03|05|07|08|09)\d{8}$/;
 - **Admin accounts:** Seeded manually in DB via SQL functions
 - **Admin creation:** `SELECT create_admin_user('EMAIL', 'PASSWORD', 'NAME');`
 - **User promotion:** `SELECT promote_user_to_admin('EMAIL');`
+- **Supervisor promotion:** Admins can assign the Supervisor role via the employee details modal or SQL helpers (read-only management access).
 
 ## Security Features
 

@@ -20,8 +20,9 @@ The Employee Management system provides comprehensive admin controls for managin
 ### Role-Based Access Control (RBAC)
 - **Admin Roles:** Full CRUD access to users, schedules, activities, rates, and timekeeping
 - **Employee Roles:** Read-only access to schedules and own salary data
-- **Role Transition:** Secure promotion/demotion with validation
+- **Role Transition:** Secure promotion/demotion with validation (Admin ↔ Supervisor ↔ Employee)
 - **Self-Management Prevention:** Admins cannot demote themselves
+- **Supervisor Roles:** Read-only access to all management views (employees, schedules, payroll, settings) with UI safeguards that remove mutation controls.
 
 ### Safety Features
 - **Admin Self-Management Prevention:** Business Rule #7 enforcement
@@ -111,8 +112,9 @@ CREATE OR REPLACE FUNCTION create_admin_user(
 
 ### Role Management
 - **Promote to Admin:** Elevate employee to admin role
-- **Demote to Employee:** Reduce admin to employee role
-- **Role Validation:** Enforce business rules during transitions
+- **Assign Supervisor Role:** Provide read-only management access across scheduling, payroll, settings, and employee lists
+- **Demote to Employee:** Reduce admin or supervisor to employee role
+- **Role Validation:** Enforce business rules during transitions (self-demote prevention, last-admin protection)
 - **Permission Checks:** Verify user has permission for role changes
 
 ### Status Management
@@ -135,7 +137,7 @@ CREATE OR REPLACE FUNCTION create_admin_user(
   - [x] View all employees with real-time data fetching
   - [x] Mobile-friendly card layout with modal details
   - [x] Employee status (active/inactive) with visual badges
-  - [x] Promote/demote admin roles with business rule validation
+  - [x] Promote/demote admin & supervisor roles with business rule validation
   - [x] Deactivate/reactivate employees with safety checks
   - [x] Admin self-management prevention (Business Rule #7)
   - [x] Last admin protection to ensure system manageability

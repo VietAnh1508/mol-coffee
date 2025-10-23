@@ -9,12 +9,12 @@ import { CurrentUserBadge } from "../CurrentUserBadge";
 
 interface ShiftCardProps {
   shift: ScheduleShift;
-  isAdmin: boolean;
+  canManage: boolean;
   isLocked?: boolean;
   onEdit?: (shift: ScheduleShift) => void;
 }
 
-export function ShiftCard({ shift, isAdmin, isLocked = false, onEdit }: ShiftCardProps) {
+export function ShiftCard({ shift, canManage, isLocked = false, onEdit }: ShiftCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { deleteShift } = useScheduleMutations();
   const { showToast } = useToast();
@@ -58,7 +58,7 @@ export function ShiftCard({ shift, isAdmin, isLocked = false, onEdit }: ShiftCar
             </span>
           )}
         </div>
-        {isAdmin && !isLocked && (
+        {canManage && !isLocked && (
           <div className="flex space-x-1">
             <button
               onClick={() => onEdit?.(shift)}

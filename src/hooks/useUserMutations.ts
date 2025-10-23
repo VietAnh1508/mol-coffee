@@ -1,7 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { User } from '../types'
-import { USER_ROLES, type UserRole } from '../constants/userRoles'
+import { USER_ROLES, type UserRole, isAdmin } from '../constants/userRoles'
+import { useAuth } from './useAuth'
 
 interface MutationCallbacks<T = unknown> {
   onSuccess?: (data: T) => void;
@@ -37,16 +38,24 @@ export function useUpdateUser() {
   })
 }
 
-export function useToggleUserRole(callbacks?: MutationCallbacks<User>) {
+export function useUpdateUserRole(callbacks?: MutationCallbacks<User>) {
   const queryClient = useQueryClient()
-  
+  const { user } = useAuth()
+
   return useMutation({
-    mutationFn: async (user: User) => {
-      const newRole = user.role === USER_ROLES.ADMIN ? USER_ROLES.EMPLOYEE : USER_ROLES.ADMIN
+    mutationFn: async ({ userId, role }: { userId: string; role: UserRole }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền cập nhật vai trò');
+      }
+
+      if (!Object.values(USER_ROLES).includes(role)) {
+        throw new Error('Vai trò không hợp lệ');
+      }
+
       const { data, error } = await supabase
         .from('users')
-        .update({ role: newRole })
-        .eq('id', user.id)
+        .update({ role })
+        .eq('id', userId)
         .select()
         .single()
 
@@ -59,7 +68,7 @@ export function useToggleUserRole(callbacks?: MutationCallbacks<User>) {
       callbacks?.onSuccess?.(data)
     },
     onError: (error) => {
-      console.error('Error toggling user role:', error)
+      console.error('Error updating user role:', error)
       callbacks?.onError?.(error)
     }
   })
@@ -67,9 +76,14 @@ export function useToggleUserRole(callbacks?: MutationCallbacks<User>) {
 
 export function useToggleUserStatus(callbacks?: MutationCallbacks<User>) {
   const queryClient = useQueryClient()
+  const { user: currentUser } = useAuth()
   
   return useMutation({
     mutationFn: async (user: User) => {
+      if (!isAdmin(currentUser?.role)) {
+        throw new Error('Bạn không có quyền cập nhật trạng thái')
+      }
+
       const newStatus = user.status === 'active' ? 'inactive' : 'active'
       const { data, error } = await supabase
         .from('users')

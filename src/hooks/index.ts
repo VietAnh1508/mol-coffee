@@ -16,7 +16,7 @@ export {
 export { useToast } from "./useToast";
 export {
   useDeleteUser,
-  useToggleUserRole,
+  useUpdateUserRole,
   useToggleUserStatus,
   useUpdateUser,
   useUpdateUserProfile,

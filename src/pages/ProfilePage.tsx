@@ -12,6 +12,7 @@ import {
 import { useAuth } from "../hooks";
 import { useToast } from "../hooks/useToast";
 import { useUpdateUserProfile } from "../hooks/useUserMutations";
+import { getRoleLabel } from "../constants/userRoles";
 import { isValidVietnamesePhone } from "../utils/phoneValidation";
 
 export function ProfilePage() {
@@ -191,7 +192,7 @@ export function ProfilePage() {
                 Vai trò
               </label>
               <p className="rounded-xl bg-surface-muted px-4 py-3 text-sm text-subtle">
-                {user.role === "admin" ? "Quản trị viên" : "Nhân viên"}
+                {getRoleLabel(user.role)}
               </p>
             </div>
 

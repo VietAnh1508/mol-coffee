@@ -1,5 +1,5 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { USER_ROLES } from "../../constants/userRoles";
+import { canAccessManagement } from "../../constants/userRoles";
 import { useAuth } from "../../hooks";
 import { SettingsPage } from "../../pages/SettingsPage";
 
@@ -10,7 +10,7 @@ export const Route = createFileRoute("/_authenticated/settings")({
 function SettingsRoute() {
   const { user } = useAuth();
 
-  if (user?.role !== USER_ROLES.ADMIN) {
+  if (!canAccessManagement(user?.role)) {
     return <Navigate to="/dashboard" />;
   }
 

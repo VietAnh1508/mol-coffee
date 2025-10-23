@@ -2,6 +2,7 @@ import { useState } from "react";
 import { ActivityList } from "../components/activity/ActivityList";
 import { RateList } from "../components/rates/RateList";
 import { useAuth } from "../hooks";
+import { canManageResources } from "../constants/userRoles";
 
 export function SettingsPage() {
   const { user } = useAuth();
@@ -12,6 +13,8 @@ export function SettingsPage() {
   );
 
   if (!user) return null;
+
+  const canManage = canManageResources(user.role);
 
   return (
     <div className="px-4 py-6 sm:px-0 text-primary">
@@ -56,9 +59,9 @@ export function SettingsPage() {
         </nav>
       </div>
 
-      {activeTab === "activities" && <ActivityList />}
+      {activeTab === "activities" && <ActivityList canManage={canManage} />}
 
-      {activeTab === "rates" && <RateList />}
+      {activeTab === "rates" && <RateList canManage={canManage} />}
     </div>
   );
 }

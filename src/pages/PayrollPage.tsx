@@ -1,27 +1,32 @@
 import { useState } from "react";
 import { PageTitle } from "../components/PageTitle";
-import { PayrollPeriodManager } from "../components/payroll/PayrollPeriodManager";
 import { PayrollDataDisplay } from "../components/payroll/PayrollDataDisplay";
-import { USER_ROLES } from "../constants/userRoles";
-import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
-import { getCurrentYearMonth, formatMonthName } from "../utils/payrollUtils";
+import { PayrollPeriodManager } from "../components/payroll/PayrollPeriodManager";
 import { Spinner } from "../components/Spinner";
+import {
+  canAccessManagement,
+  canManageResources,
+  isEmployee,
+} from "../constants/userRoles";
+import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
+import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
 
 export function PayrollPage() {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState(getCurrentYearMonth());
 
-  const isAdmin = user?.role === USER_ROLES.ADMIN;
+  const canManage = canManageResources(user?.role);
+  const canAccess = canAccessManagement(user?.role);
+  const isEmployeeUser = isEmployee(user?.role);
 
   // For employees, only show their own data
-  const userId = isAdmin ? undefined : user?.id;
+  const userId = isEmployeeUser ? user?.id : undefined;
 
-  const { data: payrollData, isLoading: isLoadingPayroll } = usePayrollCalculations(
-    selectedPeriod,
-    userId
-  );
+  const { data: payrollData, isLoading: isLoadingPayroll } =
+    usePayrollCalculations(selectedPeriod, userId);
 
-  const { data: periodInfo, isLoading: isLoadingPeriod } = usePayrollPeriod(selectedPeriod);
+  const { data: periodInfo, isLoading: isLoadingPeriod } =
+    usePayrollPeriod(selectedPeriod);
 
   if (!user) return null;
 
@@ -32,7 +37,7 @@ export function PayrollPage() {
       <PageTitle
         title="Bảng lương"
         subtitle={
-          isAdmin
+          canAccess
             ? "Quản lý bảng lương tất cả nhân viên"
             : "Xem thông tin lương của bạn"
         }
@@ -40,15 +45,16 @@ export function PayrollPage() {
 
       <div className="space-y-6">
         {/* Period Manager (Admin only) */}
-        {isAdmin && (
+        {canAccess && (
           <PayrollPeriodManager
             onPeriodSelect={setSelectedPeriod}
             selectedPeriod={selectedPeriod}
+            canManage={canManage}
           />
         )}
 
         {/* Period Selector for Employees */}
-        {!isAdmin && (
+        {!canAccess && (
           <div className="rounded-2xl border border-subtle bg-surface p-4 shadow-lg shadow-black/5">
             <label
               htmlFor="period-select"
@@ -72,24 +78,29 @@ export function PayrollPage() {
 
         {/* Period Status Banner */}
         {periodInfo && (
-          <div className={`rounded-2xl border p-4 ${
-            periodInfo.status === "closed"
-              ? "border-amber-400/40 bg-amber-500/10"
-              : "border-emerald-400/40 bg-emerald-500/10"
-          }`}>
+          <div
+            className={`rounded-2xl border p-4 ${
+              periodInfo.status === "closed"
+                ? "border-amber-400/40 bg-amber-500/10"
+                : "border-emerald-400/40 bg-emerald-500/10"
+            }`}
+          >
             <div className="flex items-center">
-              <div className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
-                periodInfo.status === "closed"
-                  ? "bg-amber-500/25 text-amber-200"
-                  : "bg-emerald-500/25 text-emerald-200"
-              }`}>
+              <div
+                className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-semibold ${
+                  periodInfo.status === "closed"
+                    ? "bg-amber-500/25 text-amber-200"
+                    : "bg-emerald-500/25 text-emerald-200"
+                }`}
+              >
                 {periodInfo.status === "closed" ? "Đã khóa" : "Đang mở"}
               </div>
               <span className="ml-3 text-sm text-subtle">
                 Kỳ lương {formatMonthName(selectedPeriod)}
-                {periodInfo.status === "closed" && periodInfo.closed_by_user && (
-                  <> - Khóa bởi {periodInfo.closed_by_user.name}</>
-                )}
+                {periodInfo.status === "closed" &&
+                  periodInfo.closed_by_user && (
+                    <> - Khóa bởi {periodInfo.closed_by_user.name}</>
+                  )}
               </span>
             </div>
           </div>
@@ -114,10 +125,9 @@ export function PayrollPage() {
                 Chưa có dữ liệu lương
               </h3>
               <p className="text-sm">
-                {isAdmin
+                {canAccess
                   ? "Chưa có lịch làm việc nào trong kỳ này."
-                  : "Bạn chưa có lịch làm việc nào trong kỳ này."
-                }
+                  : "Bạn chưa có lịch làm việc nào trong kỳ này."}
               </p>
             </div>
           </div>
@@ -128,7 +138,7 @@ export function PayrollPage() {
           <PayrollDataDisplay
             payrollData={payrollData}
             selectedPeriod={selectedPeriod}
-            isAdmin={isAdmin}
+            canViewSummary={canAccess}
           />
         )}
       </div>

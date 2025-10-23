@@ -11,9 +11,9 @@ The scheduling system provides comprehensive shift management for coffee shop em
 ## Key Features
 
 ### Schedule Visibility & Access Control
-- **Employee Access:** Can view all employees' schedules (read-only) for coordination and receive their next scheduled shift on the dashboard ✅ **NEW**
+- **Employee Access:** Can view all employees' schedules (read-only) for coordination and receive their next scheduled shift on the dashboard
 - **Admin Access:** Full CRUD operations on all shifts
-- **Role-based UI:** Different interfaces based on user permissions
+- **Role-based UI:** Different interfaces based on user permissions (Admin = full CRUD, Supervisor = full visibility/read-only, Employee = personal overview)
 - **Real-time Updates:** Live data synchronization with TanStack Query
 
 ### Shift Templates
@@ -91,7 +91,7 @@ RETURNS TRIGGER AS $$
 - **White Cards:** Clean shift cards with colored activity indicators
 - **Employee Names:** Clear identification of assigned employees
 
-### Employee Experience Enhancements ✅ **NEW**
+### Employee Experience Enhancements
 - **Dashboard Reminder:** Employees see "Ca làm tiếp theo" on the dashboard, showing morning/afternoon label and localized date for their upcoming shift (hidden when no future shift exists)
 
 ### Admin Features
@@ -99,6 +99,11 @@ RETURNS TRIGGER AS $$
 - **Shift Editing:** Time and activity adjustments with notes
 - **Conflict Prevention:** Real-time validation and user feedback
 - **Smart Filtering:** Excludes already assigned users from selection
+
+### Supervisor Experience
+- **Full Visibility:** Mirrors admin calendar views (day/week) for oversight without exposing write controls
+- **Read-Only UI:** Action buttons, modals, and mutations are hidden/disabled while maintaining database-level enforcement
+- **Payroll Lock Awareness:** Supervisors see lock banners and status indicators to support audits
 
 ## Core Functionality
 
@@ -173,7 +178,7 @@ RETURNS TRIGGER AS $$
 
 #### **Schedule Calendar View Features**
 - [x] Day view layout with Vietnamese interface
-- [x] Deep link handling to open specific dates from other features ✅ **NEW**
+- [x] Deep link handling to open specific dates from other features
 - [x] Admin: multi-column view (all employees) with modification rights
 - [x] Employee: can view all employees' schedules (read-only access)
 - [x] Role-based access control and UI differences

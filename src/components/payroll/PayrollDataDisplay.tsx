@@ -5,18 +5,18 @@ import { PayrollDailyBreakdown } from "./PayrollDailyBreakdown";
 interface PayrollDataDisplayProps {
   payrollData: PayrollEmployeeSummary[];
   selectedPeriod: string;
-  isAdmin: boolean;
+  canViewSummary: boolean;
 }
 
 export function PayrollDataDisplay({
   payrollData,
   selectedPeriod,
-  isAdmin,
+  canViewSummary,
 }: PayrollDataDisplayProps) {
   return (
     <div className="space-y-4 text-primary">
       {/* Summary Cards - Only show for admins */}
-      {isAdmin && (
+      {canViewSummary && (
         <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
           <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
             <div className="text-sm font-medium text-subtle">

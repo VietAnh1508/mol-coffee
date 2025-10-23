@@ -7,7 +7,7 @@ import { ShiftCard } from "./ShiftCard";
 import { useScheduleShifts } from "../../hooks";
 
 export interface DayScheduleViewProps {
-  readonly isAdmin: boolean;
+  readonly canManage: boolean;
   readonly isLocked: boolean;
   readonly selectedDate: Date;
   readonly onOpenModal: (template: "morning" | "afternoon") => void;
@@ -16,7 +16,7 @@ export interface DayScheduleViewProps {
 }
 
 export function DayScheduleView({
-  isAdmin,
+  canManage,
   isLocked,
   selectedDate,
   onOpenModal,
@@ -63,7 +63,7 @@ export function DayScheduleView({
         <div className={`space-y-4 ${isLoading ? "blur-sm" : ""}`}>
           <ShiftColumn
             template="morning"
-            isAdmin={isAdmin}
+            canManage={canManage}
             isLocked={isLocked}
             shifts={groupedShifts.morning}
             onOpenModal={onOpenModal}
@@ -73,7 +73,7 @@ export function DayScheduleView({
 
           <ShiftColumn
             template="afternoon"
-            isAdmin={isAdmin}
+            canManage={canManage}
             isLocked={isLocked}
             shifts={groupedShifts.afternoon}
             onOpenModal={onOpenModal}
@@ -88,7 +88,7 @@ export function DayScheduleView({
 
 interface ShiftColumnProps {
   readonly template: "morning" | "afternoon";
-  readonly isAdmin: boolean;
+  readonly canManage: boolean;
   readonly isLocked: boolean;
   readonly shifts: ScheduleShift[];
   readonly onOpenModal: (template: "morning" | "afternoon") => void;
@@ -98,7 +98,7 @@ interface ShiftColumnProps {
 
 function ShiftColumn({
   template,
-  isAdmin,
+  canManage,
   isLocked,
   shifts,
   onOpenModal,
@@ -121,7 +121,7 @@ function ShiftColumn({
             {details.start} - {details.end}
           </span>
         </div>
-        {isAdmin && (
+        {canManage && (
           <button
             onClick={() => onOpenModal(template)}
             disabled={isLocked}
@@ -142,7 +142,7 @@ function ShiftColumn({
             <ShiftCard
               key={shift.id}
               shift={shift}
-              isAdmin={isAdmin}
+              canManage={canManage}
               isLocked={isLocked}
               onEdit={onEditShift}
             />

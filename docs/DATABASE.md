@@ -50,6 +50,8 @@ CREATE TYPE payroll_status AS ENUM ('open', 'closed');
 CREATE TYPE allowance_type AS ENUM ('lunch');
 ```
 
+**Supervisor Access:** `user_role` enum includes `supervisor`; RLS policies grant supervisors admin-level SELECT access while keeping mutations restricted to admins, and triggers enforce last-admin protections.
+
 ### Core Tables
 
 #### 1. `users` - Employee & Admin Profiles
@@ -72,6 +74,7 @@ CREATE TABLE public.users (
 - Vietnamese phone validation (10 digits, 03/05/07/08/09 prefixes)
 - Progressive profile completion (email+password → name+phone)
 - Placeholder phone system (`+84000000XXX`) until real number provided
+- Role hierarchy: `admin` (full access), `supervisor` (read-only management), `employee` (self-service access)
 
 **Related Features:**
 - **[Authentication System](features/authentication.md)** - User registration and login implementation
@@ -249,6 +252,12 @@ All tables have RLS enabled with role-based policies:
 - ✅ View all employee data including roles and status
 - ❌ Demote themselves or delete their own account (Business Rule #7)
 
+#### **Supervisors Can:**
+- ✅ View all management data (employees, schedules, payroll, settings)
+- ✅ Audit payroll periods and schedule history in read-only mode
+- ❌ Perform INSERT/UPDATE/DELETE operations on protected tables
+- ❌ Promote/demote users or adjust statuses (UI + RLS guarded)
+
 ### Key RLS Policies
 
 ```sql
@@ -260,9 +269,9 @@ CREATE POLICY "Employees can view all shifts" ON public.schedule_shifts
 CREATE POLICY "Employees can view colleagues basic info" ON public.users
     FOR SELECT USING (auth.uid() IS NOT NULL);
 
--- Admin data isolation
+-- Admin & supervisor data visibility
 CREATE POLICY "Admins can view all users" ON public.users
-    FOR SELECT USING (get_user_role(auth.uid()) = 'admin');
+    FOR SELECT USING (get_user_role(auth.uid()) IN ('admin', 'supervisor'));
 ```
 
 ---
@@ -342,6 +351,11 @@ CREATE INDEX idx_time_entries_approved ON public.time_entries(approved_at) WHERE
 | 2025-09-11 | `20250911000001_remove_custom_shift_template` | Simplified shift templates |
 | 2025-09-11 | `20250911164958_allow_employees_view_all_shifts` | **Employee schedule visibility** |
 | 2025-09-11 | `20250911175745_allow_employees_view_colleagues_info` | Employee coordination access |
+| 2025-09-19 | `20250919123000_allowance_rates` | Lunch allowance system |
+| 2025-10-02 | `20251002140953_payroll_period_lock_enforcement` | Prevent edits to locked periods |
+| 2025-10-21 | `20251021090000_update_shift_limit_timezone` | Asia/Ho_Chi_Minh day boundary fix |
+| 2025-11-08 | `20251108090000_add_supervisor_role` | Added `supervisor` enum value |
+| 2025-11-08 | `20251108090100_update_supervisor_policies` | Updated role safeguards and read policies |
 
 ### Major Schema Changes
 1. **Authentication Migration (Sep 9, 2025):** Moved from phone-based synthetic emails to direct email authentication with progressive profile completion

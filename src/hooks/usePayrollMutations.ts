@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "../lib/supabase";
 import { useAuth } from "./useAuth";
+import { isAdmin } from "../constants/userRoles";
 
 export interface CreatePayrollPeriodData {
   year_month: string;
@@ -13,9 +14,14 @@ export interface UpdatePayrollPeriodData {
 
 export function useCreatePayrollPeriod() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (data: CreatePayrollPeriodData) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error("Bạn không có quyền tạo kỳ lương");
+      }
+
       const { data: result, error } = await supabase
         .from("payroll_periods")
         .insert({
@@ -43,8 +49,8 @@ export function useClosePayrollPeriod() {
 
   return useMutation({
     mutationFn: async (periodId: string) => {
-      if (!user) {
-        throw new Error("User not authenticated");
+      if (!user || !isAdmin(user.role)) {
+        throw new Error("Bạn không có quyền khóa kỳ lương");
       }
 
       const { data: result, error } = await supabase
@@ -73,9 +79,14 @@ export function useClosePayrollPeriod() {
 
 export function useReopenPayrollPeriod() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (periodId: string) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error("Bạn không có quyền mở lại kỳ lương");
+      }
+
       const { data: result, error } = await supabase
         .from("payroll_periods")
         .update({
@@ -102,9 +113,14 @@ export function useReopenPayrollPeriod() {
 
 export function useDeletePayrollPeriod() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
 
   return useMutation({
     mutationFn: async (periodId: string) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error("Bạn không có quyền xóa kỳ lương");
+      }
+
       const { error } = await supabase
         .from("payroll_periods")
         .delete()

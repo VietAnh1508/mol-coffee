@@ -4,6 +4,7 @@ import { PageTitle } from "../components/PageTitle";
 import { PayrollEmployeeCard } from "../components/payroll/PayrollEmployeeCard";
 import { PayrollPeriodManager } from "../components/payroll/PayrollPeriodManager";
 import { Spinner } from "../components/Spinner";
+import { canManageResources } from "../constants/userRoles";
 import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
 import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
 
@@ -20,6 +21,7 @@ export function PayrollEmployeeListPage() {
   if (!user) return null;
 
   const isLoading = isLoadingPayroll || isLoadingPeriod;
+  const canManage = canManageResources(user.role);
 
   // Calculate summary data for admin cards
   const totalEmployees = payrollData?.length || 0;
@@ -40,6 +42,7 @@ export function PayrollEmployeeListPage() {
         <PayrollPeriodManager
           onPeriodSelect={setSelectedPeriod}
           selectedPeriod={selectedPeriod}
+          canManage={canManage}
         />
 
         {/* Period Status Banner */}

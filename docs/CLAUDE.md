@@ -133,6 +133,7 @@ SELECT promote_user_to_admin('EMAIL');
 8. **Update PROGRESS.md** - Mark completed features and update status
 9. **Make sure migration scripts are idempotent** - Database migrations should be safe to run multiple times
 10. **⚠️ IMPORTANT: Update DATABASE.md** - When making database schema changes, ALWAYS update `docs/DATABASE.md` to reflect the changes. This is the single source of truth for database documentation.
+11. **Role Updates:** Remember the Supervisor role mirrors admin visibility but remains read-only (no mutations). UI and backend guards must respect this separation.
 
 ### **Code Patterns to Follow:**
 - **Components:** Use function components with TypeScript

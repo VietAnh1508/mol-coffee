@@ -3,23 +3,29 @@ import { FaEdit } from "react-icons/fa";
 import { HiPlus } from "react-icons/hi2";
 import { useRates } from "../../hooks";
 import type { Rate } from "../../types";
+import { formatDateDMY } from "../../utils/dateUtils";
 import { formatMoney } from "../../utils/payrollUtils";
 import { Spinner } from "../Spinner";
 import { RateForm } from "./RateForm";
-import { formatDateDMY } from "../../utils/dateUtils";
 
-export function RateList() {
+interface RateListProps {
+  readonly canManage?: boolean;
+}
+
+export function RateList({ canManage = true }: RateListProps) {
   const { data: rates = [], isLoading } = useRates();
 
   const [editingRate, setEditingRate] = useState<Rate | null>(null);
   const [showForm, setShowForm] = useState<boolean>(false);
 
   const handleEdit = (rate: Rate) => {
+    if (!canManage) return;
     setEditingRate(rate);
     setShowForm(true);
   };
 
   const handleAdd = () => {
+    if (!canManage) return;
     setEditingRate(null);
     setShowForm(true);
   };
@@ -43,13 +49,15 @@ export function RateList() {
         <h2 className="text-xl font-semibold text-primary">
           Quản lý mức lương
         </h2>
-        <button
-          onClick={handleAdd}
-          className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
-        >
-          <HiPlus className="w-4 h-4" />
-          Thêm mức lương
-        </button>
+        {canManage && (
+          <button
+            onClick={handleAdd}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
+          >
+            <HiPlus className="w-4 h-4" />
+            Thêm mức lương
+          </button>
+        )}
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/5">
@@ -77,26 +85,28 @@ export function RateList() {
                       <>
                         {" • "}
                         <span>
-                          Đến:{" "}{formatDateDMY(new Date(rate.effective_to))}
+                          Đến: {formatDateDMY(new Date(rate.effective_to))}
                         </span>
                       </>
                     )}
                   </div>
                 </div>
-                <button
-                  onClick={() => handleEdit(rate)}
-                  aria-label="Chỉnh sửa mức lương"
-                  className="rounded-md p-1 text-muted transition hover:bg-surface-muted hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
-                >
-                  <FaEdit className="w-4 h-4" />
-                </button>
+                {canManage && (
+                  <button
+                    onClick={() => handleEdit(rate)}
+                    aria-label="Chỉnh sửa mức lương"
+                    className="rounded-md p-1 text-muted transition hover:bg-surface-muted hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
+                  >
+                    <FaEdit className="w-4 h-4" />
+                  </button>
+                )}
               </div>
             </li>
           ))}
         </ul>
       </div>
 
-      {(showForm || editingRate) && (
+      {canManage && (showForm || editingRate) && (
         <RateForm rate={editingRate} onClose={handleCloseForm} />
       )}
     </div>

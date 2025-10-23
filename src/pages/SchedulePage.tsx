@@ -1,16 +1,19 @@
 import { useEffect, useState } from "react";
 import { DateNavigation } from "../components/DateNavigation";
 import { PageTitle } from "../components/PageTitle";
+import { DayScheduleView } from "../components/shift/DayScheduleView";
 import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftEditModal } from "../components/shift/ShiftEditModal";
-import { DayScheduleView } from "../components/shift/DayScheduleView";
 import { WeekScheduleView } from "../components/shift/WeekScheduleView";
 import {
   isSameDay,
   normalizeDate,
   parseDateFromParam,
 } from "../constants/schedule";
-import { USER_ROLES } from "../constants/userRoles";
+import {
+  canAccessManagement,
+  canManageResources,
+} from "../constants/userRoles";
 import { useAuth, usePayrollPeriodForDate } from "../hooks";
 import type { ScheduleShift } from "../types";
 import { formatMonthName } from "../utils/payrollUtils";
@@ -38,7 +41,8 @@ export function SchedulePage({
     null
   );
 
-  const isAdmin = user?.role === USER_ROLES.ADMIN;
+  const canManage = canManageResources(user?.role);
+  const canAccess = canAccessManagement(user?.role);
 
   const { isLocked, yearMonth } = usePayrollPeriodForDate(selectedDate);
 
@@ -62,7 +66,7 @@ export function SchedulePage({
 
   const handleOpenModal = (shiftTemplate: "morning" | "afternoon") => {
     // Prevent opening modal if period is locked
-    if (isLocked) return;
+    if (isLocked || !canManage) return;
 
     setSelectedShiftTemplate(shiftTemplate);
     setIsModalOpen(true);
@@ -74,7 +78,7 @@ export function SchedulePage({
 
   const handleEditShift = (shift: ScheduleShift) => {
     // Prevent editing if period is locked
-    if (isLocked) return;
+    if (isLocked || !canManage) return;
 
     setSelectedShift(shift);
     setIsEditModalOpen(true);
@@ -88,7 +92,7 @@ export function SchedulePage({
   return (
     <div className="px-4 py-6 text-primary sm:px-0">
       <PageTitle
-        title={isAdmin ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
+        title={canAccess ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
       />
 
       <DateNavigation
@@ -143,9 +147,7 @@ export function SchedulePage({
               </svg>
             </div>
             <div className="ml-3">
-              <h3 className="text-sm font-semibold">
-                Bảng lương đã khóa
-              </h3>
+              <h3 className="text-sm font-semibold">Bảng lương đã khóa</h3>
               <div className="mt-1 text-sm">
                 Bảng lương tháng {formatMonthName(yearMonth)} đã khóa, vui lòng
                 mở lại trước khi chỉnh sửa ca.
@@ -157,18 +159,18 @@ export function SchedulePage({
 
       {viewMode === "day" ? (
         <DayScheduleView
-          isAdmin={isAdmin}
+          canManage={canManage}
           isLocked={isLocked}
           selectedDate={selectedDate}
           onOpenModal={handleOpenModal}
           onEditShift={handleEditShift}
         />
       ) : (
-        <WeekScheduleView selectedDate={selectedDate} isAdmin={isAdmin} />
+        <WeekScheduleView selectedDate={selectedDate} canManage={canManage} />
       )}
 
       <ShiftAssignmentModal
-        isOpen={isModalOpen}
+        isOpen={canManage && isModalOpen}
         onClose={handleCloseModal}
         shiftTemplate={selectedShiftTemplate}
         selectedDate={selectedDate}
@@ -176,7 +178,7 @@ export function SchedulePage({
       />
 
       <ShiftEditModal
-        isOpen={isEditModalOpen}
+        isOpen={canManage && isEditModalOpen}
         onClose={handleEditModalClose}
         shift={selectedShift}
         isLocked={isLocked}

@@ -1,10 +1,11 @@
 import { useState } from "react";
-import { HiCheckCircle, HiPencilSquare, HiXCircle } from "react-icons/hi2";
+import { HiCheckCircle, HiEye, HiPencilSquare, HiXCircle } from "react-icons/hi2";
 import { CurrentUserBadge } from "../components/CurrentUserBadge";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
+import { EmployeeRoleBadge } from "../components/employee/EmployeeRoleBadge";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
-import { USER_ROLES } from "../constants/userRoles";
+import { canManageResources } from "../constants/userRoles";
 import { useAuth, useUsers } from "../hooks";
 
 export function EmployeesPage() {
@@ -24,6 +25,8 @@ export function EmployeesPage() {
   };
 
   if (!user) return null;
+
+  const canManage = canManageResources(user.role);
 
   if (isLoading) {
     return (
@@ -81,17 +84,7 @@ export function EmployeesPage() {
                     {employee.name}
                   </p>
                   <div className="flex flex-wrap items-center gap-2">
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                        employee.role === USER_ROLES.ADMIN
-                          ? "bg-purple-500/15 text-purple-400"
-                          : "bg-blue-500/15 text-blue-400"
-                      }`}
-                    >
-                      {employee.role === USER_ROLES.ADMIN
-                        ? "Quản trị viên"
-                        : "Nhân viên"}
-                    </span>
+                    <EmployeeRoleBadge role={employee.role} />
                     <CurrentUserBadge user={employee} />
                     {employee.status === "active" ? (
                       <HiCheckCircle
@@ -110,9 +103,13 @@ export function EmployeesPage() {
                 <button
                   onClick={() => setSelectedEmployeeId(employee.id)}
                   className="flex-shrink-0 rounded-xl border border-subtle bg-surface-muted px-3 py-2 text-sm font-semibold text-subtle transition hover:bg-surface focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
-                  title="Chỉnh sửa"
+                  title={canManage ? "Chỉnh sửa" : "Xem chi tiết"}
                 >
-                  <HiPencilSquare className="h-4 w-4" />
+                  {canManage ? (
+                    <HiPencilSquare className="h-4 w-4" />
+                  ) : (
+                    <HiEye className="h-4 w-4" />
+                  )}
                 </button>
               </div>
             </div>

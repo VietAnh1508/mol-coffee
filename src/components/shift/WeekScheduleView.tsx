@@ -12,12 +12,12 @@ import { WeekShiftSection } from "./WeekShiftSection";
 
 interface WeekScheduleViewProps {
   readonly selectedDate: Date;
-  readonly isAdmin?: boolean;
+  readonly canManage?: boolean;
 }
 
 export function WeekScheduleView({
   selectedDate,
-  isAdmin = false,
+  canManage = false,
 }: WeekScheduleViewProps) {
   const weekRange = useMemo(() => getWeekRange(selectedDate), [selectedDate]);
   const { data: weekShifts = [], isLoading } = useScheduleShiftsByDateRange(
@@ -68,7 +68,7 @@ export function WeekScheduleView({
             Lịch tuần {formatDateDMY(weekRange.start)} -{" "}
             {formatDateDMY(weekEndDate)}
           </h3>
-          {isAdmin && (
+          {canManage && (
             <span className="text-[11px] text-subtle">
               Chế độ xem tuần chỉ đọc. Chuyển sang "Ngày" để chỉnh sửa.
             </span>

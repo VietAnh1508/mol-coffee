@@ -1,8 +1,13 @@
 import type { ReactNode } from "react";
-import { USER_ROLES } from "../../constants/userRoles";
+import {
+  USER_ROLES,
+  getRoleLabel,
+  canManageResources,
+  type UserRole,
+} from "../../constants/userRoles";
 import {
   useToast,
-  useToggleUserRole,
+  useUpdateUserRole,
   useToggleUserStatus,
   useUser,
   useUsers,
@@ -10,6 +15,7 @@ import {
 import type { User } from "../../types";
 import { CurrentUserBadge } from "../CurrentUserBadge";
 import { Spinner } from "../Spinner";
+import { EmployeeRoleBadge } from "./EmployeeRoleBadge";
 
 interface EmployeeDetailsModalProps {
   employeeId: string | null;
@@ -28,11 +34,9 @@ export function EmployeeDetailsModal({
   const { data: employee, isLoading, error } = useUser(employeeId);
   const { data: employees = [] } = useUsers();
 
-  const toggleRoleMutation = useToggleUserRole({
+  const updateRoleMutation = useUpdateUserRole({
     onSuccess: (data) => {
-      showSuccess(
-        `Đã ${data.role === USER_ROLES.ADMIN ? "thăng chức" : "hạ cấp"} ${data.name} thành công`
-      );
+      showSuccess(`Đã cập nhật vai trò của ${data.name} thành ${getRoleLabel(data.role)}`);
     },
     onError: () => {
       showError("Có lỗi xảy ra khi thay đổi vai trò");
@@ -91,24 +95,35 @@ export function EmployeeDetailsModal({
     );
   }
 
+  const canManage = canManageResources(currentUser?.role);
+
   const isLastAdmin = (emp: User) => {
     if (emp.role !== USER_ROLES.ADMIN) return false;
-    const adminCount = employees.filter(
-      (e) => e.role === USER_ROLES.ADMIN
-    ).length;
+    const adminCount = employees.filter((e) => e.role === USER_ROLES.ADMIN).length;
     return adminCount === 1;
   };
 
-  const canToggleRole = (emp: User) => {
-    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN)
-      return false;
+  const canChangeRole = (emp: User) => {
+    if (!canManage) return false;
+    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN) return false;
     if (isLastAdmin(emp)) return false;
     return true;
   };
 
   const canToggleStatus = (emp: User) => {
+    if (!canManage) return false;
     if (emp.id === currentUser?.id && emp.status === "active") return false;
     return true;
+  };
+
+  const handleRoleChange = (roleValue: string) => {
+    if (!employee || roleValue === employee.role) return;
+    const validRoles = Object.values(USER_ROLES) as UserRole[];
+    if (!validRoles.includes(roleValue as UserRole)) {
+      return;
+    }
+
+    updateRoleMutation.mutate({ userId: employee.id, role: roleValue as UserRole });
   };
 
   return renderOverlay(
@@ -167,26 +182,34 @@ export function EmployeeDetailsModal({
           <label className="text-xs font-semibold uppercase tracking-wide text-subtle">
             Vai trò
           </label>
-          <div className="mt-1 flex items-center justify-between">
-            <span
-              className={`inline-flex items-center rounded-full px-2.5 py-1 text-xs font-semibold ${
-                employee.role === USER_ROLES.ADMIN
-                  ? "bg-purple-500/15 text-purple-400"
-                  : "bg-blue-500/15 text-blue-400"
-              }`}
-            >
-              {employee.role === USER_ROLES.ADMIN
-                ? "Quản trị viên"
-                : "Nhân viên"}
-            </span>
-            {canToggleRole(employee) && (
-              <button
-                onClick={() => toggleRoleMutation.mutate(employee)}
-                disabled={toggleRoleMutation.isPending}
-                className="text-sm font-semibold text-blue-400 transition hover:text-blue-300 disabled:cursor-not-allowed disabled:opacity-60"
-              >
-                {employee.role === USER_ROLES.ADMIN ? "Hạ cấp" : "Thăng chức"}
-              </button>
+          <div className="mt-1 space-y-2">
+            <div className="flex flex-wrap items-center justify-between gap-3">
+              <EmployeeRoleBadge role={employee.role} />
+              {canChangeRole(employee) ? (
+                <select
+                  value={employee.role}
+                  onChange={(e) => handleRoleChange(e.target.value)}
+                  disabled={updateRoleMutation.isPending}
+                  className="rounded-lg border border-subtle bg-surface px-3 py-1.5 text-xs font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  {(Object.values(USER_ROLES) as UserRole[]).map((roleOption) => (
+                    <option key={roleOption} value={roleOption}>
+                      {getRoleLabel(roleOption)}
+                    </option>
+                  ))}
+                </select>
+              ) : (
+                <span className="text-xs text-subtle">
+                  {canManage
+                    ? isLastAdmin(employee)
+                      ? "Không thể hạ cấp quản trị viên cuối cùng"
+                      : "Không thể chỉnh sửa vai trò này"
+                    : "Chỉ quản trị viên mới có thể chỉnh sửa"}
+                </span>
+              )}
+            </div>
+            {updateRoleMutation.isPending && (
+              <p className="text-xs text-subtle">Đang cập nhật vai trò...</p>
             )}
           </div>
         </div>

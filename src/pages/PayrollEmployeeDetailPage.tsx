@@ -4,7 +4,7 @@ import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { Spinner } from "../components/Spinner";
-import { USER_ROLES } from "../constants/userRoles";
+import { canAccessManagement, isEmployee } from "../constants/userRoles";
 import {
   useAuth,
   usePayrollCalculations,
@@ -54,7 +54,8 @@ export function PayrollEmployeeDetailPage({
   if (!user) return null;
 
   const isLoading = isLoadingPayroll || isLoadingPeriod;
-  const isAdmin = user.role === USER_ROLES.ADMIN;
+  const canAccess = canAccessManagement(user.role);
+  const isEmployeeUser = isEmployee(user.role);
   const isOwnData = user.id === employeeId;
   const employeeData = payrollData?.[0];
 
@@ -69,7 +70,7 @@ export function PayrollEmployeeDetailPage({
   return (
     <div className="px-4 py-6 sm:px-0">
       {/* Back Button */}
-      {isAdmin && (
+      {canAccess && (
         <div className="mb-4">
           <Link
             to="/payroll"
@@ -172,7 +173,7 @@ export function PayrollEmployeeDetailPage({
                 Chưa có dữ liệu lương
               </h3>
               <p>
-                {isOwnData
+                {isOwnData || isEmployeeUser
                   ? "Bạn chưa có lịch làm việc nào trong kỳ này."
                   : "Nhân viên này chưa có lịch làm việc nào trong kỳ này."}
               </p>

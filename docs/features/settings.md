@@ -197,6 +197,7 @@ ORDER BY effective_from DESC LIMIT 1;
 10. **Admin-Only Access:** Settings management restricted to admin users
 11. **Role Validation:** Database and UI enforce admin-only access
 12. **Real-time Security:** Role checks enforced on all mutations
+13. **Supervisor Read-Only Mode:** Supervisors can review activities and rates but all mutation controls (add/edit/toggle) remain hidden and guarded.
 
 ## API Reference
 

@@ -2,7 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { IconType } from "react-icons";
 import { FaCalendarAlt, FaCog, FaDollarSign, FaUsers } from "react-icons/fa";
 import { NextShiftNotice } from "../components/NextShiftNotice";
-import { USER_ROLES } from "../constants/userRoles";
+import { canAccessManagement } from "../constants/userRoles";
 import { useAuth } from "../hooks";
 
 export function DashboardPage() {
@@ -10,14 +10,16 @@ export function DashboardPage() {
 
   if (!user) return null;
 
+  const canAccessManage = canAccessManagement(user.role);
+
   const shortcuts = [
-    user.role === USER_ROLES.ADMIN && {
+    canAccessManage && {
       to: "/settings",
       title: "Cài đặt",
       icon: FaCog,
       iconBg: "bg-purple-500",
     },
-    user.role === USER_ROLES.ADMIN && {
+    canAccessManage && {
       to: "/employees",
       title: "Danh sách nhân viên",
       icon: FaUsers,
@@ -25,15 +27,13 @@ export function DashboardPage() {
     },
     {
       to: "/schedule",
-      title:
-        user.role === USER_ROLES.ADMIN ? "Quản lý ca làm việc" : "Ca làm việc",
+      title: canAccessManage ? "Quản lý ca làm việc" : "Ca làm việc",
       icon: FaCalendarAlt,
       iconBg: "bg-blue-500",
     },
     {
       to: "/payroll",
-      title:
-        user.role === USER_ROLES.ADMIN ? "Bảng lương nhân viên" : "Bảng lương",
+      title: canAccessManage ? "Quản lý bảng lương" : "Bảng lương",
       icon: FaDollarSign,
       iconBg: "bg-emerald-500",
     },

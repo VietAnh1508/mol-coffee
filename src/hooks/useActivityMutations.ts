@@ -1,12 +1,19 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
 import type { Activity } from '../types'
+import { useAuth } from './useAuth'
+import { isAdmin } from '../constants/userRoles'
 
 export function useCreateActivity() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   
   return useMutation({
     mutationFn: async (activityData: { name: string }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền tạo hoạt động')
+      }
+
       const { data, error } = await supabase
         .from('activities')
         .insert({ ...activityData, is_active: true })
@@ -28,9 +35,14 @@ export function useCreateActivity() {
 
 export function useUpdateActivity() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   
   return useMutation({
     mutationFn: async ({ id, ...updateData }: { id: string; name?: string; is_active?: boolean }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền cập nhật hoạt động')
+      }
+
       const { data, error } = await supabase
         .from('activities')
         .update(updateData)
@@ -52,9 +64,14 @@ export function useUpdateActivity() {
 
 export function useToggleActivity() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   
   return useMutation({
     mutationFn: async (activity: Activity) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền thay đổi trạng thái hoạt động')
+      }
+
       const { data, error } = await supabase
         .from('activities')
         .update({ is_active: !activity.is_active })

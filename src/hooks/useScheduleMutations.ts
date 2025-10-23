@@ -4,6 +4,8 @@ import type { ScheduleShift } from "../types";
 import { deriveYearMonthVN } from "../utils/payrollUtils";
 import { SUPABASE_ERROR_CODE_NO_ROWS } from "../constants/supabase";
 import type { ShiftTemplate } from "../constants/shifts";
+import { useAuth } from "./useAuth";
+import { isAdmin } from "../constants/userRoles";
 
 interface CreateScheduleShiftData {
   user_id: string;
@@ -44,11 +46,19 @@ async function checkPeriodLock(
 
 export function useScheduleMutations() {
   const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  const ensureCanManage = () => {
+    if (!isAdmin(user?.role)) {
+      throw new Error("Bạn không có quyền chỉnh sửa ca làm việc");
+    }
+  };
 
   const createShift = useMutation({
     mutationFn: async (
       data: CreateScheduleShiftData
     ): Promise<ScheduleShift> => {
+      ensureCanManage();
       // Check if the period is locked before creating
       const { isLocked, yearMonth } = await checkPeriodLock(data.start_ts);
 
@@ -85,6 +95,7 @@ export function useScheduleMutations() {
     mutationFn: async (
       data: UpdateScheduleShiftData
     ): Promise<ScheduleShift> => {
+      ensureCanManage();
       const { id, ...updateData } = data;
 
       // Always fetch the existing shift to check its original period
@@ -155,6 +166,7 @@ export function useScheduleMutations() {
 
   const deleteShift = useMutation({
     mutationFn: async (id: string): Promise<void> => {
+      ensureCanManage();
       // First, fetch the shift to check its date
       const { data: shift, error: fetchError } = await supabase
         .from("schedule_shifts")
@@ -196,6 +208,7 @@ export function useScheduleMutations() {
       end_ts: string;
       exclude_shift_id?: string;
     }): Promise<{ hasConflict: boolean; conflicts: ScheduleShift[] }> => {
+      ensureCanManage();
       const { user_id, start_ts, end_ts, exclude_shift_id } = data;
 
       // Check for overlapping shifts

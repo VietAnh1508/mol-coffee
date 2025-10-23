@@ -184,6 +184,13 @@ For detailed documentation of each feature, see:
 8. **Advanced Features** - CSV export, advanced timekeeping, shift notifications
 9. **PWA Enhancements** - Offline functionality, push notifications, app shell
 
+## ✅ Supervisor Role Implementation
+- [x] Extend database enum, triggers, and RLS to include Supervisor read-only behaviour
+- [x] Update Supabase policies/functions and access guards for Supervisor visibility
+- [x] Refresh frontend role constants, hooks, and route guards
+- [x] Adjust UI flows (employees, settings, scheduling, payroll) for read-only Supervisor experience
+- [x] Document Supervisor role behaviour across feature guides and CLAUDE context
+
 ---
 
 **Progress:** ~98% complete (Foundation + Auth + Data Layer + Settings + Employee Management + Complete Scheduling System + User Profile & Password Management + Complete Payroll System + Payroll UX Improvements ✅)

@@ -1,8 +1,11 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '../lib/supabase'
+import { useAuth } from './useAuth'
+import { isAdmin } from '../constants/userRoles'
 
 export function useCreateRate() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   
   return useMutation({
     mutationFn: async (rateData: { 
@@ -10,6 +13,10 @@ export function useCreateRate() {
       hourly_vnd: number; 
       effective_from: string 
     }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền tạo mức lương')
+      }
+
       const { data, error } = await supabase
         .from('rates')
         .insert(rateData)
@@ -34,6 +41,7 @@ export function useCreateRate() {
 
 export function useUpdateRate() {
   const queryClient = useQueryClient()
+  const { user } = useAuth()
   
   return useMutation({
     mutationFn: async ({ 
@@ -45,6 +53,10 @@ export function useUpdateRate() {
       hourly_vnd?: number; 
       effective_from?: string 
     }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Bạn không có quyền cập nhật mức lương')
+      }
+
       const { data, error } = await supabase
         .from('rates')
         .update(updateData)
