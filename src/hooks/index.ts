@@ -34,6 +34,12 @@ export {
 } from "./usePayrollPeriods";
 export { usePayrollPeriodForDate } from "./usePayrollPeriodForDate";
 export {
+  usePayrollConfirmation,
+  usePayrollConfirmations,
+  useConfirmPayrollApproval,
+  useUnconfirmPayrollApproval,
+} from "./usePayrollConfirmations";
+export {
   useCreatePayrollPeriod,
   useClosePayrollPeriod,
   useReopenPayrollPeriod,

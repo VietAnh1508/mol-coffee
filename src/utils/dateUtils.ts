@@ -33,6 +33,22 @@ export const formatHours = (hours: number): string => {
   return `${hours.toFixed(1)} giờ`;
 };
 
+export const formatDateTime = (dateInput: Date | string): string => {
+  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+  if (!date || Number.isNaN(date.getTime())) {
+    return "";
+  }
+
+  return date.toLocaleString("vi-VN", {
+    hour12: false,
+    day: "2-digit",
+    month: "2-digit",
+    year: "numeric",
+    hour: "2-digit",
+    minute: "2-digit",
+  });
+};
+
 export const createMonthDateRange = (yearMonth: string) => {
   const parts = yearMonth.split("-").map((part) => part.trim());
   if (parts.length !== 2) {

@@ -76,6 +76,16 @@ export interface PayrollPeriod {
   closed_by_user?: User
 }
 
+export interface PayrollConfirmation {
+  id: string
+  payroll_period_id: string
+  user_id: string
+  confirmed_at: string
+  created_at: string
+  updated_at: string
+  user?: User
+}
+
 export type AllowanceType = 'lunch'
 
 export interface AllowanceRate {

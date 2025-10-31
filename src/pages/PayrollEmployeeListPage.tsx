@@ -1,11 +1,17 @@
 import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollEmployeeCard } from "../components/payroll/PayrollEmployeeCard";
 import { PayrollPeriodManager } from "../components/payroll/PayrollPeriodManager";
 import { Spinner } from "../components/Spinner";
 import { canManageResources } from "../constants/userRoles";
-import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
+import {
+  useAuth,
+  usePayrollCalculations,
+  usePayrollConfirmations,
+  usePayrollPeriod,
+} from "../hooks";
+import type { PayrollConfirmation } from "../types";
 import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
 
 export function PayrollEmployeeListPage() {
@@ -17,6 +23,16 @@ export function PayrollEmployeeListPage() {
 
   const { data: periodInfo, isLoading: isLoadingPeriod } =
     usePayrollPeriod(selectedPeriod);
+  const periodId = periodInfo?.id ?? null;
+  const { data: payrollConfirmations } = usePayrollConfirmations(periodId);
+
+  const payrollConfirmationByUserId = useMemo(() => {
+    const map: Record<string, PayrollConfirmation> = {};
+    (payrollConfirmations ?? []).forEach((confirmation) => {
+      map[confirmation.user_id] = confirmation;
+    });
+    return map;
+  }, [payrollConfirmations]);
 
   if (!user) return null;
 
@@ -141,7 +157,12 @@ export function PayrollEmployeeListPage() {
                   search={{ period: selectedPeriod }}
                   className="block"
                 >
-                  <PayrollEmployeeCard employee={employee} />
+                  <PayrollEmployeeCard
+                    employee={employee}
+                    confirmation={
+                      payrollConfirmationByUserId[employee.employee.id]
+                    }
+                  />
                 </Link>
               ))}
             </div>

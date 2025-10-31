@@ -1,13 +1,23 @@
-import { FaChevronRight, FaUser } from "react-icons/fa";
+import { FaCheckCircle, FaChevronRight, FaUser } from "react-icons/fa";
 import type { PayrollEmployeeSummary } from "../../hooks/usePayrollCalculations";
+import type { PayrollConfirmation } from "../../types";
+import { formatDateTime } from "../../utils/dateUtils";
 import { formatMoney } from "../../utils/payrollUtils";
 import { getActivityBadgeColor } from "../../utils/activityColors";
 
 interface PayrollEmployeeCardProps {
   readonly employee: PayrollEmployeeSummary;
+  readonly confirmation?: PayrollConfirmation | null;
 }
 
-export function PayrollEmployeeCard({ employee }: PayrollEmployeeCardProps) {
+export function PayrollEmployeeCard({
+  employee,
+  confirmation,
+}: PayrollEmployeeCardProps) {
+  const confirmedAt = confirmation
+    ? formatDateTime(confirmation.confirmed_at)
+    : null;
+
   return (
     <div className="rounded-2xl border border-subtle bg-surface shadow-sm shadow-black/5 transition hover:shadow-lg">
       <div className="p-6">
@@ -33,6 +43,16 @@ export function PayrollEmployeeCard({ employee }: PayrollEmployeeCardProps) {
 
         {/* Salary Summary */}
         <div className="space-y-3">
+          {confirmation && (
+            <div
+              className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600"
+              title={confirmedAt ? `Xác nhận lúc ${confirmedAt}` : undefined}
+            >
+              <FaCheckCircle className="h-3.5 w-3.5" />
+              <span className="truncate">Đã xác nhận</span>
+            </div>
+          )}
+
           <div className="flex items-center justify-between">
             <span className="text-sm text-subtle">Tổng lương:</span>
             <span className="text-lg font-semibold text-primary">

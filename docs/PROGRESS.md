@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** October 22, 2025
+**Last Updated:** October 31, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -90,7 +90,7 @@ For detailed documentation of each feature, see:
 
 ### 📅 **Scheduling System** ✅ **COMPLETED**
 - Day view calendar with Vietnamese interface
-- Week view toggle with compact weekly summary (read-only) ✅ **NEW**
+- Week view toggle with compact weekly summary (read-only)
 - Role-based access (employees view all, admins modify)
 - Morning/afternoon shift templates with conflict prevention
 - Smart assignment with employee filtering
@@ -110,7 +110,8 @@ For detailed documentation of each feature, see:
 - Enhanced UI with employee list and detail pages
 - Daily breakdown with Vietnamese currency formatting
 - Role-based access control (admins see all, employees see own)
-- ✅ Lunch allowance bonus for double shifts (DB-configured via allowance_rates)
+- Lunch allowance bonus for double shifts (DB-configured via allowance_rates)
+- ✅ Employee payroll confirmation workflow (per-period consent with admin/supervisor visibility)
 - **[Full Details →](features/payroll.md)**
 
 ---
@@ -198,6 +199,7 @@ For detailed documentation of each feature, see:
 ### **Recent Major Achievements:**
 - ✅ **Complete Payroll System** - Full schedule-based payroll calculation with period management and role-based access
 - ✅ **Payroll UI/UX Redesign** - New navigation flow with employee list view and dedicated detail pages for better UX
+- ✅ **Employee Payroll Confirmation** - Employees sign off payroll per period with Supabase-backed audit trail and admin badges
 - ✅ **Complete Scheduling System** - Full shift management with assignment, editing, deletion, and role-based access
 - ✅ **User Profile & Password Management** - Secure profile editing and password change functionality
 - ✅ **Employee Management System** - Mobile-first admin controls with role management and safety features

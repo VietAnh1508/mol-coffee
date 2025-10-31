@@ -21,6 +21,7 @@ The payroll system provides comprehensive salary calculation and management base
 - **Employee Access:** View only own salary data with automatic redirection
 - **Supervisor Access:** Full visibility across payroll dashboards with read-only controls (no period mutations)
 - **Data Isolation:** Database-enforced privacy via Row Level Security
+- **Employee Confirmation:** Employees acknowledge payroll accuracy per period with auditable timestamps
 
 ### Period Management
 - **Monthly Periods:** Organize payroll by month (YYYY-MM format)
@@ -28,6 +29,12 @@ The payroll system provides comprehensive salary calculation and management base
 - **Admin Audit Trail:** Track who closed/opened periods and when
 - **Status Tracking:** Open/closed period management
 - **Supervisor Oversight:** Supervisors can review period status and history without access to create, close, reopen, or delete periods
+
+### Employee Confirmation
+- **Per-Period Consent:** Employees confirm the accuracy of their payroll via a dedicated button with confirmation dialog.
+- **Supabase Backing:** Confirmations are stored in `payroll_employee_confirmations` with unique `(payroll_period_id, user_id)` pairs.
+- **Visibility:** Admins and supervisors can audit confirmation status across the entire team.
+- **Admin Overrides:** Admins may revoke an employee's confirmation (e.g., after adjustments) via a dedicated UI action, which deletes the corresponding record and reopens confirmation for that employee.
 
 ## Technical Implementation
 
@@ -92,12 +99,14 @@ const formatMoney = (amount: number) =>
 - **Personal Salary View:** Own monthly salary breakdown with activity details
 - **Period Status:** Visual indicators for open/closed periods
 - **Read-only Access:** Cannot modify any payroll data
+- **Confirmation CTA:** Employee-facing consent button with dialog to acknowledge payroll accuracy
 
 ### Data Display Components
 - **PayrollDataDisplay:** Organized presentation of salary information
 - **PayrollDailyBreakdown:** Expandable daily view with date-grouped details and quick navigation into the scheduling view for the selected day
 - **Period Status Banners:** Vietnamese localized status indicators
 - **Activity Breakdown:** Hour and rate details per activity type
+- **Confirmation Badges:** Checkmark indicator shows which employees have acknowledged their payroll
 
 ## Key Components
 
@@ -136,6 +145,11 @@ const formatMoney = (amount: number) =>
   - [x] Employee salary breakdown with activity details
   - [x] PayrollDataDisplay component for organized data presentation
   - [x] Period status banners with Vietnamese localization
+- [x] **Employee Payroll Confirmation Workflow**
+  - [x] Supabase table with RLS for per-period confirmations
+  - [x] Employee consent dialog and mutation on detail page
+  - [x] Confirmation badges surfaced on payroll list cards for admin scanning
+  - [x] Admin-only unconfirm control to reopen confirmations when data changes
 
 - [x] **Daily Breakdown and Transparency Features**
   - [x] PayrollDailyBreakdown component with expandable daily views
@@ -244,16 +258,17 @@ Note: Payroll now reads the lunch allowance from the database (`allowance_rates`
 3. **Activity-based calculation:** Different rates for different work types
 4. **Lunch allowance eligibility:** Employees working ≥2 shifts in a day receive the daily lunch allowance sourced from `allowance_rates` (with safe client fallback)
 5. **Monthly organization:** Payroll calculated per calendar month
+6. **Employee confirmation:** Each employee may record one confirmation per payroll period (repeat confirmations update the timestamp); admins can remove confirmations when payroll figures change.
 
 ### Period Management Rules
-6. **Payroll locking:** Closed periods prevent schedule changes
-7. **Admin audit trail:** Track who closes/reopens periods
-8. **Period uniqueness:** One period per month (YYYY-MM format)
+7. **Payroll locking:** Closed periods prevent schedule changes
+8. **Admin audit trail:** Track who closes/reopens periods
+9. **Period uniqueness:** One period per month (YYYY-MM format)
 
 ### Access Control Rules
-9. **Role-based visibility:** Admins see all data, employees see own data only
-10. **Database-enforced privacy:** RLS prevents unauthorized access
-11. **Auto-redirect:** Employees automatically go to their detail page
+10. **Role-based visibility:** Admins see all data, employees see own data only
+11. **Database-enforced privacy:** RLS prevents unauthorized access
+12. **Auto-redirect:** Employees automatically go to their detail page
 
 ## API Reference
 
@@ -313,5 +328,5 @@ const { data: salaryBreakdown } = useSalaryBreakdown(yearMonth, userId);
 
 ---
 
-**Last Updated:** October 2, 2025
+**Last Updated:** October 31, 2025
 **Status:** Production Ready ✅ with Payroll Period Lock Enforcement

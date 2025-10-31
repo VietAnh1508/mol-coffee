@@ -230,6 +230,29 @@ ORDER BY effective_from DESC
 LIMIT 1;
 ```
 
+#### 8. `payroll_employee_confirmations` - Employee Payroll Sign-off
+```sql
+CREATE TABLE public.payroll_employee_confirmations (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    payroll_period_id UUID REFERENCES public.payroll_periods(id) ON DELETE CASCADE NOT NULL,
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+    confirmed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    CONSTRAINT payroll_employee_confirmations_period_user UNIQUE (payroll_period_id, user_id)
+);
+```
+
+**Features:**
+- Logs when an employee confirms their payroll for a specific period.
+- Enforces a single confirmation per employee-period pair with automatic timestamps.
+- Cascades removals alongside payroll periods or user deletion.
+
+**Access & RLS:**
+- Employees can read, create, and update only their own confirmation row.
+- Admins and supervisors have read access to all confirmations.
+- Admins may delete confirmations if a payroll adjustment is needed.
+
 ---
 
 ## 🔐 ROW LEVEL SECURITY (RLS)
@@ -244,6 +267,7 @@ All tables have RLS enabled with role-based policies:
 - ✅ View all schedule shifts (read-only) - for schedule visibility
 - ✅ View their own time entries and salary data
 - ✅ View current activity rates and payroll periods
+- ✅ Confirm and view their own payroll sign-off status
 - ❌ Modify any shifts or admin data
 
 #### **Admins Can:**
@@ -272,6 +296,23 @@ CREATE POLICY "Employees can view colleagues basic info" ON public.users
 -- Admin & supervisor data visibility
 CREATE POLICY "Admins can view all users" ON public.users
     FOR SELECT USING (get_user_role(auth.uid()) IN ('admin', 'supervisor'));
+
+-- Payroll confirmation visibility and ownership
+CREATE POLICY "Employees can view their payroll confirmations" ON public.payroll_employee_confirmations
+    FOR SELECT USING (user_id = get_user_by_auth_id(auth.uid()));
+
+CREATE POLICY "Employees can upsert their payroll confirmations" ON public.payroll_employee_confirmations
+    FOR INSERT WITH CHECK (user_id = get_user_by_auth_id(auth.uid()));
+
+CREATE POLICY "Employees can maintain their payroll confirmations" ON public.payroll_employee_confirmations
+    FOR UPDATE USING (user_id = get_user_by_auth_id(auth.uid()))
+    WITH CHECK (user_id = get_user_by_auth_id(auth.uid()));
+
+CREATE POLICY "Management can view all payroll confirmations" ON public.payroll_employee_confirmations
+    FOR SELECT USING (get_user_role(auth.uid()) IN ('admin', 'supervisor'));
+
+CREATE POLICY "Admins can manage payroll confirmations" ON public.payroll_employee_confirmations
+    FOR ALL USING (get_user_role(auth.uid()) = 'admin');
 ```
 
 ---
@@ -454,7 +495,7 @@ const formatMoney = (amount: number) =>
 ## 🔄 CURRENT STATUS
 
 **Phase:** Phase 1 MVP Complete (~95%)
-**Last Updated:** September 17, 2025
+**Last Updated:** October 31, 2025
 
 ### ✅ Completed Database Features
 - Complete schema with 6 core tables
