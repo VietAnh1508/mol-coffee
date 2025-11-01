@@ -78,7 +78,7 @@ export function formatMonthName(yearMonth: string): string {
     "Tháng 11",
     "Tháng 12",
   ];
-  return `${monthNames[parseInt(month) - 1]} ${year}`;
+  return `${monthNames[parseInt(month) - 1]}/${year}`;
 }
 
 export function formatCurrency(amount: number): string {
