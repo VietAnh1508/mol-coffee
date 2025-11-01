@@ -1,6 +1,6 @@
 interface SpinnerProps {
   size?: "sm" | "md" | "lg";
-  color?: "blue" | "gray" | "white";
+  color?: "blue" | "gray" | "white" | "rose" | "emerald" | "sky";
   className?: string;
 }
 
@@ -19,15 +19,18 @@ export function Spinner({
     blue: "border-blue-600",
     gray: "border-gray-600",
     white: "border-white",
+    rose: "border-rose-500",
+    emerald: "border-emerald-500",
+    sky: "border-sky-500",
   };
 
   return (
-    <div
-      className={`animate-spin rounded-full border-b-2 ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
+    <span
+      className={`inline-block animate-spin rounded-full border-2 border-t-transparent ${sizeClasses[size]} ${colorClasses[color]} ${className}`}
       role="status"
       aria-label="Loading"
     >
       <span className="sr-only">Loading...</span>
-    </div>
+    </span>
   );
 }

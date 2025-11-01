@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** October 31, 2025
+**Last Updated:** November 1, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -112,6 +112,7 @@ For detailed documentation of each feature, see:
 - Role-based access control (admins see all, employees see own)
 - Lunch allowance bonus for double shifts (DB-configured via allowance_rates)
 - ✅ Employee payroll confirmation workflow (per-period consent with admin/supervisor visibility)
+- ✅ Admin payment acknowledgement with `paid_at` tracking and paid badges
 - **[Full Details →](features/payroll.md)**
 
 ---
@@ -198,6 +199,7 @@ For detailed documentation of each feature, see:
 
 ### **Recent Major Achievements:**
 - ✅ **Complete Payroll System** - Full schedule-based payroll calculation with period management and role-based access
+- ✅ **Payroll Payment Acknowledgement** - Admins can mark payouts as paid with audited `paid_at` timestamps and UI indicators
 - ✅ **Payroll UI/UX Redesign** - New navigation flow with employee list view and dedicated detail pages for better UX
 - ✅ **Employee Payroll Confirmation** - Employees sign off payroll per period with Supabase-backed audit trail and admin badges
 - ✅ **Complete Scheduling System** - Full shift management with assignment, editing, deletion, and role-based access

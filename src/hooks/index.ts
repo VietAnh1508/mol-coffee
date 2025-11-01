@@ -38,6 +38,7 @@ export {
   usePayrollConfirmations,
   useConfirmPayrollApproval,
   useUnconfirmPayrollApproval,
+  useUpdatePayrollPaidStatus,
 } from "./usePayrollConfirmations";
 export {
   useCreatePayrollPeriod,

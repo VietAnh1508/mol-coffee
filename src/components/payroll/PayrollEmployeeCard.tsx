@@ -1,4 +1,9 @@
-import { FaCheckCircle, FaChevronRight, FaUser } from "react-icons/fa";
+import {
+  FaCheckCircle,
+  FaChevronRight,
+  FaMoneyBillWave,
+  FaUser,
+} from "react-icons/fa";
 import type { PayrollEmployeeSummary } from "../../hooks/usePayrollCalculations";
 import type { PayrollConfirmation } from "../../types";
 import { formatDateTime } from "../../utils/dateUtils";
@@ -16,6 +21,9 @@ export function PayrollEmployeeCard({
 }: PayrollEmployeeCardProps) {
   const confirmedAt = confirmation
     ? formatDateTime(confirmation.confirmed_at)
+    : null;
+  const paidAt = confirmation?.paid_at
+    ? formatDateTime(confirmation.paid_at)
     : null;
 
   return (
@@ -43,15 +51,33 @@ export function PayrollEmployeeCard({
 
         {/* Salary Summary */}
         <div className="space-y-3">
-          {confirmation && (
-            <div
-              className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600"
-              title={confirmedAt ? `Xác nhận lúc ${confirmedAt}` : undefined}
-            >
-              <FaCheckCircle className="h-3.5 w-3.5" />
-              <span className="truncate">Đã xác nhận</span>
-            </div>
-          )}
+          <div className="flex flex-wrap gap-2">
+            {confirmation && (
+              <span
+                className="inline-flex items-center gap-2 rounded-full bg-emerald-500/10 px-3 py-1 text-xs font-semibold text-emerald-600"
+                title={confirmedAt ? `Xác nhận lúc ${confirmedAt}` : undefined}
+              >
+                <FaCheckCircle className="h-3.5 w-3.5" />
+                <span className="truncate">Đã xác nhận</span>
+              </span>
+            )}
+            {confirmation?.paid_at ? (
+              <span
+                className="inline-flex items-center gap-2 rounded-full bg-sky-500/10 px-3 py-1 text-xs font-semibold text-sky-600"
+                title={paidAt ? `Đánh dấu thanh toán lúc ${paidAt}` : undefined}
+              >
+                <FaMoneyBillWave className="h-3.5 w-3.5" />
+                <span className="truncate">Đã thanh toán</span>
+              </span>
+            ) : (
+              confirmation && (
+                <span className="inline-flex items-center gap-2 rounded-full bg-slate-500/10 px-3 py-1 text-xs font-semibold text-slate-500">
+                  <FaMoneyBillWave className="h-3.5 w-3.5" />
+                  <span className="truncate">Chưa thanh toán</span>
+                </span>
+              )
+            )}
+          </div>
 
           <div className="flex items-center justify-between">
             <span className="text-sm text-subtle">Tổng lương:</span>

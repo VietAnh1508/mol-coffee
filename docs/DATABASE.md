@@ -237,6 +237,7 @@ CREATE TABLE public.payroll_employee_confirmations (
     payroll_period_id UUID REFERENCES public.payroll_periods(id) ON DELETE CASCADE NOT NULL,
     user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
     confirmed_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+    paid_at TIMESTAMPTZ,
     created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
     CONSTRAINT payroll_employee_confirmations_period_user UNIQUE (payroll_period_id, user_id)
@@ -245,6 +246,7 @@ CREATE TABLE public.payroll_employee_confirmations (
 
 **Features:**
 - Logs when an employee confirms their payroll for a specific period.
+- Tracks when an admin acknowledges payout completion via `paid_at`.
 - Enforces a single confirmation per employee-period pair with automatic timestamps.
 - Cascades removals alongside payroll periods or user deletion.
 
@@ -314,6 +316,9 @@ CREATE POLICY "Management can view all payroll confirmations" ON public.payroll_
 CREATE POLICY "Admins can manage payroll confirmations" ON public.payroll_employee_confirmations
     FOR ALL USING (get_user_role(auth.uid()) = 'admin');
 ```
+
+- `enforce_payroll_paid_at_rules` trigger ensures only admins can set or clear `paid_at`, prevents marking payment before confirmation, and maintains an immutable payment timestamp unless explicitly cleared.
+- `upsert_payroll_employee_confirmation(payroll_period_id, user_id, confirmed_at, paid_at)` helper allows backfills to set both confirmation and payment timestamps atomically (admin/service usage only).
 
 ---
 

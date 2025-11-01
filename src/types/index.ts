@@ -81,6 +81,7 @@ export interface PayrollConfirmation {
   payroll_period_id: string
   user_id: string
   confirmed_at: string
+  paid_at: string | null
   created_at: string
   updated_at: string
   user?: User

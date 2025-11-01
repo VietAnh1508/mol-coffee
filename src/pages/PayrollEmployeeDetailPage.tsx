@@ -4,6 +4,7 @@ import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { PayrollConfirmationStatus } from "../components/payroll/PayrollConfirmationStatus";
+import { PayrollPaymentStatus } from "../components/payroll/PayrollPaymentStatus";
 import { Spinner } from "../components/Spinner";
 import { canAccessManagement, isAdmin, isEmployee } from "../constants/userRoles";
 import {
@@ -217,13 +218,21 @@ export function PayrollEmployeeDetailPage({
                     </div>
                   </div>
                 </div>
-                <PayrollConfirmationStatus
-                  payrollPeriodId={payrollPeriodId}
-                  employeeId={employeeId}
-                  isOwnData={isOwnData}
-                  isAdmin={isAdminUser}
-                  period={selectedPeriod}
-                />
+                <div className="mt-6 grid w-full gap-4 sm:grid-cols-2">
+                  <PayrollConfirmationStatus
+                    payrollPeriodId={payrollPeriodId}
+                    employeeId={employeeId}
+                    isOwnData={isOwnData}
+                    isAdmin={isAdminUser}
+                    period={selectedPeriod}
+                  />
+                  <PayrollPaymentStatus
+                    payrollPeriodId={payrollPeriodId}
+                    employeeId={employeeId}
+                    isAdmin={isAdminUser}
+                    period={selectedPeriod}
+                  />
+                </div>
               </div>
             </div>
           </div>

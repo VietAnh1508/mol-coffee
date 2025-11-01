@@ -17,7 +17,7 @@ export function usePayrollConfirmation(
       const { data, error } = await supabase
         .from("payroll_employee_confirmations")
         .select(
-          "id, payroll_period_id, user_id, confirmed_at, created_at, updated_at"
+          "id, payroll_period_id, user_id, confirmed_at, paid_at, created_at, updated_at"
         )
         .eq("payroll_period_id", payrollPeriodId)
         .eq("user_id", userId)
@@ -45,7 +45,7 @@ export function usePayrollConfirmations(payrollPeriodId?: string | null) {
       const { data, error } = await supabase
         .from("payroll_employee_confirmations")
         .select(
-          "id, payroll_period_id, user_id, confirmed_at, created_at, updated_at"
+          "id, payroll_period_id, user_id, confirmed_at, paid_at, created_at, updated_at"
         )
         .eq("payroll_period_id", payrollPeriodId);
 
@@ -95,7 +95,7 @@ export function useConfirmPayrollApproval() {
           { onConflict: "payroll_period_id,user_id" }
         )
         .select(
-          "id, payroll_period_id, user_id, confirmed_at, created_at, updated_at"
+          "id, payroll_period_id, user_id, confirmed_at, paid_at, created_at, updated_at"
         )
         .single();
 
@@ -107,7 +107,11 @@ export function useConfirmPayrollApproval() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["payroll-confirmation", data.payroll_period_id, data.user_id],
+        queryKey: [
+          "payroll-confirmation",
+          data.payroll_period_id,
+          data.user_id,
+        ],
       });
       queryClient.invalidateQueries({
         queryKey: ["payroll-confirmations", data.payroll_period_id],
@@ -124,7 +128,10 @@ export function useUnconfirmPayrollApproval() {
     mutationFn: async ({
       payrollPeriodId,
       userId,
-    }: ConfirmPayrollVariables): Promise<{ payroll_period_id: string; user_id: string }> => {
+    }: ConfirmPayrollVariables): Promise<{
+      payroll_period_id: string;
+      user_id: string;
+    }> => {
       if (!user) {
         throw new Error("Bạn cần đăng nhập để bỏ xác nhận bảng lương");
       }
@@ -147,7 +154,78 @@ export function useUnconfirmPayrollApproval() {
     },
     onSuccess: (data) => {
       queryClient.invalidateQueries({
-        queryKey: ["payroll-confirmation", data.payroll_period_id, data.user_id],
+        queryKey: [
+          "payroll-confirmation",
+          data.payroll_period_id,
+          data.user_id,
+        ],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["payroll-confirmations", data.payroll_period_id],
+      });
+    },
+  });
+}
+
+interface UpdatePayrollPaidVariables {
+  payrollPeriodId: string;
+  userId: string;
+  paid: boolean;
+}
+
+export function useUpdatePayrollPaidStatus() {
+  const queryClient = useQueryClient();
+  const { user } = useAuth();
+
+  return useMutation({
+    mutationFn: async ({
+      payrollPeriodId,
+      userId,
+      paid,
+    }: UpdatePayrollPaidVariables): Promise<PayrollConfirmation> => {
+      if (!user) {
+        throw new Error(
+          `Bạn cần đăng nhập để ${paid ? "" : "bỏ "}đánh dấu thanh toán`
+        );
+      }
+
+      if (!isAdmin(user.role)) {
+        throw new Error(
+          `Chỉ quản trị viên mới có thể ${paid ? "" : "bỏ "}đánh dấu thanh toán`
+        );
+      }
+
+      const { data, error } = await supabase
+        .from("payroll_employee_confirmations")
+        .update({
+          paid_at: paid ? new Date().toISOString() : null,
+        })
+        .eq("payroll_period_id", payrollPeriodId)
+        .eq("user_id", userId)
+        .select(
+          "id, payroll_period_id, user_id, confirmed_at, paid_at, created_at, updated_at"
+        )
+        .maybeSingle();
+
+      if (error) {
+        throw error;
+      }
+
+      if (!data) {
+        throw new Error(
+          "Nhân viên chưa xác nhận bảng lương nên không thể đánh dấu thanh toán"
+        );
+      }
+
+      return data;
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: [
+          "payroll-confirmation",
+          data.payroll_period_id,
+          data.user_id,
+        ],
       });
       queryClient.invalidateQueries({
         queryKey: ["payroll-confirmations", data.payroll_period_id],

@@ -9,6 +9,7 @@ import {
 import { formatDateTime } from "../../utils/dateUtils";
 import { formatMonthName } from "../../utils/payrollUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
+import { Spinner } from "../Spinner";
 
 interface PayrollConfirmationStatusProps {
   readonly payrollPeriodId: string | null;
@@ -107,7 +108,7 @@ export function PayrollConfirmationStatus({
 
   return (
     <>
-      <div className="flex flex-col items-center gap-3">
+      <div className="flex w-full flex-col items-center gap-3">
         {hasConfirmed ? (
           <span className="inline-flex items-center rounded-full bg-emerald-500/15 px-3 py-1 text-xs font-semibold text-emerald-500">
             <FaCheckCircle className="mr-2 h-4 w-4" />
@@ -136,11 +137,12 @@ export function PayrollConfirmationStatus({
             type="button"
             onClick={() => setDialogAction("confirm")}
             disabled={disabled}
-            className="inline-flex items-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-xl bg-emerald-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-emerald-500 focus:outline-none focus:ring-2 focus:ring-emerald-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {confirmPayroll.isPending
-              ? "Đang xác nhận..."
-              : "Tôi xác nhận bảng lương này"}
+            {confirmPayroll.isPending && (
+              <Spinner size="sm" color="white" className="mr-2" />
+            )}
+            Tôi xác nhận bảng lương này
           </button>
         )}
 
@@ -149,9 +151,12 @@ export function PayrollConfirmationStatus({
             type="button"
             onClick={() => setDialogAction("unconfirm")}
             disabled={disabled}
-            className="inline-flex items-center rounded-xl border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-500 transition hover:bg-rose-500/10 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
+            className="inline-flex w-full items-center justify-center rounded-xl border border-rose-500 px-4 py-2 text-sm font-semibold text-rose-500 transition hover:bg-rose-500/10 focus:outline-none focus:ring-2 focus:ring-rose-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {unconfirmPayroll.isPending ? "Đang bỏ xác nhận..." : "Bỏ xác nhận"}
+            {unconfirmPayroll.isPending && (
+              <Spinner size="sm" color="rose" className="mr-2" />
+            )}
+            Bỏ xác nhận
           </button>
         )}
       </div>

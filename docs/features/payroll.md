@@ -35,6 +35,14 @@ The payroll system provides comprehensive salary calculation and management base
 - **Supabase Backing:** Confirmations are stored in `payroll_employee_confirmations` with unique `(payroll_period_id, user_id)` pairs.
 - **Visibility:** Admins and supervisors can audit confirmation status across the entire team.
 - **Admin Overrides:** Admins may revoke an employee's confirmation (e.g., after adjustments) via a dedicated UI action, which deletes the corresponding record and reopens confirmation for that employee.
+- **Payment Acknowledgement:** Admins can mark a confirmed payroll as paid, creating an immutable `paid_at` timestamp that surfaces across admin views.
+
+### Payment Acknowledgement Workflow
+- **Admin-Only Controls:** Payment buttons appear once an employee confirmation exists; attempts to mark payment without a confirmation raise a controlled error.
+- **UI Surfacing:** The admin detail page shows “Đánh dấu đã thanh toán” / “Bỏ đánh dấu thanh toán” actions with localized toasts and timestamp badges. The payroll list cards display a subtle paid badge for quick scanning.
+- **Database Enforcement:** `enforce_payroll_paid_at_rules` trigger restricts payment updates to admins, prevents manual timestamp edits, and blocks payment before confirmation. A helper function `upsert_payroll_employee_confirmation` supports administrative backfills that include both confirmation and payment timestamps.
+- **State Integrity:** Clearing an employee confirmation drops the row, implicitly removing `paid_at`. Reopening a payroll period keeps existing payment acknowledgements intact.
+- **Client Hooks:** `useUpdatePayrollPaidStatus` unifies the mark/unmark mutations, handles admin guardrails, and refreshes relevant TanStack Query caches after every change.
 
 ## Technical Implementation
 
