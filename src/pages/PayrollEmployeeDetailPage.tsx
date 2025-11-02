@@ -1,5 +1,5 @@
 import { useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
@@ -13,11 +13,11 @@ import {
   usePayrollCalculations,
   usePayrollDailyBreakdown,
   usePayrollPeriod,
+  usePayrollPeriods,
 } from "../hooks";
 import {
   formatMoney,
   formatMonthName,
-  generateMonthOptions,
 } from "../utils/payrollUtils";
 
 interface PayrollEmployeeDetailPageProps {
@@ -43,6 +43,8 @@ export function PayrollEmployeeDetailPage({
     });
   };
 
+  const { data: payrollPeriods, isLoading: isLoadingPeriods } =
+    usePayrollPeriods();
   const { data: payrollData, isLoading: isLoadingPayroll } =
     usePayrollCalculations(selectedPeriod, employeeId);
 
@@ -55,9 +57,29 @@ export function PayrollEmployeeDetailPage({
     usePayrollPeriod(selectedPeriod);
   const payrollPeriodId = periodInfo?.id ?? null;
 
+  useEffect(() => {
+    if (!payrollPeriods || payrollPeriods.length === 0) return;
+
+    const hasSelectedPeriod = payrollPeriods.some(
+      (payrollPeriod) => payrollPeriod.year_month === selectedPeriod
+    );
+
+    if (!hasSelectedPeriod) {
+      // Guard against stale deep links or recently deleted periods by falling back to the latest
+      const latestPeriod = payrollPeriods[0].year_month;
+      setSelectedPeriod(latestPeriod);
+      navigate({
+        to: "/payroll/employee/$employeeId",
+        params: { employeeId },
+        search: { period: latestPeriod },
+        replace: true,
+      });
+    }
+  }, [employeeId, navigate, payrollPeriods, selectedPeriod]);
+
   if (!user) return null;
 
-  const isLoading = isLoadingPayroll || isLoadingPeriod;
+  const isLoading = isLoadingPayroll || isLoadingPeriod || isLoadingPeriods;
   const canAccess = canAccessManagement(user.role);
   const isAdminUser = isAdmin(user.role);
   const isEmployeeUser = isEmployee(user.role);
@@ -70,7 +92,11 @@ export function PayrollEmployeeDetailPage({
     : 0;
 
   // Get month options for period selector
-  const monthOptions = generateMonthOptions();
+  const monthOptions =
+    payrollPeriods?.map((payrollPeriod) => ({
+      value: payrollPeriod.year_month,
+      label: formatMonthName(payrollPeriod.year_month),
+    })) ?? [];
 
   return (
     <>
@@ -115,7 +141,19 @@ export function PayrollEmployeeDetailPage({
                 value={selectedPeriod}
                 onChange={(e) => handlePeriodChange(e.target.value)}
                 className="rounded-xl border border-subtle bg-surface px-3 py-2 text-sm text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
+                disabled={isLoadingPeriods || monthOptions.length === 0}
               >
+                {isLoadingPeriods && selectedPeriod && (
+                  <option value={selectedPeriod}>
+                    {formatMonthName(selectedPeriod)}
+                  </option>
+                )}
+                {isLoadingPeriods && (
+                  <option value="">Đang tải kỳ lương...</option>
+                )}
+                {!isLoadingPeriods && monthOptions.length === 0 && (
+                  <option value="">Chưa có kỳ lương khả dụng</option>
+                )}
                 {monthOptions.map((option) => (
                   <option key={option.value} value={option.value}>
                     {option.label}

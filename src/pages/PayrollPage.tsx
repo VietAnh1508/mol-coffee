@@ -11,6 +11,9 @@ import {
 import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
 import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
 
+/**
+ * @deprecated Use PayrollEmployeeListPage for admin view and PayrollPage for employee view
+ */
 export function PayrollPage() {
   const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState(getCurrentYearMonth());
