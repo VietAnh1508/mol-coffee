@@ -12,11 +12,11 @@ import {
   usePayrollPeriod,
 } from "../hooks";
 import type { PayrollConfirmation } from "../types";
-import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
+import { formatMonthName } from "../utils/payrollUtils";
 
 export function PayrollEmployeeListPage() {
   const { user } = useAuth();
-  const [selectedPeriod, setSelectedPeriod] = useState(getCurrentYearMonth());
+  const [selectedPeriod, setSelectedPeriod] = useState<string | null>(null);
 
   const { data: payrollData, isLoading: isLoadingPayroll } =
     usePayrollCalculations(selectedPeriod);
@@ -36,7 +36,9 @@ export function PayrollEmployeeListPage() {
 
   if (!user) return null;
 
-  const isLoading = isLoadingPayroll || isLoadingPeriod;
+  const hasSelectedPeriod = Boolean(selectedPeriod);
+  const isLoading =
+    hasSelectedPeriod && (isLoadingPayroll || isLoadingPeriod);
   const canManage = canManageResources(user.role);
 
   // Calculate summary data for admin cards
@@ -62,7 +64,7 @@ export function PayrollEmployeeListPage() {
         />
 
         {/* Period Status Banner */}
-        {periodInfo && (
+        {hasSelectedPeriod && periodInfo && (
           <div
             className={`rounded-2xl border p-4 ${
               periodInfo.status === "closed"
@@ -81,7 +83,7 @@ export function PayrollEmployeeListPage() {
                 {periodInfo.status === "closed" ? "Đã khóa" : "Đang mở"}
               </div>
               <span className="ml-3 text-sm text-subtle">
-                Kỳ lương {formatMonthName(selectedPeriod)}
+                Kỳ lương {selectedPeriod && formatMonthName(selectedPeriod)}
                 {periodInfo.status === "closed" &&
                   periodInfo.closed_by_user && (
                     <> - Khóa bởi {periodInfo.closed_by_user.name}</>
@@ -92,33 +94,37 @@ export function PayrollEmployeeListPage() {
         )}
 
         {/* Summary Cards */}
-        <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
-          <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
-            <div className="text-sm font-medium text-subtle">
-              Tổng nhân viên
+        {hasSelectedPeriod && (
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+            <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
+              <div className="text-sm font-medium text-subtle">
+                Tổng nhân viên
+              </div>
+              <div className="text-2xl font-semibold text-primary">
+                {totalEmployees}
+              </div>
             </div>
-            <div className="text-2xl font-semibold text-primary">
-              {totalEmployees}
+            <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
+              <div className="text-sm font-medium text-subtle">
+                Tổng giờ làm
+              </div>
+              <div className="text-2xl font-semibold text-primary">
+                {totalHours.toFixed(1)}
+              </div>
+            </div>
+            <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
+              <div className="text-sm font-medium text-subtle">
+                Tổng tiền lương
+              </div>
+              <div className="text-2xl font-semibold text-primary">
+                {Math.round(totalSalary).toLocaleString("vi-VN")} ₫
+              </div>
             </div>
           </div>
-          <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
-            <div className="text-sm font-medium text-subtle">Tổng giờ làm</div>
-            <div className="text-2xl font-semibold text-primary">
-              {totalHours.toFixed(1)}
-            </div>
-          </div>
-          <div className="rounded-2xl border border-subtle bg-surface p-6 shadow-lg shadow-black/5">
-            <div className="text-sm font-medium text-subtle">
-              Tổng tiền lương
-            </div>
-            <div className="text-2xl font-semibold text-primary">
-              {Math.round(totalSalary).toLocaleString("vi-VN")} ₫
-            </div>
-          </div>
-        </div>
+        )}
 
         {/* Loading State */}
-        {isLoading && (
+        {hasSelectedPeriod && isLoading && (
           <div className="rounded-2xl border border-subtle bg-surface p-8 shadow-lg shadow-black/5">
             <div className="flex items-center justify-center text-subtle">
               <Spinner />
@@ -128,46 +134,53 @@ export function PayrollEmployeeListPage() {
         )}
 
         {/* No Data State */}
-        {!isLoading && (!payrollData || payrollData.length === 0) && (
-          <div className="rounded-2xl border border-subtle bg-surface p-8 text-center text-subtle shadow-lg shadow-black/5">
-            <div>
-              <div className="mb-4 text-4xl">📊</div>
-              <h3 className="mb-2 text-lg font-semibold text-primary">
-                Chưa có dữ liệu lương
+        {hasSelectedPeriod &&
+          !isLoading &&
+          (!payrollData || payrollData.length === 0) && (
+            <div className="rounded-2xl border border-subtle bg-surface p-8 text-center text-subtle shadow-lg shadow-black/5">
+              <div>
+                <div className="mb-4 text-4xl">📊</div>
+                <h3 className="mb-2 text-lg font-semibold text-primary">
+                  Chưa có dữ liệu lương
               </h3>
               <p>Chưa có lịch làm việc nào trong kỳ này.</p>
+              </div>
             </div>
-          </div>
-        )}
+          )}
 
         {/* Employee List */}
-        {!isLoading && payrollData && payrollData.length > 0 && (
-          <div>
-            <div className="mb-4 flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-primary">
-                Danh sách nhân viên
-              </h3>
-            </div>
-            <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
-              {payrollData.map((employee) => (
+        {hasSelectedPeriod &&
+          !isLoading &&
+          payrollData &&
+          payrollData.length > 0 && (
+            <div>
+              <div className="mb-4 flex items-center justify-between">
+                <h3 className="text-lg font-semibold text-primary">
+                  Danh sách nhân viên
+                </h3>
+              </div>
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+                {payrollData.map((employee) => (
                 <Link
                   key={employee.employee.id}
                   to="/payroll/employee/$employeeId"
                   params={{ employeeId: employee.employee.id }}
-                  search={{ period: selectedPeriod }}
+                  search={
+                    selectedPeriod ? { period: selectedPeriod } : undefined
+                  }
                   className="block"
                 >
-                  <PayrollEmployeeCard
-                    employee={employee}
-                    confirmation={
-                      payrollConfirmationByUserId[employee.employee.id]
-                    }
-                  />
-                </Link>
-              ))}
+                    <PayrollEmployeeCard
+                      employee={employee}
+                      confirmation={
+                        payrollConfirmationByUserId[employee.employee.id]
+                      }
+                    />
+                  </Link>
+                ))}
+              </div>
             </div>
-          </div>
-        )}
+          )}
       </div>
     </div>
   );

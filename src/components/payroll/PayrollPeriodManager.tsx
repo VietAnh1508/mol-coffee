@@ -14,7 +14,7 @@ import { PayrollPeriodForm } from "./PayrollPeriodForm";
 
 interface PayrollPeriodManagerProps {
   onPeriodSelect: (yearMonth: string) => void;
-  selectedPeriod?: string;
+  selectedPeriod?: string | null;
   canManage?: boolean;
 }
 
@@ -102,6 +102,12 @@ export function PayrollPeriodManager({
           </button>
         )}
       </div>
+
+      {!selectedPeriod && (
+        <p className="mb-4 text-sm text-subtle">
+          Chọn kỳ lương để xem dữ liệu.
+        </p>
+      )}
 
       {canManage && showCreateForm && (
         <PayrollPeriodForm
