@@ -19,7 +19,10 @@ import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticate
 import { Route as AuthenticatedEmployeesRouteImport } from './routes/_authenticated/employees'
 import { Route as AuthenticatedDashboardRouteImport } from './routes/_authenticated/dashboard'
 import { Route as AuthenticatedChangePasswordRouteImport } from './routes/_authenticated/change-password'
+import { Route as AuthenticatedRecipesRouteRouteImport } from './routes/_authenticated/recipes/route'
+import { Route as AuthenticatedRecipesIndexRouteImport } from './routes/_authenticated/recipes/index'
 import { Route as AuthenticatedPayrollIndexRouteImport } from './routes/_authenticated/payroll/index'
+import { Route as AuthenticatedRecipesRecipeSlugRouteImport } from './routes/_authenticated/recipes/$recipeSlug'
 import { Route as AuthenticatedPayrollEmployeeEmployeeIdRouteImport } from './routes/_authenticated/payroll/employee/$employeeId'
 
 const SignupRoute = SignupRouteImport.update({
@@ -72,11 +75,29 @@ const AuthenticatedChangePasswordRoute =
     path: '/change-password',
     getParentRoute: () => AuthenticatedRouteRoute,
   } as any)
+const AuthenticatedRecipesRouteRoute =
+  AuthenticatedRecipesRouteRouteImport.update({
+    id: '/recipes',
+    path: '/recipes',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRecipesIndexRoute =
+  AuthenticatedRecipesIndexRouteImport.update({
+    id: '/',
+    path: '/',
+    getParentRoute: () => AuthenticatedRecipesRouteRoute,
+  } as any)
 const AuthenticatedPayrollIndexRoute =
   AuthenticatedPayrollIndexRouteImport.update({
     id: '/payroll/',
     path: '/payroll/',
     getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
+const AuthenticatedRecipesRecipeSlugRoute =
+  AuthenticatedRecipesRecipeSlugRouteImport.update({
+    id: '/$recipeSlug',
+    path: '/$recipeSlug',
+    getParentRoute: () => AuthenticatedRecipesRouteRoute,
   } as any)
 const AuthenticatedPayrollEmployeeEmployeeIdRoute =
   AuthenticatedPayrollEmployeeEmployeeIdRouteImport.update({
@@ -88,6 +109,7 @@ const AuthenticatedPayrollEmployeeEmployeeIdRoute =
 export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/recipes': typeof AuthenticatedRecipesRouteRouteWithChildren
   '/change-password': typeof AuthenticatedChangePasswordRoute
   '/dashboard': typeof AuthenticatedDashboardRoute
   '/employees': typeof AuthenticatedEmployeesRoute
@@ -95,7 +117,9 @@ export interface FileRoutesByFullPath {
   '/schedule': typeof AuthenticatedScheduleRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
+  '/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
+  '/recipes/': typeof AuthenticatedRecipesIndexRoute
   '/payroll/employee/$employeeId': typeof AuthenticatedPayrollEmployeeEmployeeIdRoute
 }
 export interface FileRoutesByTo {
@@ -108,7 +132,9 @@ export interface FileRoutesByTo {
   '/schedule': typeof AuthenticatedScheduleRoute
   '/settings': typeof AuthenticatedSettingsRoute
   '/': typeof AuthenticatedIndexRoute
+  '/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
+  '/recipes': typeof AuthenticatedRecipesIndexRoute
   '/payroll/employee/$employeeId': typeof AuthenticatedPayrollEmployeeEmployeeIdRoute
 }
 export interface FileRoutesById {
@@ -116,6 +142,7 @@ export interface FileRoutesById {
   '/_authenticated': typeof AuthenticatedRouteRouteWithChildren
   '/login': typeof LoginRoute
   '/signup': typeof SignupRoute
+  '/_authenticated/recipes': typeof AuthenticatedRecipesRouteRouteWithChildren
   '/_authenticated/change-password': typeof AuthenticatedChangePasswordRoute
   '/_authenticated/dashboard': typeof AuthenticatedDashboardRoute
   '/_authenticated/employees': typeof AuthenticatedEmployeesRoute
@@ -123,7 +150,9 @@ export interface FileRoutesById {
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
+  '/_authenticated/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
+  '/_authenticated/recipes/': typeof AuthenticatedRecipesIndexRoute
   '/_authenticated/payroll/employee/$employeeId': typeof AuthenticatedPayrollEmployeeEmployeeIdRoute
 }
 export interface FileRouteTypes {
@@ -131,6 +160,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/login'
     | '/signup'
+    | '/recipes'
     | '/change-password'
     | '/dashboard'
     | '/employees'
@@ -138,7 +168,9 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/'
+    | '/recipes/$recipeSlug'
     | '/payroll'
+    | '/recipes/'
     | '/payroll/employee/$employeeId'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -151,13 +183,16 @@ export interface FileRouteTypes {
     | '/schedule'
     | '/settings'
     | '/'
+    | '/recipes/$recipeSlug'
     | '/payroll'
+    | '/recipes'
     | '/payroll/employee/$employeeId'
   id:
     | '__root__'
     | '/_authenticated'
     | '/login'
     | '/signup'
+    | '/_authenticated/recipes'
     | '/_authenticated/change-password'
     | '/_authenticated/dashboard'
     | '/_authenticated/employees'
@@ -165,7 +200,9 @@ export interface FileRouteTypes {
     | '/_authenticated/schedule'
     | '/_authenticated/settings'
     | '/_authenticated/'
+    | '/_authenticated/recipes/$recipeSlug'
     | '/_authenticated/payroll/'
+    | '/_authenticated/recipes/'
     | '/_authenticated/payroll/employee/$employeeId'
   fileRoutesById: FileRoutesById
 }
@@ -247,12 +284,33 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedChangePasswordRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
+    '/_authenticated/recipes': {
+      id: '/_authenticated/recipes'
+      path: '/recipes'
+      fullPath: '/recipes'
+      preLoaderRoute: typeof AuthenticatedRecipesRouteRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/recipes/': {
+      id: '/_authenticated/recipes/'
+      path: '/'
+      fullPath: '/recipes/'
+      preLoaderRoute: typeof AuthenticatedRecipesIndexRouteImport
+      parentRoute: typeof AuthenticatedRecipesRouteRoute
+    }
     '/_authenticated/payroll/': {
       id: '/_authenticated/payroll/'
       path: '/payroll'
       fullPath: '/payroll'
       preLoaderRoute: typeof AuthenticatedPayrollIndexRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/recipes/$recipeSlug': {
+      id: '/_authenticated/recipes/$recipeSlug'
+      path: '/$recipeSlug'
+      fullPath: '/recipes/$recipeSlug'
+      preLoaderRoute: typeof AuthenticatedRecipesRecipeSlugRouteImport
+      parentRoute: typeof AuthenticatedRecipesRouteRoute
     }
     '/_authenticated/payroll/employee/$employeeId': {
       id: '/_authenticated/payroll/employee/$employeeId'
@@ -264,7 +322,24 @@ declare module '@tanstack/react-router' {
   }
 }
 
+interface AuthenticatedRecipesRouteRouteChildren {
+  AuthenticatedRecipesRecipeSlugRoute: typeof AuthenticatedRecipesRecipeSlugRoute
+  AuthenticatedRecipesIndexRoute: typeof AuthenticatedRecipesIndexRoute
+}
+
+const AuthenticatedRecipesRouteRouteChildren: AuthenticatedRecipesRouteRouteChildren =
+  {
+    AuthenticatedRecipesRecipeSlugRoute: AuthenticatedRecipesRecipeSlugRoute,
+    AuthenticatedRecipesIndexRoute: AuthenticatedRecipesIndexRoute,
+  }
+
+const AuthenticatedRecipesRouteRouteWithChildren =
+  AuthenticatedRecipesRouteRoute._addFileChildren(
+    AuthenticatedRecipesRouteRouteChildren,
+  )
+
 interface AuthenticatedRouteRouteChildren {
+  AuthenticatedRecipesRouteRoute: typeof AuthenticatedRecipesRouteRouteWithChildren
   AuthenticatedChangePasswordRoute: typeof AuthenticatedChangePasswordRoute
   AuthenticatedDashboardRoute: typeof AuthenticatedDashboardRoute
   AuthenticatedEmployeesRoute: typeof AuthenticatedEmployeesRoute
@@ -277,6 +352,7 @@ interface AuthenticatedRouteRouteChildren {
 }
 
 const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
+  AuthenticatedRecipesRouteRoute: AuthenticatedRecipesRouteRouteWithChildren,
   AuthenticatedChangePasswordRoute: AuthenticatedChangePasswordRoute,
   AuthenticatedDashboardRoute: AuthenticatedDashboardRoute,
   AuthenticatedEmployeesRoute: AuthenticatedEmployeesRoute,

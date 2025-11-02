@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** November 1, 2025
+**Last Updated:** November 2, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -13,6 +13,7 @@ For detailed documentation of each feature, see:
 - **[Scheduling System](features/scheduling.md)** - Shift management and conflict prevention
 - **[Settings Management](features/settings.md)** - Activities and rates configuration
 - **[Payroll System](features/payroll.md)** - Salary calculation and period management
+- **[Drink Recipes](features/recipes.md)** - Internal barista recipe reference
 
 ---
 
@@ -69,6 +70,7 @@ For detailed documentation of each feature, see:
   - [x] Auto-dismiss functionality with manual close option
   - [x] Non-intrusive positioning and smooth animations
 - [x] System-driven dark mode styling across core pages and modals
+- [x] “Công thức pha chế” drink recipe library (read-only) available to every role via TanStack Router navigation
 
 ---
 
@@ -207,6 +209,7 @@ For detailed documentation of each feature, see:
 - ✅ **Employee Management System** - Mobile-first admin controls with role management and safety features
 - ✅ **Settings Management** - Full CRUD for activities and rates with real-time UI updates
 - ✅ **Email Authentication Migration** - Modern auth flow with progressive profile completion
+- ✅ **Drink Recipes Library** - Read-only catalog of café drinks with detailed steps, linked from the dashboard for every role
 
 ---
 

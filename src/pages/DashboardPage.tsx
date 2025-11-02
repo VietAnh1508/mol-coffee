@@ -1,6 +1,12 @@
 import { Link } from "@tanstack/react-router";
 import type { IconType } from "react-icons";
-import { FaCalendarAlt, FaCog, FaDollarSign, FaUsers } from "react-icons/fa";
+import {
+  FaCalendarAlt,
+  FaCog,
+  FaDollarSign,
+  FaMugHot,
+  FaUsers,
+} from "react-icons/fa";
 import { NextShiftNotice } from "../components/NextShiftNotice";
 import { canAccessManagement } from "../constants/userRoles";
 import { useAuth } from "../hooks";
@@ -24,6 +30,13 @@ export function DashboardPage() {
       title: "Danh sách nhân viên",
       icon: FaUsers,
       iconBg: "bg-orange-500",
+    },
+    {
+      to: "/recipes",
+      title: "Công thức pha chế",
+      icon: FaMugHot,
+      iconBg: "bg-amber-500",
+      badgeLabel: "New",
     },
     {
       to: "/schedule",
@@ -57,13 +70,18 @@ export function DashboardPage() {
       </header>
 
       <div className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto sm:max-w-2xl">
-        {shortcuts.map(({ to, title, icon: Icon, iconBg }) => (
+        {shortcuts.map(({ to, title, icon: Icon, iconBg, badgeLabel }) => (
           <Link
             key={to}
             to={to}
-            className="group flex flex-col items-center gap-4 rounded-2xl border border-subtle bg-surface p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-page"
+            className="group relative flex flex-col items-center gap-4 rounded-2xl border border-subtle bg-surface p-6 text-center shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-page"
             aria-label={title}
           >
+            {badgeLabel && (
+              <span className="absolute right-4 top-4 inline-flex items-center rounded-full bg-red-500 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-white shadow-sm">
+                {badgeLabel}
+              </span>
+            )}
             <span
               className={`flex h-12 w-12 items-center justify-center rounded-xl text-white shadow-lg shadow-black/10 ${iconBg}`}
             >
@@ -82,4 +100,5 @@ interface ShortcutCard {
   title: string;
   icon: IconType;
   iconBg: string;
+  badgeLabel?: string;
 }

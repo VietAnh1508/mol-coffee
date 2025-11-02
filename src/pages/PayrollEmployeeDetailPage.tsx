@@ -1,12 +1,13 @@
-import { Link, useNavigate } from "@tanstack/react-router";
+import { useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { FaArrowLeft, FaCalendarAlt } from "react-icons/fa";
+import { FaCalendarAlt } from "react-icons/fa";
 import { PageTitle } from "../components/PageTitle";
 import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { PayrollConfirmationStatus } from "../components/payroll/PayrollConfirmationStatus";
 import { PayrollPaymentStatus } from "../components/payroll/PayrollPaymentStatus";
 import { Spinner } from "../components/Spinner";
 import { canAccessManagement, isAdmin, isEmployee } from "../constants/userRoles";
+import { BackLink } from "../components/common/BackLink";
 import {
   useAuth,
   usePayrollCalculations,
@@ -77,13 +78,7 @@ export function PayrollEmployeeDetailPage({
         {/* Back Button */}
         {canAccess && (
           <div className="mb-4">
-            <Link
-              to="/payroll"
-              className="inline-flex items-center gap-2 text-sm font-medium text-subtle transition hover:text-primary"
-            >
-              <FaArrowLeft className="h-4 w-4" />
-              Quay lại danh sách
-            </Link>
+            <BackLink to="/payroll" label="Quay lại danh sách" />
           </div>
         )}
 

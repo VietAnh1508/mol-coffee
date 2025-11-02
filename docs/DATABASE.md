@@ -198,6 +198,49 @@ CREATE TABLE public.payroll_periods (
 **Related Features:**
 - **[Payroll System](features/payroll.md)** - Period management and salary calculation
 
+#### 7. `recipes` - Drink Recipe Catalog
+```sql
+CREATE TABLE public.recipes (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    slug TEXT NOT NULL UNIQUE,
+    name TEXT NOT NULL,
+    description TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
+);
+```
+
+**Purpose:**
+- Serves as the read-only catalogue of pha chế (drink-making) recipes
+- Supports localized Vietnamese copy for quicker onboarding of new staff
+- Slug doubles as stable route identifier for the PWA
+
+**Access Model:**
+- RLS grants all authenticated users (`admin`, `supervisor`, `employee`) read access
+- Only admins may create, update, or delete recipes
+
+#### 8. `recipe_steps` - Step-by-Step Instructions
+```sql
+CREATE TABLE public.recipe_steps (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    recipe_id UUID REFERENCES public.recipes(id) ON DELETE CASCADE NOT NULL,
+    step_number INTEGER NOT NULL,
+    instruction TEXT NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT recipe_steps_step_number_check CHECK (step_number > 0),
+    CONSTRAINT recipe_steps_unique_step UNIQUE (recipe_id, step_number)
+);
+```
+
+**Details:**
+- Maintains 1-based ordering for display (`step_number`)
+- Cascades deletes when a recipe is removed, keeping data tidy
+- Indexed by `recipe_id` to speed up TanStack Query fetches
+
+**Access Model:**
+- Mirror of `recipes` policies: everyone authenticated can read, only admins mutate
+
 #### 7. `allowance_rates` - Effective-Dated Allowances (Per-Day)
 ```sql
 CREATE TABLE public.allowance_rates (

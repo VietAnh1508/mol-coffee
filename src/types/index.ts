@@ -98,3 +98,21 @@ export interface AllowanceRate {
   created_at: string
   updated_at: string
 }
+
+export interface Recipe {
+  id: string
+  slug: string
+  name: string
+  description: string | null
+  created_at: string
+  updated_at: string
+}
+
+export interface RecipeStep {
+  id: string
+  recipe_id: string
+  step_number: number
+  instruction: string
+  created_at: string
+  updated_at: string
+}
