@@ -121,6 +121,37 @@ export function AuthProvider({ children }: PropsWithChildren) {
     }
   }, []);
 
+  const requestPasswordReset = useCallback(
+    async (email: string, redirectTo: string) => {
+      try {
+        const { error } = await supabase.auth.resetPasswordForEmail(email, {
+          redirectTo,
+        });
+
+        return { error };
+      } catch (error) {
+        const authError =
+          error instanceof Error ? error : new Error("Unknown error");
+        return { error: authError as AuthError };
+      }
+    },
+    []
+  );
+
+  const resetPassword = useCallback(async (newPassword: string) => {
+    try {
+      const { error } = await supabase.auth.updateUser({
+        password: newPassword,
+      });
+
+      return { error };
+    } catch (error) {
+      const authError =
+        error instanceof Error ? error : new Error("Unknown error");
+      return { error: authError as AuthError };
+    }
+  }, []);
+
   const isProfileComplete = useCallback((userData: typeof user): boolean => {
     if (!userData) return false;
     // Check if name exists and phone is not a placeholder
@@ -141,8 +172,20 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signIn,
       signUp,
       signOut,
+      requestPasswordReset,
+      resetPassword,
     }),
-    [user, supabaseUser, loading, isProfileComplete, signIn, signUp, signOut]
+    [
+      user,
+      supabaseUser,
+      loading,
+      isProfileComplete,
+      signIn,
+      signUp,
+      signOut,
+      requestPasswordReset,
+      resetPassword,
+    ]
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

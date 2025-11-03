@@ -24,6 +24,12 @@ The MoL Coffee authentication system provides secure email-based authentication 
 - **Vietnamese Localization:** Interface labels and validation messages in Vietnamese
 - **Security:** bcrypt/argon2 password hashing, HTTPS, brute-force throttling
 
+### Forgot Password Flow
+- **Self-service recovery:** Users request a reset email via the “Quên mật khẩu?” screen
+- **Supabase redirect:** Emails point to `/reset-password` with environment-aware redirect URLs (`VITE_SITE_URL` or window origin during development)
+- **Recovery session handling:** The app exchanges Supabase recovery tokens, sanitizes URL fragments, and prompts for a new password after validating the link
+- **Post-reset sign-out:** Users are signed out and guided back to the login page after a successful reset
+
 ## Technical Implementation
 
 ### Authentication Flow
@@ -35,6 +41,16 @@ The MoL Coffee authentication system provides secure email-based authentication 
 5. User provides name + phone (validated)
 6. Profile updated, modal disappears
 7. User proceeds to dashboard
+```
+
+### Forgot Password Workflow
+```
+1. User opens "Quên mật khẩu?" link on Login page
+2. User submits email → Supabase sends reset link using `resetPasswordForEmail`
+3. Supabase redirects to /reset-password with recovery tokens
+4. App verifies recovery session (supports fragment + PKCE flows) and cleans URL
+5. User submits new password → `supabase.auth.updateUser({ password })`
+6. App signs the user out and redirects back to /login
 ```
 
 ### Database Schema
@@ -137,10 +153,15 @@ const VIETNAMESE_PHONE_PATTERN = /^(03|05|07|08|09)\d{8}$/;
     - [x] Password policy enforcement (minimum 6 characters)
     - [x] Supabase auth integration with updateUser API
     - [x] Success feedback and form reset on completion
-  - [x] Password policy system
-    - [x] Reusable PasswordPolicy component with flexible variants
-    - [x] Centralized password constants for maintainability
-    - [x] Consistent policy display across signup and password change flows
+- [x] Password policy system
+  - [x] Reusable PasswordPolicy component with flexible variants
+  - [x] Centralized password constants for maintainability
+  - [x] Consistent policy display across signup and password change flows
+- [x] Quên mật khẩu (Forgot Password)
+  - [x] Public forgot-password page with Supabase email trigger
+  - [x] Reset-password page validating recovery session tokens
+  - [x] Automatic URL cleanup & post-reset redirect to login
+  - [x] Vietnamese guidance and error handling throughout
 
 ### 🚧 Future Enhancements
 - [ ] User preferences and settings

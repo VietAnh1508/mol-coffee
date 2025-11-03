@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** November 2, 2025
+**Last Updated:** November 3, 2025
 
 ## 📚 Feature-Specific Documentation
 
@@ -34,6 +34,7 @@ For detailed documentation of each feature, see:
 - Email-based authentication with progressive profile completion
 - Vietnamese phone validation and localization
 - Admin user management functions
+- Forgot password flow with Supabase recovery and reset-password screen
 - **[Full Details →](features/authentication.md)**
 
 ### 🗄️ **Database & Security**

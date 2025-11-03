@@ -56,6 +56,15 @@ export function LoginPage() {
           </button>
         </div>
 
+        <div className="text-center text-sm">
+          <Link
+            to="/forgot-password"
+            className="text-blue-600 transition-colors hover:text-blue-400"
+          >
+            Quên mật khẩu?
+          </Link>
+        </div>
+
         <div className="text-center">
           <Link
             to="/signup"
