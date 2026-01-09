@@ -3,7 +3,7 @@
 ## 📋 PROJECT STATUS
 
 **Current Phase:** Phase 1 (MVP Foundation)
-**Last Updated:** November 3, 2025
+**Last Updated:** January 9, 2026
 
 ## 📚 Feature-Specific Documentation
 
@@ -72,6 +72,7 @@ For detailed documentation of each feature, see:
   - [x] Non-intrusive positioning and smooth animations
 - [x] System-driven dark mode styling across core pages and modals
 - [x] “Công thức pha chế” drink recipe library (read-only) available to every role via TanStack Router navigation
+- [x] Admin CRUD UI for drink recipes (create/edit/delete with confirmation and cache sync)
 
 ---
 

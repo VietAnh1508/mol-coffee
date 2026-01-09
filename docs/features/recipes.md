@@ -1,7 +1,7 @@
 # Drink Recipes Feature
 
 ## Summary
-- **Status:** New (read-only MVP)
+- **Status:** Admin CRUD UI available (read-only for non-admins)
 - **Audience:** All authenticated roles (admin / supervisor / employee)
 - **Goal:** Provide a dedicated “Drink Recipes” library so baristas can reference standard drink formulas during a shift.
 
@@ -12,12 +12,26 @@
 
 ### Row Level Security
 - All authenticated users can `SELECT` from both tables.
-- Only admins may `INSERT`, `UPDATE`, or `DELETE`. The current UI is read-only, so there are no client-side edit forms yet.
+- Only admins may `INSERT`, `UPDATE`, or `DELETE`. The UI will surface create/edit/delete controls for admins only.
 
 ## User Experience
 1. Dashboard shortcut “Công thức pha chế” links to `/recipes`.
 2. The list page shows each drink’s name and optional description. Selecting a drink navigates to the detail view.
 3. The detail page renders the ordered step list with a numbered badge. Steps remain readable on mobile and desktop layouts.
+4. Admins can create new recipes, edit existing recipes, and delete recipes from the list page (with confirmation).
+5. Admins can inline-edit individual recipe steps directly on the detail page.
+
+## Admin CRUD UI Plan
+- [x] Add “Tạo mới” button on the recipes list page for admins.
+- [x] Reuse a single dialog for both create and edit, capturing name, optional description, and steps (one step per line).
+- [x] Add Edit/Delete actions on each recipe card; delete uses the shared confirmation dialog.
+- [x] Wire up Supabase mutations with optimistic updates and cache invalidation.
+- [x] Add inline per-step edit on the detail page (admin-only, no step reordering).
+
+## Detail Page CRUD TODOs
+- [ ] Add inline delete for individual steps (admin-only, confirm before delete).
+- [ ] Add inline "thêm bước" action to append a new step (admin-only).
+- [ ] Add step reordering controls (up/down buttons; optional drag & drop later).
 
 ## Seed Data Reference
 | Slug | Drink name |

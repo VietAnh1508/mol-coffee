@@ -1,13 +1,36 @@
-import { Link } from "@tanstack/react-router";
-import { useEffect } from "react";
-import { FaMugHot } from "react-icons/fa";
+import { useEffect, useState } from "react";
+import { HiPlus } from "react-icons/hi2";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
-import { useRecipes, useToast } from "../hooks";
+import { RecipeFormDialog } from "../components/recipes/RecipeFormDialog";
+import { RecipeListItem } from "../components/recipes/RecipeListItem";
+import { isAdmin } from "../constants/userRoles";
+import {
+  useAuth,
+  useCreateRecipe,
+  useRecipe,
+  useRecipes,
+  useToast,
+  useUpdateRecipe,
+} from "../hooks";
+import type { Recipe } from "../types";
 
 export function RecipeListPage() {
   const { data: recipes = [], isLoading, error } = useRecipes();
   const { showToast } = useToast();
+  const { user } = useAuth();
+  const canManage = isAdmin(user?.role);
+  const createRecipeMutation = useCreateRecipe();
+  const updateRecipeMutation = useUpdateRecipe();
+
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [editingRecipe, setEditingRecipe] = useState<Recipe | null>(null);
+
+  const {
+    data: activeRecipeDetail,
+    isLoading: isRecipeDetailLoading,
+    error: recipeDetailError,
+  } = useRecipe(editingRecipe?.slug);
 
   useEffect(() => {
     if (!error) return;
@@ -15,12 +38,77 @@ export function RecipeListPage() {
     showToast("Không thể tải danh sách công thức. Vui lòng thử lại.", "error");
   }, [error, showToast]);
 
+  useEffect(() => {
+    if (!recipeDetailError) return;
+    console.error("Failed to load recipe detail", recipeDetailError);
+    showToast("Không thể tải chi tiết công thức. Vui lòng thử lại.", "error");
+    setIsFormOpen(false);
+    setEditingRecipe(null);
+  }, [recipeDetailError, showToast]);
+
   const hasRecipes = recipes.length > 0;
+  const isSubmitting =
+    createRecipeMutation.isPending || updateRecipeMutation.isPending;
+
+  const handleCreate = () => {
+    if (!canManage) return;
+    setEditingRecipe(null);
+    setIsFormOpen(true);
+  };
+
+  const handleEdit = (recipe: Recipe) => {
+    if (!canManage) return;
+    setEditingRecipe(recipe);
+    setIsFormOpen(true);
+  };
+
+  const handleCloseForm = () => {
+    if (isSubmitting) return;
+    setIsFormOpen(false);
+    setEditingRecipe(null);
+  };
+
+  const handleSubmitForm = async (values: {
+    name: string;
+    description: string | null;
+    steps: string[];
+  }) => {
+    if (!canManage) return;
+
+    try {
+      if (editingRecipe) {
+        await updateRecipeMutation.mutateAsync({
+          id: editingRecipe.id,
+          slug: editingRecipe.slug,
+          ...values,
+        });
+        showToast("Cập nhật công thức thành công", "success");
+      } else {
+        await createRecipeMutation.mutateAsync(values);
+        showToast("Đã tạo công thức mới", "success");
+      }
+
+      setIsFormOpen(false);
+      setEditingRecipe(null);
+    } catch (mutationError) {
+      console.error("Failed to save recipe:", mutationError);
+      showToast("Có lỗi xảy ra khi lưu công thức", "error");
+    }
+  };
 
   return (
     <div className="mx-auto flex w-full max-w-4xl flex-col gap-8 px-4 py-6 sm:px-6 lg:px-8">
-      <div>
+      <div className="flex flex-wrap items-center justify-between gap-3">
         <PageTitle title="Công thức pha chế" />
+        {canManage && (
+          <button
+            onClick={handleCreate}
+            className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
+          >
+            <HiPlus className="h-4 w-4" />
+            Tạo mới
+          </button>
+        )}
       </div>
 
       {isLoading ? (
@@ -34,36 +122,31 @@ export function RecipeListPage() {
       ) : hasRecipes ? (
         <div className="grid gap-4 sm:grid-cols-2">
           {recipes.map((recipe) => (
-            <Link
+            <RecipeListItem
               key={recipe.id}
-              to="/recipes/$recipeSlug"
-              params={{ recipeSlug: recipe.slug }}
-              className="group flex h-full flex-col gap-4 rounded-2xl border border-subtle bg-surface p-5 shadow-sm transition-all duration-200 hover:-translate-y-1 hover:shadow-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
-            >
-              <div className="flex items-start gap-3">
-                <span className="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-500 text-white shadow-lg shadow-black/10">
-                  <FaMugHot className="h-5 w-5" />
-                </span>
-                <div className="space-y-1">
-                  <h2 className="text-lg font-semibold text-primary transition-colors group-hover:text-blue-500">
-                    {recipe.name}
-                  </h2>
-                  <p className="text-sm text-subtle">
-                    {recipe.description || "Không có mô tả"}
-                  </p>
-                </div>
-              </div>
-              <span className="text-xs font-semibold uppercase tracking-wide text-blue-500 transition-colors group-hover:text-blue-400">
-                Xem chi tiết →
-              </span>
-            </Link>
+              recipe={recipe}
+              canManage={canManage}
+              onEdit={handleEdit}
+            />
           ))}
         </div>
       ) : (
         <div className="rounded-2xl border border-subtle bg-surface px-6 py-10 text-center text-sm text-subtle shadow-sm">
-          Chưa có công thức nào. Vui lòng liên hệ quản trị viên để thêm dữ liệu.
+          {canManage
+            ? "Chưa có công thức nào. Hãy tạo mới để bắt đầu."
+            : "Chưa có công thức nào. Vui lòng liên hệ quản trị viên để thêm dữ liệu."}
         </div>
       )}
+
+      <RecipeFormDialog
+        isOpen={isFormOpen}
+        isLoading={Boolean(editingRecipe && isRecipeDetailLoading)}
+        isSubmitting={isSubmitting}
+        recipe={activeRecipeDetail?.recipe ?? editingRecipe}
+        steps={activeRecipeDetail?.steps}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmitForm}
+      />
     </div>
   );
 }

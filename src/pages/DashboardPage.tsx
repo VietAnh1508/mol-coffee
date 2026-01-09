@@ -36,7 +36,6 @@ export function DashboardPage() {
       title: "Công thức pha chế",
       icon: FaMugHot,
       iconBg: "bg-amber-500",
-      badgeLabel: "New",
     },
     {
       to: "/schedule",
