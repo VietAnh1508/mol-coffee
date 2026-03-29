@@ -46,10 +46,13 @@ public/, src/assets/  # Static & bundled assets
 - `pnpm dev` – Vite dev server.
 - `pnpm lint` – ESLint (React hooks rules enforced).
 - `pnpm build` – Type-check + production build.
+- `pnpm test` – Run all Vitest unit tests.
+- `pnpm test <path>` – Run tests for a specific file (e.g. `pnpm test src/utils/dateUtils.test.ts`).
 - Database (Supabase CLI required):
   - `pnpm run db:push`, `db:pull`, `db:diff`, `db:migration <name>`.
 - Before large changes, run lint and build; ensure migrations mirror docs updates.
-- No formal test runner yet; co-locate future tests as `*.test.ts(x)`.
+- Use `pnpm` (not `npx`) for all project scripts; the project is managed with pnpm.
+- Co-locate tests as `*.test.ts(x)` next to the file under test.
 
 ## Coding Standards & UX Expectations
 - 2-space indentation, single quotes, trailing commas.
