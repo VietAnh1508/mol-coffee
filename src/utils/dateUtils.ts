@@ -76,6 +76,25 @@ export const createMonthDateRange = (yearMonth: string) => {
   };
 };
 
+/**
+ * Formats a week range compactly.
+ * Same month & year:  "30 - 05/04/2026"
+ * Same year:          "30/03 - 05/04/2026"
+ * Cross-year:         "30/12/2025 - 05/01/2026"
+ */
+export const formatWeekRangeCompact = (start: Date, end: Date): string => {
+  const dd = (d: Date) => String(d.getDate()).padStart(2, "0");
+  const mm = (d: Date) => String(d.getMonth() + 1).padStart(2, "0");
+  const endStr = `${dd(end)}/${mm(end)}/${end.getFullYear()}`;
+  if (start.getFullYear() !== end.getFullYear()) {
+    return `${dd(start)}/${mm(start)}/${start.getFullYear()} - ${endStr}`;
+  }
+  if (start.getMonth() !== end.getMonth()) {
+    return `${dd(start)}/${mm(start)} - ${endStr}`;
+  }
+  return `${dd(start)} - ${endStr}`;
+};
+
 export const formatDateLocal = (date: Date): string => {
   return (
     date.getFullYear() +

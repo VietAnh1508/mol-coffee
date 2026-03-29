@@ -4,9 +4,10 @@ import {
   isSameDay,
   normalizeDate,
 } from "../../constants/schedule";
+import { SHIFT_TEMPLATES } from "../../constants/shifts";
 import { useScheduleShiftsByDateRange } from "../../hooks";
 import type { ScheduleShift } from "../../types";
-import { formatDateDMY, formatDateLocal } from "../../utils/dateUtils";
+import { formatDateLocal } from "../../utils/dateUtils";
 import { Spinner } from "../Spinner";
 import { WeekShiftSection } from "./WeekShiftSection";
 
@@ -17,19 +18,12 @@ interface WeekScheduleViewProps {
 
 export function WeekScheduleView({
   selectedDate,
-  canManage = false,
 }: WeekScheduleViewProps) {
-  const weekRange = useMemo(() => getWeekRange(selectedDate), [selectedDate]);
+  const weekRange = getWeekRange(selectedDate);
   const { data: weekShifts = [], isLoading } = useScheduleShiftsByDateRange(
     weekRange.start,
     weekRange.endExclusive
   );
-
-  const weekEndDate = useMemo(() => {
-    const endDate = new Date(weekRange.start);
-    endDate.setDate(endDate.getDate() + 6);
-    return endDate;
-  }, [weekRange.start]);
 
   const weekShiftsByDay = useMemo(() => {
     const shiftsGroupedByDay = new Map<
@@ -61,78 +55,68 @@ export function WeekScheduleView({
   const today = useMemo(() => normalizeDate(new Date()), []);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
-      <div className="border-b border-subtle p-4">
-        <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
-          <h3 className="text-base font-semibold text-primary">
-            Lịch tuần {formatDateDMY(weekRange.start)} -{" "}
-            {formatDateDMY(weekEndDate)}
-          </h3>
-          {canManage && (
-            <span className="text-[11px] text-subtle">
-              Chế độ xem tuần chỉ đọc. Chuyển sang "Ngày" để chỉnh sửa.
-            </span>
-          )}
-        </div>
+    <div className="relative">
+      <div className="mb-1 flex items-center gap-4">
+        {(["morning", "afternoon"] as const).map((t) => (
+          <div key={t} className="flex items-center gap-1">
+            <span className={`h-2 w-2 rounded-full ${t === "morning" ? "bg-orange-400" : "bg-blue-400"}`} aria-hidden />
+            <span className="text-[11px] text-subtle">{SHIFT_TEMPLATES[t].label}</span>
+          </div>
+        ))}
       </div>
 
-      <div className="relative p-4">
-        {isLoading && (
-          <div className="absolute inset-0 z-10 flex items-center justify-center rounded-b-2xl border-t border-subtle bg-surface/80 backdrop-blur-sm">
-            <div className="flex flex-col items-center space-y-3 text-subtle">
-              <Spinner />
-            </div>
-          </div>
-        )}
-
-        <div
-          className={`grid gap-2 ${isLoading ? "blur-sm" : ""} sm:grid-cols-2 md:grid-cols-3 xl:grid-cols-5 2xl:grid-cols-7`}
-        >
-          {weekRange.days.map((day) => {
-            const dayKey = formatDateLocal(day);
-            const grouped = weekShiftsByDay.get(dayKey) ?? {
-              morning: [],
-              afternoon: [],
-            };
-            const isToday = isSameDay(day, today);
-
-            return (
-              <div
-                key={dayKey}
-                className={`flex flex-col rounded-lg border border-subtle bg-surface-muted/50 p-2 shadow-sm shadow-black/5 ${
-                  isToday ? "ring-1 ring-blue-400/60" : ""
-                }`}
-              >
-                <div className="flex flex-wrap items-center justify-between gap-1">
-                  <div className="flex items-center gap-2">
-                    <span className="text-[11px] font-semibold uppercase text-subtle">
-                      {day.toLocaleDateString("vi-VN", { weekday: "narrow" })}
-                    </span>
-                    <span className="text-xs font-semibold text-primary">
-                      {formatDateDMY(day)}
-                    </span>
-                  </div>
-                  {isToday && (
-                    <span className="inline-flex items-center rounded-full bg-blue-500/15 px-1.5 text-[10px] font-semibold text-blue-400">
-                      Hôm nay
-                    </span>
-                  )}
-                </div>
-                <div className="mt-2 space-y-2 text-xs text-primary">
-                  <WeekShiftSection
-                    colorClass="bg-orange-400"
-                    shifts={grouped.morning}
-                  />
-                  <hr className="border-subtle/40" />
-                  <WeekShiftSection
-                    colorClass="bg-blue-400"
-                    shifts={grouped.afternoon}
-                  />
-                </div>
-              </div>
-            );
-          })}
+      {isLoading && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center rounded-2xl bg-surface/80 backdrop-blur-sm">
+          <Spinner />
         </div>
+      )}
+
+      <div
+        className={`divide-y divide-subtle/40 ${isLoading ? "blur-sm" : ""}`}
+      >
+        {weekRange.days.map((day) => {
+          const dayKey = formatDateLocal(day);
+          const grouped = weekShiftsByDay.get(dayKey) ?? {
+            morning: [],
+            afternoon: [],
+          };
+          const isToday = isSameDay(day, today);
+
+          return (
+            <div
+              key={dayKey}
+              className={`flex gap-3 py-2 ${
+                isToday ? "rounded-lg bg-blue-500/5 px-2" : "px-1"
+              }`}
+            >
+              <div className="flex w-8 flex-shrink-0 flex-col items-center pt-0.5">
+                <span className="text-[10px] font-semibold uppercase text-subtle">
+                  {day.toLocaleDateString("vi-VN", { weekday: "narrow" })}
+                </span>
+                <span
+                  className={`text-lg font-bold leading-tight ${
+                    isToday ? "text-blue-400" : "text-primary"
+                  }`}
+                >
+                  {day.getDate()}
+                </span>
+              </div>
+
+              <div className="flex-1 space-y-1.5">
+                <WeekShiftSection
+                  borderColorClass="border-orange-400"
+                  shifts={grouped.morning}
+                  template="morning"
+                />
+                <WeekShiftSection
+                  borderColorClass="border-blue-400"
+                  shifts={grouped.afternoon}
+                  template="afternoon"
+                />
+              </div>
+            </div>
+          );
+        })}
       </div>
     </div>
   );

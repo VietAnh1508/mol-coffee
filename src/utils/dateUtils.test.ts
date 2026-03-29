@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 
-import { createMonthDateRange } from "./dateUtils";
+import { createMonthDateRange, formatWeekRangeCompact } from "./dateUtils";
 
 describe("createMonthDateRange", () => {
   it("produces ISO range for month-year inputs", () => {
@@ -31,5 +31,25 @@ describe("createMonthDateRange", () => {
   it("throws for invalid formats", () => {
     expect(() => createMonthDateRange("invalid"))
       .toThrowError(/Invalid yearMonth value/);
+  });
+});
+
+describe("formatWeekRangeCompact", () => {
+  it("shows only start day when range is within the same month", () => {
+    const start = new Date(2026, 2, 1); // 01/03/2026
+    const end = new Date(2026, 2, 7);   // 07/03/2026
+    expect(formatWeekRangeCompact(start, end)).toBe("01 - 07/03/2026");
+  });
+
+  it("shows start day/month when range spans two months in the same year", () => {
+    const start = new Date(2026, 2, 30); // 30/03/2026
+    const end = new Date(2026, 3, 5);    // 05/04/2026
+    expect(formatWeekRangeCompact(start, end)).toBe("30/03 - 05/04/2026");
+  });
+
+  it("shows full dates on both sides when range spans two years", () => {
+    const start = new Date(2025, 11, 29); // 29/12/2025
+    const end = new Date(2026, 0, 4);     // 04/01/2026
+    expect(formatWeekRangeCompact(start, end)).toBe("29/12/2025 - 04/01/2026");
   });
 });

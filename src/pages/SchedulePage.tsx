@@ -6,6 +6,7 @@ import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
 import { ShiftEditModal } from "../components/shift/ShiftEditModal";
 import { WeekScheduleView } from "../components/shift/WeekScheduleView";
 import {
+  getWeekRange,
   isSameDay,
   normalizeDate,
   parseDateFromParam,
@@ -16,6 +17,7 @@ import {
 } from "../constants/userRoles";
 import { useAuth, usePayrollPeriodForDate } from "../hooks";
 import type { ScheduleShift } from "../types";
+import { formatWeekRangeCompact } from "../utils/dateUtils";
 import { formatMonthName } from "../utils/payrollUtils";
 
 interface SchedulePageProps {
@@ -40,6 +42,8 @@ export function SchedulePage({
   const [selectedShift, setSelectedShift] = useState<ScheduleShift | null>(
     null
   );
+
+  const { start: weekStart, days: weekDays } = getWeekRange(selectedDate);
 
   const canManage = canManageResources(user?.role);
   const canAccess = canAccessManagement(user?.role);
@@ -100,8 +104,13 @@ export function SchedulePage({
         onDateChange={updateSelectedDate}
       />
 
-      <div className="mb-4 flex justify-end">
-        <div className="inline-flex rounded-full bg-surface-muted p-1 text-sm font-semibold text-subtle">
+      <div className={`flex items-center ${viewMode === "week" ? "mb-1" : "mb-4"}`}>
+        {viewMode === "week" && (
+          <span className="text-sm font-semibold text-primary">
+            {formatWeekRangeCompact(weekStart, weekDays[weekDays.length - 1])}
+          </span>
+        )}
+        <div className="ml-auto inline-flex rounded-full bg-surface-muted p-1 text-sm font-semibold text-subtle">
           <button
             type="button"
             onClick={() => setViewMode("day")}
