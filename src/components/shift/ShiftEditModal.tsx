@@ -73,7 +73,7 @@ export function ShiftEditModal({
         start_ts: startDateTime.toISOString(),
         end_ts: endDateTime.toISOString(),
         // Preserve original template_name (morning/afternoon) instead of marking as custom
-        note: note.trim() || undefined,
+        note: note.trim() || null,
       });
 
       showToast("Cập nhật ca làm việc thành công", "success");

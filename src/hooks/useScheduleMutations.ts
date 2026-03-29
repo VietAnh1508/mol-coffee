@@ -13,7 +13,7 @@ interface CreateScheduleShiftData {
   start_ts: string;
   end_ts: string;
   template_name: ShiftTemplate;
-  note?: string;
+  note?: string | null;
 }
 
 interface UpdateScheduleShiftData extends Partial<CreateScheduleShiftData> {
