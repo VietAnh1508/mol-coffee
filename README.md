@@ -4,20 +4,20 @@
 
 A mobile-first Progressive Web App for managing coffee shop employee schedules, timekeeping, and payroll with Vietnamese localization.
 
-## 🎯 Overview
+## Tech Stack
 
-**MoL Coffee** streamlines coffee shop operations with:
-- 📱 **Mobile-optimized PWA** - No app store installation needed
-- 📧 **Email-based authentication** - Secure email authentication with profile completion
-- 👥 **Role-based access** - Admin dashboard vs Employee self-service
-- 🇻🇳 **Vietnamese interface** - Localized for Vietnamese coffee shops
-- ⏰ **Smart scheduling** - Conflict prevention and business rules enforcement
+- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
+- **Data Fetching:** TanStack Query for caching & state management
+- **Routing:** TanStack Router with file-based routing
+- **Backend:** Supabase (PostgreSQL + Auth + RLS)
+- **Package Manager:** pnpm
+- **Deployment:** Vercel (Frontend) + Supabase Cloud
 
-## 🚀 Quick Start
+## Quick Start
 
 ### Prerequisites
-- Node.js 20.15+ (or upgrade recommended)
-- pnpm (recommended) or npm
+- Node.js 20.15+
+- pnpm
 - Supabase account
 
 ### Installation
@@ -42,7 +42,7 @@ pnpm dev
 # Login to Supabase CLI (one time)
 npx supabase login
 
-# Link to project (one time) 
+# Link to project (one time)
 npx supabase link --project-ref YOUR_PROJECT_REF
 
 # Apply database migrations
@@ -56,85 +56,38 @@ In Supabase SQL Editor:
 SELECT create_admin_user('YOUR_EMAIL', 'YOUR_PASSWORD', 'Your Name');
 ```
 
-## 🏗️ Tech Stack
-
-- **Frontend:** React 19 + TypeScript + Vite + Tailwind CSS v4
-- **Data Fetching:** TanStack Query (React Query) for caching & state management
-- **Routing:** TanStack Router with file-based routing
-- **Backend:** Supabase (PostgreSQL + Auth + RLS)
-- **PWA:** Service Worker + Manifest + Offline-ready
-- **Package Manager:** pnpm
-- **Deployment:** Vercel (Frontend) + Supabase Cloud
-
-## 📱 Features
-
-**Core Features Implemented:**
-- Complete employee scheduling and payroll management system
-- Email authentication with Vietnamese interface
-- Role-based dashboards for admins and employees
-- Real-time data management with optimistic updates
-
-**For detailed feature list and development status, see [docs/PROGRESS.md](docs/PROGRESS.md)**
-
-## 🔐 Security Features
-
-- **Email-based Auth** - Secure authentication with progressive profile completion
-- **Row Level Security** - Database-enforced access control
-- **Role-based Access** - Admins see all data, employees see only their own
-- **Environment Security** - Sensitive tokens excluded from git
-
-## 📚 Documentation
-
-### Core Documentation
-- **[docs/PROGRESS.md](docs/PROGRESS.md)** - Current development status and completed features
-- **[docs/DATABASE.md](docs/DATABASE.md)** - Database schema, RLS policies, and technical details
-- **[docs/CLAUDE.md](docs/CLAUDE.md)** - Development context and architectural patterns
-
-### Feature-Specific Documentation
-- **[docs/features/authentication.md](docs/features/authentication.md)** - User registration, login, and profile management
-- **[docs/features/employee-management.md](docs/features/employee-management.md)** - Role-based user administration
-- **[docs/features/scheduling.md](docs/features/scheduling.md)** - Shift management and conflict prevention
-- **[docs/features/settings.md](docs/features/settings.md)** - Activities and rates configuration
-- **[docs/features/payroll.md](docs/features/payroll.md)** - Salary calculation and period management
-
-## 🛠️ Development Commands
+## Development Commands
 
 ```bash
-# Development
 pnpm dev                     # Start dev server
-pnpm build                   # Build for production
+pnpm build                   # Type-check + build for production
 pnpm preview                 # Preview production build
 pnpm lint                    # Run ESLint
 pnpm test                    # Run Vitest suite
 
-# Database Operations
+# Database
 pnpm run db:push             # Apply migrations to remote
 pnpm run db:pull             # Pull remote schema changes
 pnpm run db:diff             # Show local vs remote differences
 pnpm run db:migration <name> # Create new migration file
 ```
 
-## 🌐 Environment Variables
+## Environment Variables
 
 ```env
-# Required - Supabase Configuration
 VITE_SUPABASE_URL=your_supabase_url
 VITE_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-# Not needed in .env (use CLI login instead)
-# SUPABASE_ACCESS_TOKEN - Use 'npx supabase login'
+# Not needed in .env — use 'npx supabase login' for CLI auth
+# SUPABASE_ACCESS_TOKEN
 ```
 
-## 🎯 Project Status
+## Documentation
 
-**Phase:** Phase 1 MVP Complete
-**Progress:** ~95% (Foundation + Complete Feature Set)
-
-See **[docs/PROGRESS.md](docs/PROGRESS.md)** for detailed status, completed features, and development roadmap.
-
-## 🤝 Contributing
-
-This project follows Vietnamese coffee shop operational patterns with mobile-first design and TypeScript strict mode. See **[docs/CLAUDE.md](docs/CLAUDE.md)** for development guidelines and architectural patterns.
+- **[docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)** - Architecture rationale & design decisions
+- **[docs/PROGRESS.md](docs/PROGRESS.md)** - Development status and roadmap
+- **[docs/DATABASE.md](docs/DATABASE.md)** - Database schema, RLS policies, and business rules
+- **[docs/features/](docs/features/)** - Feature-level specs (auth, scheduling, payroll, employee mgmt, settings, recipes)
 
 ---
 
