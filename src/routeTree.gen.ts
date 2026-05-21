@@ -15,6 +15,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as ForgotPasswordRouteImport } from './routes/forgot-password'
 import { Route as AuthenticatedRouteRouteImport } from './routes/_authenticated/route'
 import { Route as AuthenticatedIndexRouteImport } from './routes/_authenticated/index'
+import { Route as AuthenticatedShiftRegistrationRouteImport } from './routes/_authenticated/shift-registration'
 import { Route as AuthenticatedSettingsRouteImport } from './routes/_authenticated/settings'
 import { Route as AuthenticatedScheduleRouteImport } from './routes/_authenticated/schedule'
 import { Route as AuthenticatedProfileRouteImport } from './routes/_authenticated/profile'
@@ -56,6 +57,12 @@ const AuthenticatedIndexRoute = AuthenticatedIndexRouteImport.update({
   path: '/',
   getParentRoute: () => AuthenticatedRouteRoute,
 } as any)
+const AuthenticatedShiftRegistrationRoute =
+  AuthenticatedShiftRegistrationRouteImport.update({
+    id: '/shift-registration',
+    path: '/shift-registration',
+    getParentRoute: () => AuthenticatedRouteRoute,
+  } as any)
 const AuthenticatedSettingsRoute = AuthenticatedSettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
@@ -130,6 +137,7 @@ export interface FileRoutesByFullPath {
   '/profile': typeof AuthenticatedProfileRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/shift-registration': typeof AuthenticatedShiftRegistrationRoute
   '/': typeof AuthenticatedIndexRoute
   '/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
@@ -147,6 +155,7 @@ export interface FileRoutesByTo {
   '/profile': typeof AuthenticatedProfileRoute
   '/schedule': typeof AuthenticatedScheduleRoute
   '/settings': typeof AuthenticatedSettingsRoute
+  '/shift-registration': typeof AuthenticatedShiftRegistrationRoute
   '/': typeof AuthenticatedIndexRoute
   '/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/payroll': typeof AuthenticatedPayrollIndexRoute
@@ -167,6 +176,7 @@ export interface FileRoutesById {
   '/_authenticated/profile': typeof AuthenticatedProfileRoute
   '/_authenticated/schedule': typeof AuthenticatedScheduleRoute
   '/_authenticated/settings': typeof AuthenticatedSettingsRoute
+  '/_authenticated/shift-registration': typeof AuthenticatedShiftRegistrationRoute
   '/_authenticated/': typeof AuthenticatedIndexRoute
   '/_authenticated/recipes/$recipeSlug': typeof AuthenticatedRecipesRecipeSlugRoute
   '/_authenticated/payroll/': typeof AuthenticatedPayrollIndexRoute
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/schedule'
     | '/settings'
+    | '/shift-registration'
     | '/'
     | '/recipes/$recipeSlug'
     | '/payroll'
@@ -204,6 +215,7 @@ export interface FileRouteTypes {
     | '/profile'
     | '/schedule'
     | '/settings'
+    | '/shift-registration'
     | '/'
     | '/recipes/$recipeSlug'
     | '/payroll'
@@ -223,6 +235,7 @@ export interface FileRouteTypes {
     | '/_authenticated/profile'
     | '/_authenticated/schedule'
     | '/_authenticated/settings'
+    | '/_authenticated/shift-registration'
     | '/_authenticated/'
     | '/_authenticated/recipes/$recipeSlug'
     | '/_authenticated/payroll/'
@@ -280,6 +293,13 @@ declare module '@tanstack/react-router' {
       path: '/'
       fullPath: '/'
       preLoaderRoute: typeof AuthenticatedIndexRouteImport
+      parentRoute: typeof AuthenticatedRouteRoute
+    }
+    '/_authenticated/shift-registration': {
+      id: '/_authenticated/shift-registration'
+      path: '/shift-registration'
+      fullPath: '/shift-registration'
+      preLoaderRoute: typeof AuthenticatedShiftRegistrationRouteImport
       parentRoute: typeof AuthenticatedRouteRoute
     }
     '/_authenticated/settings': {
@@ -386,6 +406,7 @@ interface AuthenticatedRouteRouteChildren {
   AuthenticatedProfileRoute: typeof AuthenticatedProfileRoute
   AuthenticatedScheduleRoute: typeof AuthenticatedScheduleRoute
   AuthenticatedSettingsRoute: typeof AuthenticatedSettingsRoute
+  AuthenticatedShiftRegistrationRoute: typeof AuthenticatedShiftRegistrationRoute
   AuthenticatedIndexRoute: typeof AuthenticatedIndexRoute
   AuthenticatedPayrollIndexRoute: typeof AuthenticatedPayrollIndexRoute
   AuthenticatedPayrollEmployeeEmployeeIdRoute: typeof AuthenticatedPayrollEmployeeEmployeeIdRoute
@@ -399,6 +420,7 @@ const AuthenticatedRouteRouteChildren: AuthenticatedRouteRouteChildren = {
   AuthenticatedProfileRoute: AuthenticatedProfileRoute,
   AuthenticatedScheduleRoute: AuthenticatedScheduleRoute,
   AuthenticatedSettingsRoute: AuthenticatedSettingsRoute,
+  AuthenticatedShiftRegistrationRoute: AuthenticatedShiftRegistrationRoute,
   AuthenticatedIndexRoute: AuthenticatedIndexRoute,
   AuthenticatedPayrollIndexRoute: AuthenticatedPayrollIndexRoute,
   AuthenticatedPayrollEmployeeEmployeeIdRoute:

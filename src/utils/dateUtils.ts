@@ -62,13 +62,22 @@ export const createMonthDateRange = (yearMonth: string) => {
   const year = Number.parseInt(yearPart, 10);
   const month = Number.parseInt(monthPart, 10);
 
-  if (!Number.isFinite(year) || !Number.isFinite(month) || month < 1 || month > 12) {
+  if (
+    !Number.isFinite(year) ||
+    !Number.isFinite(month) ||
+    month < 1 ||
+    month > 12
+  ) {
     throw new Error(`Invalid yearMonth value: ${yearMonth}`);
   }
 
   const offsetMs = VN_TIMEZONE_OFFSET_MINUTES * 60 * 1000;
-  const startDate = new Date(Date.UTC(year, month - 1, 1, 0, 0, 0, 0) - offsetMs);
-  const endDate = new Date(Date.UTC(year, month, 0, 23, 59, 59, 999) - offsetMs);
+  const startDate = new Date(
+    Date.UTC(year, month - 1, 1, 0, 0, 0, 0) - offsetMs,
+  );
+  const endDate = new Date(
+    Date.UTC(year, month, 0, 23, 59, 59, 999) - offsetMs,
+  );
 
   return {
     startDateStr: startDate.toISOString(),
@@ -103,4 +112,17 @@ export const formatDateLocal = (date: Date): string => {
     "-" +
     String(date.getDate()).padStart(2, "0")
   );
+};
+
+export const getNextWeekMondayVN = (): string => {
+  const vnNowMs = Date.now() + VN_TIMEZONE_OFFSET_MINUTES * 60 * 1000;
+  const vnDate = new Date(vnNowMs);
+  const dayOfWeek = vnDate.getUTCDay(); // 0=Sun
+  const diffToThisMonday = dayOfWeek === 0 ? -6 : 1 - dayOfWeek;
+  const nextMonday = new Date(vnNowMs);
+  nextMonday.setUTCDate(nextMonday.getUTCDate() + diffToThisMonday + 7);
+  const yyyy = nextMonday.getUTCFullYear();
+  const mm = String(nextMonday.getUTCMonth() + 1).padStart(2, "0");
+  const dd = String(nextMonday.getUTCDate()).padStart(2, "0");
+  return `${yyyy}-${mm}-${dd}`;
 };
