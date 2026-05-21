@@ -7,17 +7,17 @@
 
 ## Status
 
-| Phase | Area | Status |
-|-------|------|--------|
-| 1 | Database migration | ✅ Done |
-| 2 | TypeScript types | ✅ Done |
-| 3 | Utility functions | ✅ Done |
-| 4 | Hooks | ✅ Done |
-| 5 | Components | ✅ Done |
-| 6 | Page | ✅ Done |
-| 7 | Route | ✅ Done |
-| 8 | Navigation | ✅ Done |
-| 9 | Docs updates | ⬜ Not started |
+| Phase | Area               | Status  |
+| ----- | ------------------ | ------- |
+| 1     | Database migration | ✅ Done |
+| 2     | TypeScript types   | ✅ Done |
+| 3     | Utility functions  | ✅ Done |
+| 4     | Hooks              | ✅ Done |
+| 5     | Components         | ✅ Done |
+| 6     | Page               | ✅ Done |
+| 7     | Route              | ✅ Done |
+| 8     | Navigation         | ✅ Done |
+| 9     | Docs updates       | ✅ Done |
 
 ---
 
@@ -104,29 +104,31 @@
 
 ## Phase 9 — Docs Updates
 
-- [ ] `docs/DATABASE.md` updated with new tables
-- [ ] `docs/PROGRESS.md` updated with Shift Registration feature status
+- [x] `docs/DATABASE.md` updated with new tables
+- [x] `docs/PROGRESS.md` updated with Shift Registration feature status
 
 ---
 
 ## Acceptance Criteria Sign-off
 
-| AC | Description | Status |
-|----|-------------|--------|
-| AC1 | Screen accessible from nav; shows next week only; user pill visible | ⬜ |
-| AC2 | Grid shows all shifts with live occupancy + heat colors + avatar order | ⬜ |
-| AC3 | Employee can select multiple shifts; summary bar updates live | ⬜ |
-| AC4 | Submit is all-or-nothing; toast on success/failure | ⬜ |
-| AC5 | Re-submit preserves existing `registered_at` order; board locked = read-only | ⬜ |
-| AC6 | Admin lock/unlock button; per-week state | ⬜ |
-| AC7 | Legend always visible | ⬜ |
+| AC  | Description                                                                  | Status |
+| --- | ---------------------------------------------------------------------------- | ------ |
+| AC1 | Screen accessible from the main app; shows next week only; user pill visible | ✅     |
+| AC2 | Grid shows all shifts with live occupancy + heat colors + avatar order       | ✅     |
+| AC3 | Employee can select multiple shifts; summary bar updates live                | ✅     |
+| AC4 | Submit is all-or-nothing; toast on success/failure                           | ✅     |
+| AC5 | Re-submit preserves existing `registered_at` order; board locked = read-only | ✅     |
+| AC6 | Admin lock/unlock button; per-week state                                     | ✅     |
+| AC7 | Legend always visible                                                        | ✅     |
 
 ---
 
 ## Notes / Decisions Log
 
-| Date | Note |
-|------|------|
-| 2026-05-20 | Plan drafted. Atomic submit via Postgres RPC chosen over client-side sequential mutations. Navigation entry point chosen as horizontal nav row in Layout.tsx. |
-| 2026-05-20 | Phases 1–3 complete. `getShiftLabel` removed from utils — shift labels now read from `SHIFT_TEMPLATES[template].label` in `src/constants/shifts.ts`. |
-| 2026-05-20 | Phases 5–8 complete. Navigation implemented as a dashboard shortcut card (teal, FaClipboardList icon) instead of a horizontal nav row. |
+| Date       | Note                                                                                                                                                                                                                          |
+| ---------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| 2026-05-20 | Plan drafted. Atomic submit via Postgres RPC chosen over client-side sequential mutations. Navigation entry point chosen as horizontal nav row in Layout.tsx.                                                                 |
+| 2026-05-20 | Phases 1–3 complete. `getShiftLabel` removed from utils — shift labels now read from `SHIFT_TEMPLATES[template].label` in `src/constants/shifts.ts`.                                                                          |
+| 2026-05-20 | Phases 5–8 complete. Navigation implemented as a dashboard shortcut card (teal, FaClipboardList icon) instead of a horizontal nav row.                                                                                        |
+| 2026-05-21 | Phase 9 complete. `docs/DATABASE.md` updated with `shift_registration_boards` and `shift_registrations` tables, indexes, migration entry, and status. `docs/PROGRESS.md` updated with completed section and feature doc link. |
+
