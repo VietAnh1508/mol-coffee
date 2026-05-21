@@ -8,9 +8,9 @@ export function LockedBanner({ lockedByName }: Props) {
       <p className="text-sm font-semibold text-amber-700">
         Bảng đăng ký đã bị khoá
       </p>
-      {lockedByName && (
-        <p className="mt-0.5 text-xs text-amber-600">Khoá bởi {lockedByName}</p>
-      )}
+      <p className="mt-0.5 text-xs text-amber-600">
+        {lockedByName ? `Khoá bởi ${lockedByName}. ` : ""}Liên hệ trực tiếp với admin để thay đổi.
+      </p>
     </div>
   );
 }

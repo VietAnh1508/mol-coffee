@@ -226,7 +226,6 @@ Uses UTC arithmetic shifted by `VN_TIMEZONE_OFFSET_MINUTES` to avoid browser-loc
 | `getHeatLevel(count, template, isSelected)` | Returns heat level; `isSelected` overrides all |
 | `HEAT_STYLES` | Exact hex values for bg/border/text per heat level |
 | `getDayLabel(date)` | T2/T3/.../T7/CN |
-| `getShiftLabel(template)` | Sáng / Chiều |
 | `formatSelectedSlots(Set<string>)` | "T2 Sáng · T3 Chiều" |
 | `slotKey(dayDate, template)` | `"YYYY-MM-DD_morning"` composite key |
 
@@ -313,7 +312,7 @@ Layout: `grid-cols-[52px_1fr_1fr]` (same as `WeekScheduleView.tsx`)
 Rows:
 1. Legend (6 heat swatches + labels; inline, not a sub-component)
 2. Column headers: "Ca sáng / 06:00–12:00" | "Ca chiều / 12:00–18:00"
-3. 7 day rows; insert `col-span-3 border-t` divider between index 4 (Fri) and index 5 (Sat)
+3. **6 day rows (Mon–Sat only)** — the shop is closed on Sundays so Sunday is intentionally excluded; no divider needed
 
 ### `SummaryBar.tsx`
 
@@ -339,7 +338,7 @@ Amber banner (`border-amber-400/40 bg-amber-500/10 rounded-2xl`):
 
 ```
 weekStart      = useMemo(() => getNextWeekMondayVN(), [])   // stable for page lifetime
-weekDays       = useMemo(...)                                // 7 Date objects Mon–Sun
+weekDays       = useMemo(...)                                // 6 Date objects Mon–Sat (shop closed Sundays)
 registrations  = useShiftRegistrations(weekStart)
 board          = useShiftRegistrationBoard(weekStart)
 { submit,
@@ -377,24 +376,18 @@ No search params — always shows next week.
 
 ## Phase 8 — Navigation
 
-**File:** `src/components/Layout.tsx`
+**File:** `src/pages/DashboardPage.tsx`
 
-Add a second `<div>` below the existing `<nav>` (h-16 header), inside the `{user && (...)}` block:
+Add a shortcut card for "Đăng ký ca" to the existing dashboard cards array. No changes to `Layout.tsx` — a global nav links row was considered and rejected in favour of keeping the header clean.
 
 ```tsx
-<div className="border-b border-subtle bg-surface">
-  <div className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-6 lg:px-8">
-    <NavLink to="/dashboard">Tổng quan</NavLink>
-    <NavLink to="/schedule">Ca làm việc</NavLink>
-    <NavLink to="/shift-registration">Đăng ký ca</NavLink>
-    <NavLink to="/recipes">Công thức</NavLink>
-    {canAccessManagement(user.role) && <NavLink to="/employees">Nhân viên</NavLink>}
-    {canAccessManagement(user.role) && <NavLink to="/payroll">Lương</NavLink>}
-  </div>
-</div>
+{
+  to: "/shift-registration",
+  title: "Đăng ký ca",
+  icon: FaClipboardList,
+  iconBg: "bg-teal-500",
+},
 ```
-
-`NavLink` — local wrapper using TanStack Router `Link` with `activeProps={{ className: 'active' }}` to apply `border-b-2 border-blue-500 text-primary` on the active route. `overflow-x-auto` handles mobile scroll.
 
 ---
 

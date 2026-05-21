@@ -73,6 +73,7 @@ export function RegistrationCell({
         borderColor: styles.borderColor,
         color: styles.color,
         cursor: isReadOnly ? "default" : "pointer",
+        opacity: isReadOnly ? 0.8 : 1,
       }}
       className="relative flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
     >
@@ -123,3 +124,4 @@ export function RegistrationCell({
     </div>
   );
 }
+
