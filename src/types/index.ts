@@ -116,3 +116,26 @@ export interface RecipeStep {
   created_at: string
   updated_at: string
 }
+
+export interface ShiftRegistration {
+  id: string
+  user_id: string
+  week_start_date: string          // YYYY-MM-DD
+  day_date: string                  // YYYY-MM-DD
+  shift_template: ShiftTemplate
+  registered_at: string             // ISO timestamp — drives avatar display order
+  created_at: string
+  updated_at: string
+  user?: Pick<User, 'id' | 'name'>
+}
+
+export interface ShiftRegistrationBoard {
+  id: string
+  week_start_date: string
+  is_locked: boolean
+  locked_by: string | null
+  locked_at: string | null
+  created_at: string
+  updated_at: string
+  locked_by_user?: Pick<User, 'id' | 'name'>
+}

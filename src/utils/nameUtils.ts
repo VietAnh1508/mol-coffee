@@ -14,3 +14,13 @@ export function abbreviateName(fullName: string | null | undefined): string {
   const last = parts[parts.length - 1];
   return `${secondToLast.charAt(0)}. ${last}`;
 }
+
+export function getInitials(name: string): string {
+  return name
+    .split(" ")
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("")
+    .toUpperCase()
+    .slice(0, 2);
+}

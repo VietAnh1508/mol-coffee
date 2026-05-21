@@ -273,6 +273,62 @@ ORDER BY effective_from DESC
 LIMIT 1;
 ```
 
+#### 9. `shift_registration_boards` - Weekly Registration Lock State
+```sql
+CREATE TABLE public.shift_registration_boards (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    week_start_date DATE NOT NULL UNIQUE,
+    is_locked BOOLEAN DEFAULT false NOT NULL,
+    locked_by UUID REFERENCES public.users(id),
+    locked_at TIMESTAMP WITH TIME ZONE,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT shift_registration_boards_lock_check CHECK (
+        (is_locked = false AND locked_by IS NULL AND locked_at IS NULL) OR
+        (is_locked = true  AND locked_by IS NOT NULL AND locked_at IS NOT NULL)
+    )
+);
+```
+
+**Features:**
+- One row per week; missing row means unlocked (open by default)
+- Per-week lock state — locking week N does not affect week N+1
+- Admin audit trail (`locked_by`, `locked_at`) mirrors `payroll_periods` pattern
+
+**Access & RLS:**
+- All authenticated users can `SELECT`
+- Only `admin` role may `INSERT/UPDATE/DELETE`
+
+#### 10. `shift_registrations` - Employee Shift Preferences
+```sql
+CREATE TABLE public.shift_registrations (
+    id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+    user_id UUID REFERENCES public.users(id) ON DELETE CASCADE NOT NULL,
+    week_start_date DATE NOT NULL,
+    day_date DATE NOT NULL,
+    shift_template shift_template NOT NULL,
+    registered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    CONSTRAINT shift_registrations_unique_slot UNIQUE (user_id, day_date, shift_template)
+);
+```
+
+**Features:**
+- One row per (user, day, shift) slot; unique constraint prevents duplicates
+- `registered_at` drives avatar display order in the registration grid (first-in, leftmost)
+- Resubmit is a selective diff — unchanged slots are untouched via `ON CONFLICT DO NOTHING`, preserving `registered_at`
+- Board lock enforced by `check_shift_registration_board_lock` trigger on `INSERT` and `DELETE`
+- Atomic submit via `submit_shift_registrations(p_week_start, p_user_id, p_slots)` SECURITY DEFINER RPC
+
+**Access & RLS:**
+- All authenticated users can `SELECT`
+- Employees can `INSERT/DELETE` their own rows (defense-in-depth; normal path uses the RPC)
+- Supervisors have read-only access
+
+**Related Features:**
+- **[Shift Registration](features/shift-registration.md)** — Employee self-service shift preference board
+
 #### 8. `payroll_employee_confirmations` - Employee Payroll Sign-off
 ```sql
 CREATE TABLE public.payroll_employee_confirmations (
@@ -415,6 +471,10 @@ CREATE INDEX idx_rates_effective_period ON public.rates(effective_from, effectiv
 
 -- Time entries (future)
 CREATE INDEX idx_time_entries_approved ON public.time_entries(approved_at) WHERE approved_at IS NOT NULL;
+
+-- Shift registration lookups
+CREATE INDEX idx_shift_registrations_week_start ON public.shift_registrations(week_start_date);
+CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(user_id, week_start_date);
 ```
 
 ### Query Patterns
@@ -445,6 +505,7 @@ CREATE INDEX idx_time_entries_approved ON public.time_entries(approved_at) WHERE
 | 2025-10-21 | `20251021090000_update_shift_limit_timezone` | Asia/Ho_Chi_Minh day boundary fix |
 | 2025-11-08 | `20251108090000_add_supervisor_role` | Added `supervisor` enum value |
 | 2025-11-08 | `20251108090100_update_supervisor_policies` | Updated role safeguards and read policies |
+| 2026-05-20 | `20260520000000_shift_registration` | **Shift registration board — employee self-service preferences** |
 
 ### Major Schema Changes
 1. **Authentication Migration (Sep 9, 2025):** Moved from phone-based synthetic emails to direct email authentication with progressive profile completion
@@ -542,17 +603,18 @@ const formatMoney = (amount: number) =>
 
 ## 🔄 CURRENT STATUS
 
-**Phase:** Phase 1 MVP Complete (~95%)
-**Last Updated:** October 31, 2025
+**Phase:** Phase 1 MVP Complete (~99%)
+**Last Updated:** May 21, 2026
 
 ### ✅ Completed Database Features
-- Complete schema with 6 core tables
+- Complete schema with 10 core tables
 - Row Level Security with employee schedule visibility
 - Business rules enforcement via triggers
 - Vietnamese data localization
 - Email authentication with progressive profile completion
 - Payroll period management with locking
 - Admin functions for user management
+- Shift registration board with per-week lock enforcement and atomic submit RPC
 
 ### 🚧 Future Database Enhancements (Phase 2+)
 - Advanced time entries system (separate from schedules)

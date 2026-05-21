@@ -2,6 +2,7 @@ import { Link } from "@tanstack/react-router";
 import type { IconType } from "react-icons";
 import {
   FaCalendarAlt,
+  FaClipboardList,
   FaCog,
   FaDollarSign,
   FaMugHot,
@@ -36,6 +37,12 @@ export function DashboardPage() {
       title: "Công thức pha chế",
       icon: FaMugHot,
       iconBg: "bg-amber-500",
+    },
+    {
+      to: "/shift-registration",
+      title: "Đăng ký ca",
+      icon: FaClipboardList,
+      iconBg: "bg-teal-500",
     },
     {
       to: "/schedule",
