@@ -16,6 +16,14 @@ import {
 import { formatDateLocal, getNextWeekMondayVN } from "../utils/dateUtils";
 import { slotKey } from "../utils/shiftRegistrationUtils";
 
+function hasSelectionChanged(
+  selectedSlots: Set<string>,
+  savedKeys: Set<string>,
+): boolean {
+  if (selectedSlots.size !== savedKeys.size) return true;
+  return [...selectedSlots].some((k) => !savedKeys.has(k));
+}
+
 export function ShiftRegistrationPage() {
   const { user } = useAuth();
 
@@ -85,6 +93,13 @@ export function ShiftRegistrationPage() {
     }
   }
 
+  const savedKeys = new Set(
+    registrations
+      .filter((r) => r.user_id === user?.id)
+      .map((r) => slotKey(r.day_date, r.shift_template)),
+  );
+  const isDirty = hasSelectionChanged(selectedSlots, savedKeys);
+
   const isLoading = isLoadingRegs || isLoadingBoard;
 
   if (!user) return null;
@@ -132,6 +147,7 @@ export function ShiftRegistrationPage() {
         isReadOnly={isReadOnly}
         isAdmin={isAdminUser}
         isLocked={isLocked}
+        isDirty={isDirty}
         isSubmitting={submit.isPending}
         isTogglingLock={toggleLock.isPending}
         onSubmit={handleSubmit}

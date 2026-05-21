@@ -2,6 +2,7 @@ import { formatSelectedSlots } from "../../utils/shiftRegistrationUtils";
 
 interface Props {
   selectedSlots: Set<string>;
+  isDirty: boolean;
   isReadOnly: boolean;
   isAdmin: boolean;
   isLocked: boolean;
@@ -13,6 +14,7 @@ interface Props {
 
 export function SummaryBar({
   selectedSlots,
+  isDirty,
   isReadOnly,
   isAdmin,
   isLocked,
@@ -61,7 +63,7 @@ export function SummaryBar({
           <button
             type="button"
             onClick={onSubmit}
-            disabled={count === 0 || isSubmitting}
+            disabled={!isDirty || isSubmitting}
             className="shrink-0 rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white disabled:opacity-40"
           >
             {isSubmitting ? "Đang lưu..." : "Đăng ký"}
