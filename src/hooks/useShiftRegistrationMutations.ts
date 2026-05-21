@@ -52,7 +52,12 @@ export function useShiftRegistrationMutations() {
       }
 
       const now = new Date().toISOString();
-      const payload = currentlyLocked
+      const payload: {
+        week_start_date: string;
+        is_locked: boolean;
+        locked_by: string | null;
+        locked_at: string | null;
+      } = currentlyLocked
         ? { week_start_date: weekStart, is_locked: false, locked_by: null, locked_at: null }
         : { week_start_date: weekStart, is_locked: true, locked_by: user!.id, locked_at: now };
 
