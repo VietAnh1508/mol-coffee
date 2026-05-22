@@ -28,6 +28,7 @@
 ## Components
 
 ### New: `AnnotationBottomSheet` (`src/components/shift-registration/AnnotationBottomSheet.tsx`)
+
 - [x] Slide-up bottom sheet with dark backdrop
 - [x] Header: slot label + shift window
 - [x] **Giờ đến** `<input type="time">` — default = shift start, `min`/`max` = shift window
@@ -41,6 +42,7 @@
   - [x] No edit controls; close button only
 
 ### Modified: `SummaryBar`
+
 - [x] Replace plain-text slot summary with horizontally-scrollable chip strip
 - [x] Each chip tappable → opens `AnnotationBottomSheet`
 - [x] Chip has separate `×` deselect button
@@ -49,16 +51,19 @@
 - [x] Add `onSaveAnnotation` / `onClearAnnotation` / `onDeselect` callback props
 
 ### Modified: `RegistrationCell`
+
 - [x] Accept `myAnnotation: SlotAnnotation | null` prop
 - [x] Accept `onInspect?: () => void` prop
 - [x] Render ✓ tick on avatar when annotated (current user uses local state; others use server data)
 - [x] When `isReadOnly && onInspect`, tap calls `onInspect` instead of no-op
 
 ### Modified: `RegistrationGrid`
+
 - [x] Thread `selectedSlots` Map and `onInspect` down to `RegistrationCell`
 - [x] Derive per-cell annotation presence for tick icon on colleague avatars
 
 ### Modified: `ShiftRegistrationPage`
+
 - [x] State: `Set<string>` → `Map<string, SlotAnnotation>`
 - [x] Add `handleSaveAnnotation` / `handleClearAnnotation` / `handleDeselect` handlers
 - [x] Pre-fill hydration: populate annotation from server response alongside slot key (normalises `HH:MM:SS` → `HH:MM`)
@@ -76,7 +81,7 @@
 
 - [x] Run `pnpm typecheck` with no errors
 - [x] Run `pnpm lint` with no errors
-- [ ] Manual smoke test: employee annotate → submit → reload → verify pre-fill
-- [ ] Manual smoke test: admin inspect mode on annotated slot
-- [ ] Manual smoke test: locked board (employee blocked, admin can inspect)
+- [x] Manual smoke test: employee annotate → submit → reload → verify pre-fill
+- [x] Manual smoke test: admin inspect mode on annotated slot
+- [x] Manual smoke test: locked board (employee blocked, admin can inspect)
 - [ ] Update `docs/PROGRESS.md` to list this feature as complete
