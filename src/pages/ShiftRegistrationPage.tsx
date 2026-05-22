@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { PageTitle } from "../components/PageTitle";
+import { AnnotationBottomSheet } from "../components/shift-registration/AnnotationBottomSheet";
 import { LockedBanner } from "../components/shift-registration/LockedBanner";
 import { RegistrationGrid } from "../components/shift-registration/RegistrationGrid";
 import { SummaryBar } from "../components/shift-registration/SummaryBar";
 import { Spinner } from "../components/Spinner";
 import type { ShiftTemplate } from "../constants/shifts";
-import { isAdmin, isEmployee } from "../constants/userRoles";
+import { getRoleLabel, isAdmin, isEmployee } from "../constants/userRoles";
 import {
   useAuth,
   useShiftRegistrationBoard,
@@ -13,15 +14,50 @@ import {
   useShiftRegistrations,
   useToast,
 } from "../hooks";
+import type { SlotAnnotation } from "../types";
 import { formatDateLocal, getNextWeekMondayVN } from "../utils/dateUtils";
-import { slotKey } from "../utils/shiftRegistrationUtils";
+import { getDayLabel, slotKey } from "../utils/shiftRegistrationUtils";
+
+const EMPTY_ANNOTATION: SlotAnnotation = {
+  customStartTime: null,
+  customEndTime: null,
+  note: null,
+};
 
 function hasSelectionChanged(
-  selectedSlots: Set<string>,
-  savedKeys: Set<string>,
+  selectedSlots: Map<string, SlotAnnotation>,
+  registrations: {
+    user_id: string;
+    day_date: string;
+    shift_template: string;
+    custom_start_time: string | null;
+    custom_end_time: string | null;
+    note: string | null;
+  }[],
+  userId: string,
 ): boolean {
-  if (selectedSlots.size !== savedKeys.size) return true;
-  return [...selectedSlots].some((k) => !savedKeys.has(k));
+  const mine = registrations.filter((r) => r.user_id === userId);
+  if (selectedSlots.size !== mine.length) return true;
+
+  for (const [key, annotation] of selectedSlots) {
+    const [dayDate, template] = key.split("_");
+    const saved = mine.find(
+      (r) => r.day_date === dayDate && r.shift_template === template,
+    );
+    if (!saved) return true;
+    if (
+      annotation.customStartTime !==
+      (saved.custom_start_time ? saved.custom_start_time.slice(0, 5) : null)
+    )
+      return true;
+    if (
+      annotation.customEndTime !==
+      (saved.custom_end_time ? saved.custom_end_time.slice(0, 5) : null)
+    )
+      return true;
+    if (annotation.note !== (saved.note ?? null)) return true;
+  }
+  return false;
 }
 
 export function ShiftRegistrationPage() {
@@ -41,39 +77,95 @@ export function ShiftRegistrationPage() {
   const isAdminUser = isAdmin(user?.role);
   const isReadOnly = isLocked || !isEmployeeUser;
 
-  const [selectedSlots, setSelectedSlots] = useState<Set<string>>(new Set());
-  // Track whether the user has manually toggled any cell this session.
+  const [selectedSlots, setSelectedSlots] = useState<
+    Map<string, SlotAnnotation>
+  >(new Map());
+  const [inspectKey, setInspectKey] = useState<string | null>(null);
+
   // While false, keep selectedSlots in sync with server data so that
   // existing registrations are always pre-selected on page load (including
   // after a query invalidation that briefly returns stale/empty data).
   const dirtyRef = useRef(false);
   useEffect(() => {
     if (isLoadingRegs || !user || dirtyRef.current) return;
-    const myKeys = registrations
+    const map = new Map<string, SlotAnnotation>();
+    registrations
       .filter((r) => r.user_id === user.id)
-      .map((r) => slotKey(r.day_date, r.shift_template));
-    setSelectedSlots(new Set(myKeys));
+      .forEach((r) => {
+        map.set(slotKey(r.day_date, r.shift_template), {
+          customStartTime: r.custom_start_time
+            ? r.custom_start_time.slice(0, 5)
+            : null,
+          customEndTime: r.custom_end_time
+            ? r.custom_end_time.slice(0, 5)
+            : null,
+          note: r.note ?? null,
+        });
+      });
+    setSelectedSlots(map);
   }, [isLoadingRegs, registrations, user]);
 
   const handleToggle = useCallback((key: string) => {
     dirtyRef.current = true;
     setSelectedSlots((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
+      const next = new Map(prev);
+      if (next.has(key)) {
+        next.delete(key);
+      } else {
+        next.set(key, { ...EMPTY_ANNOTATION });
+      }
       return next;
     });
   }, []);
 
+  const handleDeselect = useCallback((key: string) => {
+    dirtyRef.current = true;
+    setSelectedSlots((prev) => {
+      const next = new Map(prev);
+      next.delete(key);
+      return next;
+    });
+  }, []);
+
+  const handleSaveAnnotation = useCallback(
+    (key: string, annotation: SlotAnnotation) => {
+      dirtyRef.current = true;
+      setSelectedSlots((prev) => {
+        const next = new Map(prev);
+        next.set(key, annotation);
+        return next;
+      });
+    },
+    [],
+  );
+
+  const handleClearAnnotation = useCallback((key: string) => {
+    dirtyRef.current = true;
+    setSelectedSlots((prev) => {
+      const next = new Map(prev);
+      next.set(key, { ...EMPTY_ANNOTATION });
+      return next;
+    });
+  }, []);
+
+  const handleInspect = useCallback((key: string) => {
+    setInspectKey(key);
+  }, []);
+
   async function handleSubmit() {
     if (!user) return;
-    const slots = Array.from(selectedSlots).map((key) => {
-      const [dayDate, shiftTemplate] = key.split("_");
-      return {
-        day_date: dayDate,
-        shift_template: shiftTemplate as ShiftTemplate,
-      };
-    });
+    const slots = Array.from(selectedSlots.entries()).map(
+      ([key, annotation]) => {
+        const [dayDate, shiftTemplate] = key.split("_");
+        return {
+          day_date: dayDate,
+          shift_template: shiftTemplate as ShiftTemplate,
+          custom_start_time: annotation.customStartTime,
+          custom_end_time: annotation.customEndTime,
+          note: annotation.note,
+        };
+      },
+    );
     try {
       await submit.mutateAsync({ weekStart, userId: user.id, slots });
       showSuccess("Đăng ký ca thành công");
@@ -93,19 +185,27 @@ export function ShiftRegistrationPage() {
     }
   }
 
-  const savedKeys = new Set(
-    registrations
-      .filter((r) => r.user_id === user?.id)
-      .map((r) => slotKey(r.day_date, r.shift_template)),
-  );
-  const isDirty = hasSelectionChanged(selectedSlots, savedKeys);
+  const isDirty = user
+    ? hasSelectionChanged(selectedSlots, registrations, user.id)
+    : false;
 
   const isLoading = isLoadingRegs || isLoadingBoard;
 
   if (!user) return null;
 
-  // User pill: show name + role label
-  const roleLabel = isAdminUser ? "Quản lý" : "Nhân viên";
+  // Inspect mode: derive slot details for the AnnotationBottomSheet
+  let inspectDayLabel = "";
+  let inspectTemplate: ShiftTemplate = "morning";
+  let inspectRegistrations = registrations;
+  if (inspectKey) {
+    const idx = inspectKey.lastIndexOf("_");
+    const dayDate = inspectKey.slice(0, idx);
+    inspectTemplate = inspectKey.slice(idx + 1) as ShiftTemplate;
+    inspectDayLabel = getDayLabel(new Date(dayDate + "T00:00:00"));
+    inspectRegistrations = registrations.filter(
+      (r) => r.day_date === dayDate && r.shift_template === inspectTemplate,
+    );
+  }
 
   return (
     <div className="flex min-h-screen flex-col">
@@ -119,7 +219,7 @@ export function ShiftRegistrationPage() {
         <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-subtle bg-surface px-3 py-1 text-xs text-primary">
           <span className="font-semibold">{user.name}</span>
           <span className="text-muted">·</span>
-          <span className="text-muted">{roleLabel}</span>
+          <span className="text-muted">{getRoleLabel(user.role)}</span>
         </div>
 
         {isLoading ? (
@@ -136,7 +236,9 @@ export function ShiftRegistrationPage() {
               registrations={registrations}
               selectedSlots={selectedSlots}
               isReadOnly={isReadOnly}
+              currentUserId={user.id}
               onToggle={handleToggle}
+              onInspect={!isEmployeeUser ? handleInspect : undefined}
             />
           </div>
         )}
@@ -152,7 +254,25 @@ export function ShiftRegistrationPage() {
         isTogglingLock={toggleLock.isPending}
         onSubmit={handleSubmit}
         onToggleLock={handleToggleLock}
+        onDeselect={handleDeselect}
+        onSaveAnnotation={handleSaveAnnotation}
+        onClearAnnotation={handleClearAnnotation}
       />
+
+      {/* admin/supervisor inspect bottom sheet */}
+      {inspectKey && (
+        <AnnotationBottomSheet
+          isOpen
+          onClose={() => setInspectKey(null)}
+          dayLabel={inspectDayLabel}
+          template={inspectTemplate}
+          annotation={EMPTY_ANNOTATION}
+          onSave={() => {}}
+          onClear={() => {}}
+          readOnly
+          registrations={inspectRegistrations}
+        />
+      )}
     </div>
   );
 }

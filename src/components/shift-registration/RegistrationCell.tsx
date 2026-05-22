@@ -1,25 +1,17 @@
 import type { ShiftTemplate } from "../../constants/shifts";
-import type { ShiftRegistration } from "../../types";
+import type { ShiftRegistration, SlotAnnotation } from "../../types";
 import { getInitials } from "../../utils/nameUtils";
 import {
+  avatarColor,
   getHeatLevel,
+  hasAnnotation,
   HEAT_STYLES,
   slotKey,
 } from "../../utils/shiftRegistrationUtils";
+import { ClockIcon } from "../ClockIcon";
 
-const AVATAR_COLORS = [
-  "#7F77DD",
-  "#3BAF87",
-  "#F5A623",
-  "#E8819A",
-  "#4AADDB",
-  "#A67BC8",
-];
-
-function avatarColor(userId: string): string {
-  let hash = 0;
-  for (let i = 0; i < userId.length; i++) hash += userId.charCodeAt(i);
-  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+function serverAnnotated(r: ShiftRegistration): boolean {
+  return !!(r.custom_start_time || r.custom_end_time || r.note);
 }
 
 interface Props {
@@ -29,6 +21,11 @@ interface Props {
   isSelected: boolean;
   isReadOnly: boolean;
   onToggle: (key: string) => void;
+  // Current user's annotation from local state (for tick icon before submit)
+  currentUserId?: string;
+  myAnnotation?: SlotAnnotation | null;
+  // Admin/supervisor inspect tap handler
+  onInspect?: () => void;
 }
 
 export function RegistrationCell({
@@ -38,6 +35,9 @@ export function RegistrationCell({
   isSelected,
   isReadOnly,
   onToggle,
+  currentUserId,
+  myAnnotation,
+  onInspect,
 }: Props) {
   const count = registrations.length;
   const heat = getHeatLevel(count, template, isSelected);
@@ -48,32 +48,36 @@ export function RegistrationCell({
   const overflow = count > 4 ? count - 3 : 0;
 
   function handleClick() {
-    if (isReadOnly) return;
+    if (isReadOnly) {
+      if (onInspect) onInspect();
+      return;
+    }
     onToggle(key);
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (isReadOnly) return;
     if (e.key === "Enter" || e.key === " ") {
       e.preventDefault();
-      onToggle(key);
+      handleClick();
     }
   }
+
+  const isInteractive = !isReadOnly || !!onInspect;
 
   return (
     <div
       role="button"
-      tabIndex={isReadOnly ? -1 : 0}
-      aria-pressed={isSelected}
-      aria-disabled={isReadOnly}
+      tabIndex={isInteractive ? 0 : -1}
+      aria-pressed={isReadOnly ? undefined : isSelected}
+      aria-disabled={!isInteractive}
       onClick={handleClick}
       onKeyDown={handleKeyDown}
       style={{
         backgroundColor: styles.backgroundColor,
         borderColor: styles.borderColor,
         color: styles.color,
-        cursor: isReadOnly ? "default" : "pointer",
-        opacity: isReadOnly ? 0.8 : 1,
+        cursor: isInteractive ? "pointer" : "default",
+        opacity: isReadOnly && !onInspect ? 0.8 : 1,
       }}
       className="relative flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
     >
@@ -103,19 +107,33 @@ export function RegistrationCell({
             className="pointer-events-none flex flex-wrap justify-center gap-0.5"
             aria-hidden="true"
           >
-            {visibleAvatars.map((r) => (
-              <span
-                key={r.id}
-                title={r.user?.name}
-                style={{
-                  backgroundColor: avatarColor(r.user_id),
-                  color: "#fff",
-                }}
-                className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold leading-none"
-              >
-                {getInitials(r.user?.name ?? "")}
-              </span>
-            ))}
+            {visibleAvatars.map((r) => {
+              // For the current user's own avatar, derive annotation from local
+              // state (myAnnotation) so unsaved changes are reflected immediately.
+              const annotated =
+                r.user_id === currentUserId
+                  ? hasAnnotation(myAnnotation)
+                  : serverAnnotated(r);
+
+              return (
+                <span
+                  key={r.id}
+                  title={r.user?.name}
+                  className="relative flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold leading-none"
+                  style={{
+                    backgroundColor: avatarColor(r.user_id),
+                    color: "#fff",
+                  }}
+                >
+                  {getInitials(r.user?.name ?? "")}
+                  {annotated && (
+                    <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-white text-indigo-600">
+                      <ClockIcon className="h-2 w-2" />
+                    </span>
+                  )}
+                </span>
+              );
+            })}
             {overflow > 0 && (
               <span
                 style={{ backgroundColor: "#888", color: "#fff" }}
@@ -133,4 +151,3 @@ export function RegistrationCell({
     </div>
   );
 }
-

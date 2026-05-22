@@ -1,5 +1,4 @@
 import type { ShiftTemplate } from "../constants/shifts";
-import { SHIFT_TEMPLATES } from "../constants/shifts";
 
 export type HeatLevel =
   | "empty"
@@ -88,12 +87,23 @@ export function slotKey(dayDate: string, template: ShiftTemplate): string {
   return `${dayDate}_${template}`;
 }
 
-export function formatSelectedSlots(selected: Set<string>): string {
-  return Array.from(selected)
-    .map((key) => {
-      const [dayDate, template] = key.split("_") as [string, ShiftTemplate];
-      const date = new Date(dayDate + "T00:00:00");
-      return `${getDayLabel(date)} ${SHIFT_TEMPLATES[template].label}`;
-    })
-    .join(" · ");
+const AVATAR_COLORS = [
+  "#7F77DD",
+  "#3BAF87",
+  "#F5A623",
+  "#E8819A",
+  "#4AADDB",
+  "#A67BC8",
+];
+
+export function hasAnnotation(
+  a: { customStartTime: string | null; customEndTime: string | null; note: string | null } | null | undefined,
+): boolean {
+  return !!(a?.customStartTime || a?.customEndTime || a?.note);
+}
+
+export function avatarColor(userId: string): string {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i++) hash += userId.charCodeAt(i);
+  return AVATAR_COLORS[hash % AVATAR_COLORS.length];
 }

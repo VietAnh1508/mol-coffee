@@ -308,18 +308,26 @@ CREATE TABLE public.shift_registrations (
     day_date DATE NOT NULL,
     shift_template shift_template NOT NULL,
     registered_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
+    -- Annotation columns (migration 20260521000000)
+    custom_start_time TIME,        -- null = use shift default
+    custom_end_time   TIME,        -- null = use shift default
+    note              TEXT,        -- max 200 chars enforced by application
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
-    CONSTRAINT shift_registrations_unique_slot UNIQUE (user_id, day_date, shift_template)
+    CONSTRAINT shift_registrations_unique_slot UNIQUE (user_id, day_date, shift_template),
+    CONSTRAINT chk_custom_time_order  CHECK (custom_end_time IS NULL OR custom_start_time IS NULL OR custom_end_time > custom_start_time),
+    CONSTRAINT chk_morning_window     CHECK (shift_template <> 'morning'   OR ((custom_start_time IS NULL OR custom_start_time >= '06:00') AND (custom_end_time IS NULL OR custom_end_time <= '12:00'))),
+    CONSTRAINT chk_afternoon_window   CHECK (shift_template <> 'afternoon' OR ((custom_start_time IS NULL OR custom_start_time >= '12:00') AND (custom_end_time IS NULL OR custom_end_time <= '18:00')))
 );
 ```
 
 **Features:**
 - One row per (user, day, shift) slot; unique constraint prevents duplicates
 - `registered_at` drives avatar display order in the registration grid (first-in, leftmost)
-- Resubmit is a selective diff — unchanged slots are untouched via `ON CONFLICT DO NOTHING`, preserving `registered_at`
-- Board lock enforced by `check_shift_registration_board_lock` trigger on `INSERT` and `DELETE`
+- Resubmit uses `ON CONFLICT DO UPDATE` to persist annotation changes; `registered_at` is excluded so avatar order is preserved
+- Board lock enforced by `check_shift_registration_board_lock` trigger on `INSERT`, `UPDATE`, and `DELETE`
 - Atomic submit via `submit_shift_registrations(p_week_start, p_user_id, p_slots)` SECURITY DEFINER RPC
+- Annotation fields (`custom_start_time`, `custom_end_time`, `note`) are optional per-slot employee notes about partial attendance
 
 **Access & RLS:**
 - All authenticated users can `SELECT`
@@ -328,6 +336,7 @@ CREATE TABLE public.shift_registrations (
 
 **Related Features:**
 - **[Shift Registration](features/shift-registration.md)** — Employee self-service shift preference board
+- **[Shift Registration Annotations](features/shift-registration-annotations.md)** — Per-slot partial-shift annotation (AC8)
 
 #### 8. `payroll_employee_confirmations` - Employee Payroll Sign-off
 ```sql
@@ -506,6 +515,7 @@ CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(us
 | 2025-11-08 | `20251108090000_add_supervisor_role` | Added `supervisor` enum value |
 | 2025-11-08 | `20251108090100_update_supervisor_policies` | Updated role safeguards and read policies |
 | 2026-05-20 | `20260520000000_shift_registration` | **Shift registration board — employee self-service preferences** |
+| 2026-05-21 | `20260521000000_shift_registration_annotations` | **Partial-shift annotations** — `custom_start_time`, `custom_end_time`, `note` columns; updated RPC; extended lock trigger |
 
 ### Major Schema Changes
 1. **Authentication Migration (Sep 9, 2025):** Moved from phone-based synthetic emails to direct email authentication with progressive profile completion
@@ -627,7 +637,7 @@ const formatMoney = (amount: number) =>
 ---
 
 **For more information:**
-- Technical setup: `docs/CLAUDE.md`
+- Technical setup: `docs/ARCHITECTURE.md`
 - Development progress: `docs/PROGRESS.md`
 - Feature documentation: `docs/features/` directory
 - Migration files: `supabase/migrations/`

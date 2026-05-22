@@ -117,6 +117,12 @@ export interface RecipeStep {
   updated_at: string
 }
 
+export interface SlotAnnotation {
+  customStartTime: string | null  // "HH:MM" or null — use shift default
+  customEndTime:   string | null
+  note:            string | null
+}
+
 export interface ShiftRegistration {
   id: string
   user_id: string
@@ -124,6 +130,9 @@ export interface ShiftRegistration {
   day_date: string                  // YYYY-MM-DD
   shift_template: ShiftTemplate
   registered_at: string             // ISO timestamp — drives avatar display order
+  custom_start_time: string | null  // "HH:MM:SS" from DB, null = shift default
+  custom_end_time:   string | null
+  note:              string | null
   created_at: string
   updated_at: string
   user?: Pick<User, 'id' | 'name'>

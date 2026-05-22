@@ -136,11 +136,12 @@ For detailed documentation of each feature, see:
 ### 📋 **Shift Registration** ✅ **COMPLETED**
 
 - Weekly 7×2 grid (Mon-Sat, morning/afternoon) showing live occupancy heat colors and avatar initials in registration order
-- Employee multi-select tap interaction with sticky summary bar and one-tap submit
+- Employee multi-select tap interaction with sticky SummaryBar chip strip and one-tap submit
 - Selective diff resubmit — unchanged slots preserve `registered_at` (avatar order integrity)
 - Admin lock/unlock per week; locked board shows banner and hides submit controls for employees
 - Supervisor read-only view of the full grid
 - DB-enforced lock via trigger + atomic `submit_shift_registrations` SECURITY DEFINER RPC
+- **Per-slot partial-shift annotations (AC8)** — employees can record custom arrival/departure times and a note per selected slot; admins/supervisors can inspect annotations in read-only mode
 - **[Full Details →](features/shift-registration.md)**
 
 ---
