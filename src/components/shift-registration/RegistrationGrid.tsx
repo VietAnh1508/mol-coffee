@@ -1,6 +1,6 @@
 import type { ShiftTemplate } from "../../constants/shifts";
 import { SHIFT_TEMPLATES } from "../../constants/shifts";
-import type { ShiftRegistration } from "../../types";
+import type { ShiftRegistration, SlotAnnotation } from "../../types";
 import { formatDateLocal } from "../../utils/dateUtils";
 import {
   HEAT_STYLES,
@@ -29,9 +29,11 @@ const HEAT_LABELS: Record<string, string> = {
 interface Props {
   weekStart: string;
   registrations: ShiftRegistration[];
-  selectedSlots: Set<string>;
+  selectedSlots: Map<string, SlotAnnotation>;
   isReadOnly: boolean;
+  currentUserId?: string;
   onToggle: (key: string) => void;
+  onInspect?: (key: string) => void;
 }
 
 function buildWeekDays(weekStart: string): Date[] {
@@ -50,7 +52,9 @@ export function RegistrationGrid({
   registrations,
   selectedSlots,
   isReadOnly,
+  currentUserId,
   onToggle,
+  onInspect,
 }: Props) {
   const days = buildWeekDays(weekStart);
 
@@ -108,25 +112,23 @@ export function RegistrationGrid({
                 {label}
               </div>
 
-              {/* morning cell */}
-              <RegistrationCell
-                dayDate={dayDate}
-                template="morning"
-                registrations={cellRegs(dayDate, "morning")}
-                isSelected={selectedSlots.has(slotKey(dayDate, "morning"))}
-                isReadOnly={isReadOnly}
-                onToggle={onToggle}
-              />
-
-              {/* afternoon cell */}
-              <RegistrationCell
-                dayDate={dayDate}
-                template="afternoon"
-                registrations={cellRegs(dayDate, "afternoon")}
-                isSelected={selectedSlots.has(slotKey(dayDate, "afternoon"))}
-                isReadOnly={isReadOnly}
-                onToggle={onToggle}
-              />
+              {(["morning", "afternoon"] as ShiftTemplate[]).map((template) => {
+                const key = slotKey(dayDate, template);
+                return (
+                  <RegistrationCell
+                    key={template}
+                    dayDate={dayDate}
+                    template={template}
+                    registrations={cellRegs(dayDate, template)}
+                    isSelected={selectedSlots.has(key)}
+                    isReadOnly={isReadOnly}
+                    onToggle={onToggle}
+                    currentUserId={currentUserId}
+                    myAnnotation={selectedSlots.get(key) ?? null}
+                    onInspect={onInspect ? () => onInspect(key) : undefined}
+                  />
+                );
+              })}
             </div>
           );
         })}

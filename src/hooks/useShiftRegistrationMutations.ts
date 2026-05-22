@@ -5,8 +5,11 @@ import { isAdmin, isEmployee } from "../constants/userRoles";
 import type { ShiftTemplate } from "../constants/shifts";
 
 interface SubmitSlot {
-  day_date: string;
-  shift_template: ShiftTemplate;
+  day_date:          string;
+  shift_template:    ShiftTemplate;
+  custom_start_time: string | null;
+  custom_end_time:   string | null;
+  note:              string | null;
 }
 
 interface SubmitParams {

@@ -126,6 +126,25 @@ Additional visual rules for each state:
 
 ---
 
+### AC8 — Employee can annotate a shift with custom hours and a note
+
+- After selecting a shift cell, the slot appears as a chip in the summary bar at the bottom of the screen.
+- Tapping the chip body opens an **annotation bottom sheet** for that slot, allowing the employee to optionally set:
+  - **Giờ đến** (arrival time) — pre-filled with the shift's default start time (06:00 for morning, 12:00 for afternoon); clamped to within the shift window.
+  - **Giờ về** (departure time) — pre-filled with the shift's default end time (12:00 for morning, 18:00 for afternoon); clamped to within the shift window.
+  - **Ghi chú** — free-text note (max 200 characters), e.g. _"Đến muộn do xe hỏng"_.
+- Giờ về must be after Giờ đến; an inline Vietnamese error is shown if the constraint is violated and the **Lưu** button is disabled until resolved.
+- Tapping **Lưu** closes the sheet and saves the annotation in local state; tapping **Xoá ghi chú** clears any annotation for that slot.
+- If a slot has any custom hours or note, the chip shows a clock indicator (⏱) before the slot label, and a small tick icon (✓) appears on the employee's avatar in that grid cell.
+- The annotation is submitted together with the slot selection in the same **Đăng ký** action — no separate save step.
+- On reload, existing annotations are pre-filled back into the chips alongside the pre-selected slots.
+- **Admins and supervisors** can tap any cell to open the bottom sheet in **read-only inspect mode**, which lists all registered users for that slot along with their custom hours and notes. No editing is possible from this view.
+- When the board is locked, employees cannot open or edit annotations; the inspect mode for admin/supervisor still works.
+
+> Annotations are informational — they do not restrict which shifts an employee can register for, nor do they affect the heat level or avatar display order in the grid.
+
+---
+
 ### AC7 — Legend is always visible
 
 - A compact legend row is displayed below the header, showing all five heat states plus the Selected indicator with labels: **Trống, Nhẹ, Đủ, Đông, Quá đông, Đã chọn**.
@@ -142,7 +161,7 @@ These notes orient implementers within the existing project. Full schema details
 
 **New DB tables required:**
 
-- `shift_registrations` — one row per (user, week_start_date, shift_template). Must record `registered_at` to preserve insertion order for avatar display. Week boundaries must be computed with `VN_TIMEZONE_OFFSET_MINUTES` (matching the pattern used in payroll).
+- `shift_registrations` — one row per (user, week_start_date, shift_template). Must record `registered_at` to preserve insertion order for avatar display. Week boundaries must be computed with `VN_TIMEZONE_OFFSET_MINUTES` (matching the pattern used in payroll). Includes optional annotation columns: `custom_start_time TIME`, `custom_end_time TIME`, `note TEXT` (see `docs/features/shift-registration-annotations.md`).
 - `shift_registration_boards` — one row per week_start_date storing lock state (`is_locked`, `locked_by`, `locked_at`). Follows the same per-period lock pattern as `payroll_periods`.
 
 **Hook naming convention:**
@@ -180,7 +199,7 @@ The following screens were designed and approved during the discovery phase:
 
 ## Definition of Done
 
-- [ ] All 7 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
+- [ ] All 8 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
 - [ ] Grid data loads within 2 seconds on a standard mobile connection.
 - [ ] The feature is covered by unit tests (cell selection logic, submit flow, lock/unlock state, resubmit-preserves-order) and at least one end-to-end test (full registration journey, and admin lock flow).
 - [ ] The locked-board banner is shown correctly to employees when the admin locks the board.
