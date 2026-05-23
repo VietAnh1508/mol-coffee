@@ -16,11 +16,10 @@ export function abbreviateName(fullName: string | null | undefined): string {
 }
 
 export function getInitials(name: string): string {
-  return name
-    .split(" ")
-    .filter(Boolean)
+  const parts = name.split(" ").filter(Boolean);
+  return parts
+    .slice(-2)
     .map((w) => w[0])
     .join("")
-    .toUpperCase()
-    .slice(0, 2);
+    .toUpperCase();
 }
