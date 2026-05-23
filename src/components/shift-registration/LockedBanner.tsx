@@ -1,5 +1,5 @@
 interface Props {
-  lockedByName?: string | null;
+  lockedByName?: string | undefined;
 }
 
 export function LockedBanner({ lockedByName }: Props) {
@@ -9,7 +9,8 @@ export function LockedBanner({ lockedByName }: Props) {
         Bảng đăng ký đã bị khoá
       </p>
       <p className="mt-0.5 text-xs text-amber-600">
-        {lockedByName ? `Khoá bởi ${lockedByName}. ` : ""}Liên hệ trực tiếp với admin để thay đổi.
+        {lockedByName ? `Khoá bởi ${lockedByName}. ` : ""}Liên hệ trực tiếp với
+        admin để thay đổi.
       </p>
     </div>
   );

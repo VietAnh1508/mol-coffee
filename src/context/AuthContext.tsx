@@ -94,9 +94,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       const { error } = await supabase.auth.signUp({
         email,
         password,
-        options: {
-          emailRedirectTo: undefined, // No email confirmation needed
-        },
+        // No email confirmation needed — emailRedirectTo intentionally omitted
       });
 
       if (error) return { error };

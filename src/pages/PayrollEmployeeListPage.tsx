@@ -165,9 +165,7 @@ export function PayrollEmployeeListPage() {
                   key={employee.employee.id}
                   to="/payroll/employee/$employeeId"
                   params={{ employeeId: employee.employee.id }}
-                  search={
-                    selectedPeriod ? { period: selectedPeriod } : undefined
-                  }
+                  {...(selectedPeriod ? { search: { period: selectedPeriod } } : {})}
                   className="block"
                 >
                     <PayrollEmployeeCard

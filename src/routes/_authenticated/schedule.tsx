@@ -49,5 +49,5 @@ function ScheduleRoute() {
     });
   };
 
-  return <SchedulePage initialDate={date} onDateChange={handleDateChange} />;
+  return <SchedulePage {...(date !== undefined ? { initialDate: date } : {})} onDateChange={handleDateChange} />;
 }

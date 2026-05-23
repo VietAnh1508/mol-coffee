@@ -6,7 +6,7 @@ interface PasswordInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder: string;
-  error?: string;
+  error?: string | undefined;
   autoComplete?: string;
   className?: string;
 }
@@ -56,3 +56,4 @@ export function PasswordInput({
     </div>
   );
 }
+

@@ -22,7 +22,7 @@ interface Props {
   isReadOnly: boolean;
   onToggle: (key: string) => void;
   // Current user's annotation from local state (for tick icon before submit)
-  currentUserId?: string;
+  currentUserId: string | undefined;
   myAnnotation?: SlotAnnotation | null;
   // Admin/supervisor inspect tap handler
   onInspect?: () => void;

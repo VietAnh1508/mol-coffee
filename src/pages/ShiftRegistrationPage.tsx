@@ -238,7 +238,7 @@ export function ShiftRegistrationPage() {
               isReadOnly={isReadOnly}
               currentUserId={user.id}
               onToggle={handleToggle}
-              onInspect={!isEmployeeUser ? handleInspect : undefined}
+              {...(!isEmployeeUser ? { onInspect: handleInspect } : {})}
             />
           </div>
         )}

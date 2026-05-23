@@ -125,7 +125,7 @@ export function RegistrationGrid({
                     onToggle={onToggle}
                     currentUserId={currentUserId}
                     myAnnotation={selectedSlots.get(key) ?? null}
-                    onInspect={onInspect ? () => onInspect(key) : undefined}
+                    {...(onInspect ? { onInspect: () => onInspect(key) } : {})}
                   />
                 );
               })}

@@ -13,7 +13,7 @@ interface RecipeFormDialogProps {
   isLoading?: boolean;
   isSubmitting?: boolean;
   recipe?: Recipe | null;
-  steps?: RecipeStep[];
+  steps?: RecipeStep[] | undefined;
   onClose: () => void;
   onSubmit: (values: RecipeFormValues) => void;
 }
