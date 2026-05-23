@@ -1,4 +1,5 @@
 import type { ShiftTemplate } from "../constants/shifts";
+import type { ShiftRegistration } from "../types";
 
 export type HeatLevel =
   | "empty"
@@ -97,7 +98,14 @@ const AVATAR_COLORS = [
 ];
 
 export function hasAnnotation(
-  a: { customStartTime: string | null; customEndTime: string | null; note: string | null } | null | undefined,
+  a:
+    | {
+        customStartTime: string | null;
+        customEndTime: string | null;
+        note: string | null;
+      }
+    | null
+    | undefined,
 ): boolean {
   return !!(a?.customStartTime || a?.customEndTime || a?.note);
 }
@@ -106,4 +114,43 @@ export function avatarColor(userId: string): string {
   let hash = 0;
   for (let i = 0; i < userId.length; i++) hash += userId.charCodeAt(i);
   return AVATAR_COLORS[hash % AVATAR_COLORS.length];
+}
+
+function abbreviateSlot(reg: ShiftRegistration): string {
+  const date = new Date(reg.day_date + "T00:00:00");
+  const dayNum = date.getDay() + 1;
+  const prefix = reg.shift_template === "morning" ? "s" : "c";
+  return `${prefix}${dayNum}`;
+}
+
+export function buildExportText(registrations: ShiftRegistration[]): string {
+  const byUserId = new Map<string, ShiftRegistration[]>();
+  for (const reg of registrations) {
+    if (!byUserId.has(reg.user_id)) byUserId.set(reg.user_id, []);
+    byUserId.get(reg.user_id)!.push(reg);
+  }
+
+  return [...byUserId.values()]
+    .sort((a, b) => {
+      const firstA = a.reduce(
+        (min, r) => (r.registered_at < min ? r.registered_at : min),
+        a[0].registered_at,
+      );
+      const firstB = b.reduce(
+        (min, r) => (r.registered_at < min ? r.registered_at : min),
+        b[0].registered_at,
+      );
+      return firstA.localeCompare(firstB);
+    })
+    .map((regs) => {
+      const name = regs[0].user?.name ?? regs[0].user_id;
+      const sorted = [...regs].sort((a, b) => {
+        if (a.day_date !== b.day_date)
+          return a.day_date.localeCompare(b.day_date);
+        if (a.shift_template === b.shift_template) return 0;
+        return a.shift_template === "morning" ? -1 : 1;
+      });
+      return `${name}: ${sorted.map(abbreviateSlot).join(", ")}`;
+    })
+    .join("\n");
 }

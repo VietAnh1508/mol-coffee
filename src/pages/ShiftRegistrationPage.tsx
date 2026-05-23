@@ -250,6 +250,7 @@ export function ShiftRegistrationPage() {
         isDirty={isDirty}
         isSubmitting={submit.isPending}
         isTogglingLock={toggleLock.isPending}
+        allRegistrations={registrations}
         onSubmit={handleSubmit}
         onToggleLock={handleToggleLock}
         onDeselect={handleDeselect}

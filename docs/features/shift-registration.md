@@ -2,11 +2,11 @@
 
 ## Overview
 
-| Field            | Detail                        |
-| ---------------- | ----------------------------- |
-| **Feature**      | Shift Registration            |
-| **Epic**         | Staff Scheduling              |
-| **Priority**     | High                          |
+| Field            | Detail                           |
+| ---------------- | -------------------------------- |
+| **Feature**      | Shift Registration               |
+| **Epic**         | Staff Scheduling                 |
+| **Priority**     | High                             |
 | **Target users** | All employees; Admin; Supervisor |
 
 ---
@@ -29,6 +29,7 @@ Currently, employees message the admin privately each weekend to register their 
 This feature introduces a self-service shift registration screen inside the existing web app. It does **not** replace the admin's final scheduling step — it only captures employee preferences and makes them mutually visible, so employees can self-balance before the admin finalises the schedule.
 
 > **Role summary for this feature:**
+>
 > - **Employee** — registers shifts, can update until the board is locked.
 > - **Admin** (`admin` role) — views the full grid, can lock/unlock the board.
 > - **Supervisor** (`supervisor` role) — views the full grid, read-only; cannot register or lock/unlock.
@@ -126,6 +127,22 @@ Additional visual rules for each state:
 
 ---
 
+### AC9 — Admin can copy the week's registrations as plain text
+
+- A **Copy** button is visible in the summary bar **only to accounts with the `admin` role**, and only when at least one registration exists for the week.
+- Tapping **Copy** writes a compact text summary to the clipboard, grouped by employee, for easy sharing via chat (e.g. Zalo).
+- Employees are listed in the order they first registered (earliest `registered_at` first).
+- Each employee's shifts are sorted chronologically (earlier days first; morning before afternoon on the same day) and abbreviated as `s` (sáng) or `c` (chiều) followed by the Vietnamese day number (T**2**–T**7**).
+- Example output:
+  ```
+  Kiệt: s2, c3
+  Tâm: s3, s4, s5, c6
+  ```
+- After copying, the button label briefly changes to **✓ Đã copy** for 2 seconds as visual confirmation.
+- Employees and supervisors do not see this button.
+
+---
+
 ### AC8 — Employee can annotate a shift with custom hours and a note
 
 - After selecting a shift cell, the slot appears as a chip in the summary bar at the bottom of the screen.
@@ -165,6 +182,7 @@ These notes orient implementers within the existing project. Full schema details
 - `shift_registration_boards` — one row per week_start_date storing lock state (`is_locked`, `locked_by`, `locked_at`). Follows the same per-period lock pattern as `payroll_periods`.
 
 **Hook naming convention:**
+
 - `useShiftRegistrations(weekStart)` — query hook returning registrations for the week.
 - `useShiftRegistrationBoard(weekStart)` — query hook returning lock state.
 - `useShiftRegistrationMutations()` — mutation hook with `submit` and `toggleLock` methods.
@@ -199,7 +217,7 @@ The following screens were designed and approved during the discovery phase:
 
 ## Definition of Done
 
-- [ ] All 8 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
+- [ ] All 9 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
 - [ ] Grid data loads within 2 seconds on a standard mobile connection.
 - [ ] The feature is covered by unit tests (cell selection logic, submit flow, lock/unlock state, resubmit-preserves-order) and at least one end-to-end test (full registration journey, and admin lock flow).
 - [ ] The locked-board banner is shown correctly to employees when the admin locks the board.

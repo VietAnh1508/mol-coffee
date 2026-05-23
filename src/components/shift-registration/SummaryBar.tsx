@@ -1,8 +1,13 @@
 import { useState } from "react";
+import { FaCopy, FaLock, FaLockOpen } from "react-icons/fa";
 import type { ShiftTemplate } from "../../constants/shifts";
 import { SHIFT_TEMPLATES } from "../../constants/shifts";
-import type { SlotAnnotation } from "../../types";
-import { getDayLabel, hasAnnotation } from "../../utils/shiftRegistrationUtils";
+import type { ShiftRegistration, SlotAnnotation } from "../../types";
+import {
+  buildExportText,
+  getDayLabel,
+  hasAnnotation,
+} from "../../utils/shiftRegistrationUtils";
 import { ClockIcon } from "../ClockIcon";
 import { AnnotationBottomSheet } from "./AnnotationBottomSheet";
 
@@ -31,6 +36,7 @@ interface Props {
   isLocked: boolean;
   isSubmitting: boolean;
   isTogglingLock: boolean;
+  allRegistrations?: ShiftRegistration[];
   onSubmit: () => void;
   onToggleLock: () => void;
   onDeselect: (key: string) => void;
@@ -46,6 +52,7 @@ export function SummaryBar({
   isLocked,
   isSubmitting,
   isTogglingLock,
+  allRegistrations,
   onSubmit,
   onToggleLock,
   onDeselect,
@@ -54,6 +61,7 @@ export function SummaryBar({
 }: Props) {
   const count = selectedSlots.size;
   const [activeKey, setActiveKey] = useState<string | null>(null);
+  const [copied, setCopied] = useState(false);
 
   const activeAnnotation: SlotAnnotation = activeKey
     ? (selectedSlots.get(activeKey) ?? {
@@ -122,15 +130,45 @@ export function SummaryBar({
             <div className="flex-1" />
           )}
 
+          {/* admin copy export */}
+          {isAdmin && allRegistrations && allRegistrations.length > 0 && (
+            <button
+              type="button"
+              onClick={async () => {
+                await navigator.clipboard.writeText(
+                  buildExportText(allRegistrations),
+                );
+                setCopied(true);
+                setTimeout(() => setCopied(false), 2000);
+              }}
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-subtle px-3 py-2 text-xs font-medium text-primary"
+            >
+              <FaCopy className="h-3.5 w-3.5" />
+              {copied ? "✓ Đã copy" : "Copy"}
+            </button>
+          )}
+
           {/* admin lock/unlock */}
           {isAdmin && (
             <button
               type="button"
               onClick={onToggleLock}
               disabled={isTogglingLock}
-              className="shrink-0 rounded-lg border border-subtle px-3 py-2 text-xs font-medium text-primary disabled:opacity-50"
+              className="flex shrink-0 items-center gap-1.5 rounded-lg border border-subtle px-3 py-2 text-xs font-medium text-primary disabled:opacity-50"
             >
-              {isTogglingLock ? "..." : isLocked ? "Mở khoá" : "Khoá"}
+              {isTogglingLock ? (
+                "..."
+              ) : isLocked ? (
+                <>
+                  <FaLockOpen className="h-3.5 w-3.5" />
+                  Mở khoá
+                </>
+              ) : (
+                <>
+                  <FaLock className="h-3.5 w-3.5" />
+                  Khoá
+                </>
+              )}
             </button>
           )}
 
