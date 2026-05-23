@@ -1,17 +1,16 @@
 import type { ReactNode } from "react";
 import {
   USER_ROLES,
-  getRoleLabel,
   canManageResources,
+  getRoleLabel,
   type UserRole,
 } from "../../constants/userRoles";
+import { useToast } from "../../hooks/useToast";
 import {
-  useToast,
-  useUpdateUserRole,
   useToggleUserStatus,
-  useUser,
-  useUsers,
-} from "../../hooks";
+  useUpdateUserRole,
+} from "../../hooks/useUserMutations";
+import { useUser, useUsers } from "../../hooks/useUsers";
 import type { User } from "../../types";
 import { CurrentUserBadge } from "../CurrentUserBadge";
 import { Spinner } from "../Spinner";
@@ -36,7 +35,9 @@ export function EmployeeDetailsModal({
 
   const updateRoleMutation = useUpdateUserRole({
     onSuccess: (data) => {
-      showSuccess(`Đã cập nhật vai trò của ${data.name} thành ${getRoleLabel(data.role)}`);
+      showSuccess(
+        `Đã cập nhật vai trò của ${data.name} thành ${getRoleLabel(data.role)}`,
+      );
     },
     onError: () => {
       showError("Có lỗi xảy ra khi thay đổi vai trò");
@@ -46,7 +47,7 @@ export function EmployeeDetailsModal({
   const toggleStatusMutation = useToggleUserStatus({
     onSuccess: (data) => {
       showSuccess(
-        `Đã ${data.status === "active" ? "kích hoạt" : "vô hiệu hóa"} ${data.name} thành công`
+        `Đã ${data.status === "active" ? "kích hoạt" : "vô hiệu hóa"} ${data.name} thành công`,
       );
     },
     onError: () => {
@@ -75,7 +76,7 @@ export function EmployeeDetailsModal({
       <div className="flex items-center justify-center py-12 text-subtle">
         <Spinner />
         <span className="ml-3 text-sm">Đang tải...</span>
-      </div>
+      </div>,
     );
   }
 
@@ -91,7 +92,7 @@ export function EmployeeDetailsModal({
         >
           Đóng
         </button>
-      </div>
+      </div>,
     );
   }
 
@@ -99,13 +100,16 @@ export function EmployeeDetailsModal({
 
   const isLastAdmin = (emp: User) => {
     if (emp.role !== USER_ROLES.ADMIN) return false;
-    const adminCount = employees.filter((e) => e.role === USER_ROLES.ADMIN).length;
+    const adminCount = employees.filter(
+      (e) => e.role === USER_ROLES.ADMIN,
+    ).length;
     return adminCount === 1;
   };
 
   const canChangeRole = (emp: User) => {
     if (!canManage) return false;
-    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN) return false;
+    if (emp.id === currentUser?.id && emp.role === USER_ROLES.ADMIN)
+      return false;
     if (isLastAdmin(emp)) return false;
     return true;
   };
@@ -123,7 +127,10 @@ export function EmployeeDetailsModal({
       return;
     }
 
-    updateRoleMutation.mutate({ userId: employee.id, role: roleValue as UserRole });
+    updateRoleMutation.mutate({
+      userId: employee.id,
+      role: roleValue as UserRole,
+    });
   };
 
   return renderOverlay(
@@ -192,11 +199,13 @@ export function EmployeeDetailsModal({
                   disabled={updateRoleMutation.isPending}
                   className="rounded-lg border border-subtle bg-surface px-3 py-1.5 text-xs font-semibold text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  {(Object.values(USER_ROLES) as UserRole[]).map((roleOption) => (
-                    <option key={roleOption} value={roleOption}>
-                      {getRoleLabel(roleOption)}
-                    </option>
-                  ))}
+                  {(Object.values(USER_ROLES) as UserRole[]).map(
+                    (roleOption) => (
+                      <option key={roleOption} value={roleOption}>
+                        {getRoleLabel(roleOption)}
+                      </option>
+                    ),
+                  )}
                 </select>
               ) : (
                 <span className="text-xs text-subtle">
@@ -274,6 +283,6 @@ export function EmployeeDetailsModal({
           Đóng
         </button>
       </div>
-    </div>
+    </div>,
   );
 }

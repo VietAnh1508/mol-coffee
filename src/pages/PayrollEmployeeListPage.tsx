@@ -5,12 +5,10 @@ import { PayrollEmployeeCard } from "../components/payroll/PayrollEmployeeCard";
 import { PayrollPeriodManager } from "../components/payroll/PayrollPeriodManager";
 import { Spinner } from "../components/Spinner";
 import { canManageResources } from "../constants/userRoles";
-import {
-  useAuth,
-  usePayrollCalculations,
-  usePayrollConfirmations,
-  usePayrollPeriod,
-} from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { usePayrollCalculations } from "../hooks/usePayrollCalculations";
+import { usePayrollConfirmations } from "../hooks/usePayrollConfirmations";
+import { usePayrollPeriod } from "../hooks/usePayrollPeriods";
 import type { PayrollConfirmation } from "../types";
 import { formatMonthName } from "../utils/payrollUtils";
 
@@ -37,8 +35,7 @@ export function PayrollEmployeeListPage() {
   if (!user) return null;
 
   const hasSelectedPeriod = Boolean(selectedPeriod);
-  const isLoading =
-    hasSelectedPeriod && (isLoadingPayroll || isLoadingPeriod);
+  const isLoading = hasSelectedPeriod && (isLoadingPayroll || isLoadingPeriod);
   const canManage = canManageResources(user.role);
 
   // Calculate summary data for admin cards
@@ -142,8 +139,8 @@ export function PayrollEmployeeListPage() {
                 <div className="mb-4 text-4xl">📊</div>
                 <h3 className="mb-2 text-lg font-semibold text-primary">
                   Chưa có dữ liệu lương
-              </h3>
-              <p>Chưa có lịch làm việc nào trong kỳ này.</p>
+                </h3>
+                <p>Chưa có lịch làm việc nào trong kỳ này.</p>
               </div>
             </div>
           )}
@@ -161,13 +158,15 @@ export function PayrollEmployeeListPage() {
               </div>
               <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
                 {payrollData.map((employee) => (
-                <Link
-                  key={employee.employee.id}
-                  to="/payroll/employee/$employeeId"
-                  params={{ employeeId: employee.employee.id }}
-                  {...(selectedPeriod ? { search: { period: selectedPeriod } } : {})}
-                  className="block"
-                >
+                  <Link
+                    key={employee.employee.id}
+                    to="/payroll/employee/$employeeId"
+                    params={{ employeeId: employee.employee.id }}
+                    {...(selectedPeriod
+                      ? { search: { period: selectedPeriod } }
+                      : {})}
+                    className="block"
+                  >
                     <PayrollEmployeeCard
                       employee={employee}
                       confirmation={

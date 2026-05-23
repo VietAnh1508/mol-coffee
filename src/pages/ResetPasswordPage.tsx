@@ -1,10 +1,12 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
-import { AuthFormContainer, AuthMessages } from "../components/auth";
+import { AuthFormContainer } from "../components/auth/AuthFormContainer";
+import { AuthMessages } from "../components/auth/AuthMessages";
 import { PasswordInput } from "../components/PasswordInput";
 import { PasswordPolicy } from "../components/PasswordPolicy";
 import { PASSWORD_MIN_LENGTH } from "../constants/password";
-import { useAuth, useToast } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { useToast } from "../hooks/useToast";
 import { supabase } from "../lib/supabase";
 
 type PageState = "checking" | "ready" | "error";
@@ -102,7 +104,7 @@ export function ResetPasswordPage() {
         }
 
         setStatusError(
-          "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu lại."
+          "Liên kết đặt lại mật khẩu không hợp lệ hoặc đã hết hạn. Vui lòng yêu cầu lại.",
         );
         setPageState("error");
       })
@@ -110,7 +112,7 @@ export function ResetPasswordPage() {
         console.error("Error preparing password recovery session:", error);
         if (!isMounted) return;
         setStatusError(
-          "Không thể xác thực yêu cầu đặt lại mật khẩu. Vui lòng thử lại."
+          "Không thể xác thực yêu cầu đặt lại mật khẩu. Vui lòng thử lại.",
         );
         setPageState("error");
       });
@@ -124,7 +126,7 @@ export function ResetPasswordPage() {
   const instructions = useMemo(
     () =>
       "Vui lòng nhập mật khẩu mới của bạn bên dưới. Sau khi đặt lại thành công, bạn sẽ được chuyển về trang đăng nhập.",
-    []
+    [],
   );
 
   const validateForm = () => {
@@ -162,14 +164,14 @@ export function ResetPasswordPage() {
       if (error) {
         setFormError(
           error.message ||
-            "Không thể đặt lại mật khẩu. Vui lòng kiểm tra liên kết và thử lại."
+            "Không thể đặt lại mật khẩu. Vui lòng kiểm tra liên kết và thử lại.",
         );
         return;
       }
 
       showToast(
         "Đặt lại mật khẩu thành công. Vui lòng đăng nhập lại.",
-        "success"
+        "success",
       );
 
       await supabase.auth.signOut();

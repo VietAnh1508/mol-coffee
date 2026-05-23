@@ -1,6 +1,6 @@
 import { createRootRoute, Outlet } from "@tanstack/react-router";
 import { Toast } from "../components/Toast";
-import { useToast } from "../hooks";
+import { useToast } from "../hooks/useToast";
 
 function RootComponent() {
   const { toast, hideToast } = useToast();

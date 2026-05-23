@@ -3,10 +3,10 @@ import { FaLock, FaLockOpen, FaPlus, FaTrash } from "react-icons/fa";
 import {
   useClosePayrollPeriod,
   useDeletePayrollPeriod,
-  usePayrollPeriods,
   useReopenPayrollPeriod,
-  useToast,
-} from "../../hooks";
+} from "../../hooks/usePayrollMutations";
+import { usePayrollPeriods } from "../../hooks/usePayrollPeriods";
+import { useToast } from "../../hooks/useToast";
 import { formatMonthName } from "../../utils/payrollUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
 import { Spinner } from "../Spinner";
@@ -68,7 +68,7 @@ export function PayrollPeriodManager({
           if (selectedPeriod === confirmAction.periodName) {
             // If we deleted the selected period, select the first available one
             const remainingPeriods = periods?.filter(
-              (p) => p.id !== confirmAction.periodId
+              (p) => p.id !== confirmAction.periodId,
             );
             if (remainingPeriods && remainingPeriods.length > 0) {
               onPeriodSelect(remainingPeriods[0].year_month);

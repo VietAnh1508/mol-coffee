@@ -1,6 +1,6 @@
 import { SHIFT_TEMPLATES } from "../constants/shifts";
 import { USER_ROLES } from "../constants/userRoles";
-import { useNextScheduleShift } from "../hooks";
+import { useNextScheduleShift } from "../hooks/useScheduleShifts";
 import type { User } from "../types";
 import { formatDateDMY } from "../utils/dateUtils";
 

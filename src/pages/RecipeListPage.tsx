@@ -5,14 +5,11 @@ import { Spinner } from "../components/Spinner";
 import { RecipeFormDialog } from "../components/recipes/RecipeFormDialog";
 import { RecipeListItem } from "../components/recipes/RecipeListItem";
 import { isAdmin } from "../constants/userRoles";
-import {
-  useAuth,
-  useCreateRecipe,
-  useRecipe,
-  useRecipes,
-  useToast,
-  useUpdateRecipe,
-} from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { useRecipe } from "../hooks/useRecipe";
+import { useCreateRecipe, useUpdateRecipe } from "../hooks/useRecipeMutations";
+import { useRecipes } from "../hooks/useRecipes";
+import { useToast } from "../hooks/useToast";
 import type { Recipe } from "../types";
 
 export function RecipeListPage() {

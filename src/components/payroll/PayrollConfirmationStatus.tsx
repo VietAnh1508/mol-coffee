@@ -3,9 +3,9 @@ import { FaCheckCircle } from "react-icons/fa";
 import {
   useConfirmPayrollApproval,
   usePayrollConfirmation,
-  useToast,
   useUnconfirmPayrollApproval,
-} from "../../hooks";
+} from "../../hooks/usePayrollConfirmations";
+import { useToast } from "../../hooks/useToast";
 import { formatDateTime } from "../../utils/dateUtils";
 import { formatMonthName } from "../../utils/payrollUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
@@ -33,7 +33,7 @@ export function PayrollConfirmationStatus({
 
   const { data: confirmation, isLoading } = usePayrollConfirmation(
     payrollPeriodId,
-    employeeId
+    employeeId,
   );
   const confirmPayroll = useConfirmPayrollApproval();
   const unconfirmPayroll = useUnconfirmPayrollApproval();
@@ -59,7 +59,7 @@ export function PayrollConfirmationStatus({
       if (!payrollPeriodId) {
         showToast(
           `Kỳ lương ${periodLabel} chưa được tạo, không thể bỏ xác nhận.`,
-          "error"
+          "error",
         );
         setDialogAction(null);
         return;
@@ -75,7 +75,7 @@ export function PayrollConfirmationStatus({
         console.error(error);
         showToast(
           "Không thể bỏ xác nhận bảng lương, vui lòng thử lại.",
-          "error"
+          "error",
         );
       } finally {
         setDialogAction(null);
@@ -86,7 +86,7 @@ export function PayrollConfirmationStatus({
     if (!payrollPeriodId) {
       showToast(
         `Kỳ lương ${periodLabel} chưa được tạo, không thể xác nhận.`,
-        "error"
+        "error",
       );
       setDialogAction(null);
       return;

@@ -1,10 +1,10 @@
 import type { ReactNode } from "react";
 import { useMemo } from "react";
-import { Spinner } from "../Spinner";
 import { SHIFT_TEMPLATES } from "../../constants/shifts";
+import { useScheduleShifts } from "../../hooks/useScheduleShifts";
 import type { ScheduleShift } from "../../types";
+import { Spinner } from "../Spinner";
 import { ShiftCard } from "./ShiftCard";
-import { useScheduleShifts } from "../../hooks";
 
 export interface DayScheduleViewProps {
   readonly canManage: boolean;
@@ -137,23 +137,21 @@ function ShiftColumn({
       </div>
 
       <div className="space-y-2">
-        {shifts.length > 0 ? (
-          shifts.map((shift) => (
-            <ShiftCard
-              key={shift.id}
-              shift={shift}
-              canManage={canManage}
-              isLocked={isLocked}
-              onEdit={onEditShift}
-            />
-          ))
-        ) : (
-          emptyState ?? (
-            <div className="py-8 text-center text-sm text-subtle">
-              Chưa có ca làm việc nào được lên lịch
-            </div>
-          )
-        )}
+        {shifts.length > 0
+          ? shifts.map((shift) => (
+              <ShiftCard
+                key={shift.id}
+                shift={shift}
+                canManage={canManage}
+                isLocked={isLocked}
+                onEdit={onEditShift}
+              />
+            ))
+          : (emptyState ?? (
+              <div className="py-8 text-center text-sm text-subtle">
+                Chưa có ca làm việc nào được lên lịch
+              </div>
+            ))}
       </div>
     </div>
   );

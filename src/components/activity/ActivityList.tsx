@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { HiPause, HiPlay, HiPlus } from "react-icons/hi2";
-import { useActivities, useToast, useToggleActivity } from "../../hooks";
+import { useActivities } from "../../hooks/useActivities";
+import { useToggleActivity } from "../../hooks/useActivityMutations";
+import { useToast } from "../../hooks/useToast";
 import type { Activity } from "../../types";
 import { ConfirmationDialog } from "../ConfirmationDialog";
 import { Spinner } from "../Spinner";
@@ -58,7 +60,7 @@ export function ActivityList({ canManage = true }: ActivityListProps) {
         toggledActivity.is_active
           ? `Đã vô hiệu hóa hoạt động "${toggledActivity.name}"`
           : `Đã kích hoạt hoạt động "${toggledActivity.name}"`,
-        "success"
+        "success",
       );
       setPendingToggleActivity(null);
     } catch (error) {

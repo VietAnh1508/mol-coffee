@@ -1,18 +1,24 @@
 import { useState } from "react";
-import { HiCheckCircle, HiEye, HiPencilSquare, HiXCircle } from "react-icons/hi2";
+import {
+  HiCheckCircle,
+  HiEye,
+  HiPencilSquare,
+  HiXCircle,
+} from "react-icons/hi2";
 import { CurrentUserBadge } from "../components/CurrentUserBadge";
 import { EmployeeDetailsModal } from "../components/employee/EmployeeDetailsModal";
 import { EmployeeRoleBadge } from "../components/employee/EmployeeRoleBadge";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
 import { canManageResources } from "../constants/userRoles";
-import { useAuth, useUsers } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { useUsers } from "../hooks/useUsers";
 
 export function EmployeesPage() {
   const { user } = useAuth();
   const { data: employees = [], isLoading, error } = useUsers();
   const [selectedEmployeeId, setSelectedEmployeeId] = useState<string | null>(
-    null
+    null,
   );
   const [showInactive, setShowInactive] = useState(false);
 

@@ -3,7 +3,7 @@ import type { PropsWithChildren } from "react";
 import { useEffect, useRef, useState } from "react";
 import { HiChevronDown, HiUser } from "react-icons/hi2";
 import { getRoleLabel } from "../constants/userRoles";
-import { useAuth } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
 import { ProfileCompletionModal } from "./ProfileCompletionModal";
 
 export function Layout({ children }: PropsWithChildren) {

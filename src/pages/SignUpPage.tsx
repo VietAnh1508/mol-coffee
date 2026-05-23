@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { AuthFormContainer, AuthFormFields, AuthMessages } from "../components/auth";
+import { AuthFormContainer } from "../components/auth/AuthFormContainer";
+import { AuthFormFields } from "../components/auth/AuthFormFields";
+import { AuthMessages } from "../components/auth/AuthMessages";
 import { PasswordPolicy } from "../components/PasswordPolicy";
-import { useAuth } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
 
 export function SignUpPage() {
   const [email, setEmail] = useState("");

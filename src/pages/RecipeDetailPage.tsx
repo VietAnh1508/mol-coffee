@@ -4,7 +4,10 @@ import { BackLink } from "../components/common/BackLink";
 import { PageTitle } from "../components/PageTitle";
 import { Spinner } from "../components/Spinner";
 import { isAdmin } from "../constants/userRoles";
-import { useAuth, useRecipe, useToast, useUpdateRecipeStep } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { useRecipe } from "../hooks/useRecipe";
+import { useUpdateRecipeStep } from "../hooks/useRecipeMutations";
+import { useToast } from "../hooks/useToast";
 
 interface RecipeDetailPageProps {
   slug: string;

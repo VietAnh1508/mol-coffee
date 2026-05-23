@@ -8,7 +8,9 @@ import {
   canManageResources,
   isEmployee,
 } from "../constants/userRoles";
-import { useAuth, usePayrollCalculations, usePayrollPeriod } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { usePayrollCalculations } from "../hooks/usePayrollCalculations";
+import { usePayrollPeriod } from "../hooks/usePayrollPeriods";
 import { formatMonthName, getCurrentYearMonth } from "../utils/payrollUtils";
 
 /**

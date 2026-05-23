@@ -5,7 +5,7 @@ import {
   normalizeDate,
 } from "../../constants/schedule";
 import { SHIFT_TEMPLATES } from "../../constants/shifts";
-import { useScheduleShiftsByDateRange } from "../../hooks";
+import { useScheduleShiftsByDateRange } from "../../hooks/useScheduleShifts";
 import type { ScheduleShift } from "../../types";
 import { formatDateLocal } from "../../utils/dateUtils";
 import { Spinner } from "../Spinner";
@@ -16,13 +16,11 @@ interface WeekScheduleViewProps {
   readonly canManage?: boolean;
 }
 
-export function WeekScheduleView({
-  selectedDate,
-}: WeekScheduleViewProps) {
+export function WeekScheduleView({ selectedDate }: WeekScheduleViewProps) {
   const weekRange = getWeekRange(selectedDate);
   const { data: weekShifts = [], isLoading } = useScheduleShiftsByDateRange(
     weekRange.start,
-    weekRange.endExclusive
+    weekRange.endExclusive,
   );
 
   const weekShiftsByDay = useMemo(() => {
@@ -69,10 +67,17 @@ export function WeekScheduleView({
           {(["morning", "afternoon"] as const).map((t) => (
             <div key={t} className="flex flex-col items-center">
               <div className="flex items-center gap-1">
-                <span className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${t === "morning" ? "bg-orange-400" : "bg-blue-400"}`} aria-hidden />
-                <span className="text-[11px] font-semibold text-primary">{SHIFT_TEMPLATES[t].label}</span>
+                <span
+                  className={`h-1.5 w-1.5 rounded-full flex-shrink-0 ${t === "morning" ? "bg-orange-400" : "bg-blue-400"}`}
+                  aria-hidden
+                />
+                <span className="text-[11px] font-semibold text-primary">
+                  {SHIFT_TEMPLATES[t].label}
+                </span>
               </div>
-              <span className="text-[10px] text-subtle">{SHIFT_TEMPLATES[t].start}–{SHIFT_TEMPLATES[t].end}</span>
+              <span className="text-[10px] text-subtle">
+                {SHIFT_TEMPLATES[t].start}–{SHIFT_TEMPLATES[t].end}
+              </span>
             </div>
           ))}
         </div>
@@ -106,10 +111,7 @@ export function WeekScheduleView({
                   </span>
                 </div>
 
-                <WeekShiftSection
-                  shifts={grouped.morning}
-                  template="morning"
-                />
+                <WeekShiftSection shifts={grouped.morning} template="morning" />
                 <WeekShiftSection
                   shifts={grouped.afternoon}
                   template="afternoon"

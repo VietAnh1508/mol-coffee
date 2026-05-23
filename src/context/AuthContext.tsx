@@ -6,7 +6,7 @@ import type {
 import type { PropsWithChildren } from "react";
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { isPlaceholderPhone } from "../constants/userDefaults";
-import { useUserProfile } from "../hooks";
+import { useUserProfile } from "../hooks/useUserProfile";
 import { supabase } from "../lib/supabase";
 import { AuthContext } from "./AuthContextDefinition";
 
@@ -31,7 +31,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         // Get initial session with timeout
         const sessionPromise = supabase.auth.getSession();
         const timeoutPromise = new Promise((_, reject) =>
-          setTimeout(() => reject(new Error("Session check timeout")), 10000)
+          setTimeout(() => reject(new Error("Session check timeout")), 10000),
         );
 
         const result = await Promise.race([sessionPromise, timeoutPromise]);
@@ -133,7 +133,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
         return { error: authError as AuthError };
       }
     },
-    []
+    [],
   );
 
   const resetPassword = useCallback(async (newPassword: string) => {
@@ -155,9 +155,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
     // Check if name exists and phone is not a placeholder
     return Boolean(
       userData.name &&
-        userData.name.trim() !== "" &&
-        userData.phone &&
-        !isPlaceholderPhone(userData.phone)
+      userData.name.trim() !== "" &&
+      userData.phone &&
+      !isPlaceholderPhone(userData.phone),
     );
   }, []);
 
@@ -183,8 +183,9 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signOut,
       requestPasswordReset,
       resetPassword,
-    ]
+    ],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
+

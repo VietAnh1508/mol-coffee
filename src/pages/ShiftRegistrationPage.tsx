@@ -7,13 +7,11 @@ import { SummaryBar } from "../components/shift-registration/SummaryBar";
 import { Spinner } from "../components/Spinner";
 import type { ShiftTemplate } from "../constants/shifts";
 import { getRoleLabel, isAdmin, isEmployee } from "../constants/userRoles";
-import {
-  useAuth,
-  useShiftRegistrationBoard,
-  useShiftRegistrationMutations,
-  useShiftRegistrations,
-  useToast,
-} from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { useShiftRegistrationBoard } from "../hooks/useShiftRegistrationBoard";
+import { useShiftRegistrationMutations } from "../hooks/useShiftRegistrationMutations";
+import { useShiftRegistrations } from "../hooks/useShiftRegistrations";
+import { useToast } from "../hooks/useToast";
 import type { SlotAnnotation } from "../types";
 import { formatDateLocal, getNextWeekMondayVN } from "../utils/dateUtils";
 import { getDayLabel, slotKey } from "../utils/shiftRegistrationUtils";

@@ -1,8 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { AuthFormContainer, AuthMessages } from "../components/auth";
+import { AuthFormContainer } from "../components/auth/AuthFormContainer";
+import { AuthMessages } from "../components/auth/AuthMessages";
 import { Spinner } from "../components/Spinner";
-import { useAuth } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
 
 function resolveRedirectUrl(): string | null {
   const rawSiteUrl = import.meta.env.VITE_SITE_URL as string | undefined;
@@ -40,7 +41,7 @@ export function ForgotPasswordPage() {
 
     if (!redirectTo) {
       setError(
-        "Ứng dụng chưa được cấu hình URL chuyển hướng. Vui lòng liên hệ quản trị viên."
+        "Ứng dụng chưa được cấu hình URL chuyển hướng. Vui lòng liên hệ quản trị viên.",
       );
       return;
     }
@@ -50,7 +51,7 @@ export function ForgotPasswordPage() {
     try {
       const { error: resetError } = await requestPasswordReset(
         email.trim(),
-        redirectTo
+        redirectTo,
       );
 
       if (resetError) {
@@ -59,14 +60,14 @@ export function ForgotPasswordPage() {
         } else {
           setError(
             resetError.message ||
-              "Không thể gửi email đặt lại mật khẩu. Vui lòng thử lại sau."
+              "Không thể gửi email đặt lại mật khẩu. Vui lòng thử lại sau.",
           );
         }
         return;
       }
 
       setSuccessMessage(
-        "Email hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư (bao gồm mục Spam)."
+        "Email hướng dẫn đặt lại mật khẩu đã được gửi. Vui lòng kiểm tra hộp thư (bao gồm mục Spam).",
       );
     } catch (submitError) {
       console.error("Error requesting password reset:", submitError);

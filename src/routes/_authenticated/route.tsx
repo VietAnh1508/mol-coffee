@@ -1,7 +1,7 @@
-import { createFileRoute, Outlet, Navigate } from "@tanstack/react-router";
-import { useAuth } from "../../hooks";
-import { Spinner } from "../../components/Spinner";
+import { createFileRoute, Navigate, Outlet } from "@tanstack/react-router";
 import { Layout } from "../../components/Layout";
+import { Spinner } from "../../components/Spinner";
+import { useAuth } from "../../hooks/useAuth";
 
 export const Route = createFileRoute("/_authenticated")({
   beforeLoad: async () => {

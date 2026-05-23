@@ -1,12 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaCheck, FaTimes, FaUser } from "react-icons/fa";
 import { SHIFT_TEMPLATES, type ShiftTemplate } from "../../constants/shifts";
-import {
-  useActiveUsers,
-  useActivities,
-  useScheduleMutations,
-  useScheduleShifts,
-} from "../../hooks";
+import { useActivities } from "../../hooks/useActivities";
+import { useScheduleMutations } from "../../hooks/useScheduleMutations";
+import { useScheduleShifts } from "../../hooks/useScheduleShifts";
+import { useActiveUsers } from "../../hooks/useUsers";
 
 interface ShiftAssignmentModalProps {
   isOpen: boolean;
@@ -37,7 +35,7 @@ export function ShiftAssignmentModal({
     .map((shift) => shift.user_id);
 
   const assignableUsers = activeUsers.filter(
-    (user) => !assignedUserIds.includes(user.id)
+    (user) => !assignedUserIds.includes(user.id),
   );
   const activeActivities = activities.filter((activity) => activity.is_active);
 

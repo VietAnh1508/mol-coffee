@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { canAccessManagement } from "../../constants/userRoles";
-import { useAuth } from "../../hooks";
+import { useAuth } from "../../hooks/useAuth";
 import { SettingsPage } from "../../pages/SettingsPage";
 
 export const Route = createFileRoute("/_authenticated/settings")({

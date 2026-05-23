@@ -1,4 +1,5 @@
-import { useActivities, useCreateRate, useUpdateRate } from "../../hooks";
+import { useActivities } from "../../hooks/useActivities";
+import { useCreateRate, useUpdateRate } from "../../hooks/useRateMutations";
 import type { Rate } from "../../types";
 
 interface RateFormProps {
@@ -31,7 +32,7 @@ export function RateForm({ rate, onClose }: RateFormProps) {
           onError: () => {
             alert("Lỗi khi cập nhật mức lương");
           },
-        }
+        },
       );
     } else {
       createRateMutation.mutate(
@@ -47,7 +48,7 @@ export function RateForm({ rate, onClose }: RateFormProps) {
           onError: () => {
             alert("Lỗi khi tạo mức lương");
           },
-        }
+        },
       );
     }
   };

@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { usePayrollDailyBreakdown } from "../../hooks";
+import { usePayrollDailyBreakdown } from "../../hooks/usePayrollCalculations";
 import {
   formatDateWeekdayDMY,
   formatHours,
@@ -19,7 +19,7 @@ export function PayrollDailyBreakdown({
 }: PayrollDailyBreakdownProps) {
   const { data: dailyData, isLoading } = usePayrollDailyBreakdown(
     yearMonth,
-    userId
+    userId,
   );
 
   if (isLoading) {
@@ -48,11 +48,11 @@ export function PayrollDailyBreakdown({
       acc[date].push(entry);
       return acc;
     },
-    {} as Record<string, typeof dailyData>
+    {} as Record<string, typeof dailyData>,
   );
 
   const sortedDates = Object.keys(groupedByDate).sort((a, b) =>
-    a.localeCompare(b)
+    a.localeCompare(b),
   );
 
   return (
@@ -67,11 +67,11 @@ export function PayrollDailyBreakdown({
               const dayEntries = groupedByDate[date];
               const dayTotal = dayEntries.reduce(
                 (sum, entry) => sum + entry.subtotal,
-                0
+                0,
               );
               const dayHours = dayEntries.reduce(
                 (sum, entry) => sum + entry.hours,
-                0
+                0,
               );
 
               return (

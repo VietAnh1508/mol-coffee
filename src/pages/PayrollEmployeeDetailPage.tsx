@@ -1,24 +1,27 @@
 import { useNavigate } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { FaCalendarAlt } from "react-icons/fa";
+import { BackLink } from "../components/common/BackLink";
 import { PageTitle } from "../components/PageTitle";
-import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { PayrollConfirmationStatus } from "../components/payroll/PayrollConfirmationStatus";
+import { PayrollDailyBreakdown } from "../components/payroll/PayrollDailyBreakdown";
 import { PayrollPaymentStatus } from "../components/payroll/PayrollPaymentStatus";
 import { Spinner } from "../components/Spinner";
-import { canAccessManagement, isAdmin, isEmployee } from "../constants/userRoles";
-import { BackLink } from "../components/common/BackLink";
 import {
-  useAuth,
+  canAccessManagement,
+  isAdmin,
+  isEmployee,
+} from "../constants/userRoles";
+import { useAuth } from "../hooks/useAuth";
+import {
   usePayrollCalculations,
   usePayrollDailyBreakdown,
+} from "../hooks/usePayrollCalculations";
+import {
   usePayrollPeriod,
   usePayrollPeriods,
-} from "../hooks";
-import {
-  formatMoney,
-  formatMonthName,
-} from "../utils/payrollUtils";
+} from "../hooks/usePayrollPeriods";
+import { formatMoney, formatMonthName } from "../utils/payrollUtils";
 
 interface PayrollEmployeeDetailPageProps {
   readonly employeeId: string;
@@ -50,7 +53,7 @@ export function PayrollEmployeeDetailPage({
 
   const { data: dailyData } = usePayrollDailyBreakdown(
     selectedPeriod,
-    employeeId
+    employeeId,
   );
 
   const { data: periodInfo, isLoading: isLoadingPeriod } =
@@ -61,7 +64,7 @@ export function PayrollEmployeeDetailPage({
     if (!payrollPeriods || payrollPeriods.length === 0) return;
 
     const hasSelectedPeriod = payrollPeriods.some(
-      (payrollPeriod) => payrollPeriod.year_month === selectedPeriod
+      (payrollPeriod) => payrollPeriod.year_month === selectedPeriod,
     );
 
     if (!hasSelectedPeriod) {
@@ -225,50 +228,50 @@ export function PayrollEmployeeDetailPage({
             <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/5">
               {/* Employee Header */}
               <div className="border-b border-subtle p-6">
-            <div className="flex items-center justify-center">
-              <div className="space-y-6 text-center">
-                <div>
-                  <div className="mb-1 text-sm text-subtle">Tổng lương</div>
-                  <div className="text-3xl font-semibold text-primary">
-                    {formatMoney(Math.round(employeeData.totalSalary))}
+                <div className="flex items-center justify-center">
+                  <div className="space-y-6 text-center">
+                    <div>
+                      <div className="mb-1 text-sm text-subtle">Tổng lương</div>
+                      <div className="text-3xl font-semibold text-primary">
+                        {formatMoney(Math.round(employeeData.totalSalary))}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-center space-x-8 text-subtle">
+                      <div className="text-center">
+                        <div className="mb-1 text-xs uppercase tracking-wide">
+                          Tổng giờ làm
+                        </div>
+                        <div className="text-lg font-semibold text-primary">
+                          {employeeData.totalHours.toFixed(1)} giờ
+                        </div>
+                      </div>
+                      <div className="text-center">
+                        <div className="mb-1 text-xs uppercase tracking-wide">
+                          Tổng ngày làm
+                        </div>
+                        <div className="text-lg font-semibold text-primary">
+                          {totalWorkingDays} ngày
+                        </div>
+                      </div>
+                    </div>
+                    <div className="mt-6 grid w-full gap-4 sm:grid-cols-2">
+                      <PayrollConfirmationStatus
+                        payrollPeriodId={payrollPeriodId}
+                        employeeId={employeeId}
+                        isOwnData={isOwnData}
+                        isAdmin={isAdminUser}
+                        period={selectedPeriod}
+                      />
+                      <PayrollPaymentStatus
+                        payrollPeriodId={payrollPeriodId}
+                        employeeId={employeeId}
+                        isAdmin={isAdminUser}
+                        period={selectedPeriod}
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className="flex items-center justify-center space-x-8 text-subtle">
-                  <div className="text-center">
-                    <div className="mb-1 text-xs uppercase tracking-wide">
-                      Tổng giờ làm
-                    </div>
-                    <div className="text-lg font-semibold text-primary">
-                      {employeeData.totalHours.toFixed(1)} giờ
-                    </div>
-                  </div>
-                  <div className="text-center">
-                    <div className="mb-1 text-xs uppercase tracking-wide">
-                      Tổng ngày làm
-                    </div>
-                    <div className="text-lg font-semibold text-primary">
-                      {totalWorkingDays} ngày
-                    </div>
-                  </div>
-                </div>
-                <div className="mt-6 grid w-full gap-4 sm:grid-cols-2">
-                  <PayrollConfirmationStatus
-                    payrollPeriodId={payrollPeriodId}
-                    employeeId={employeeId}
-                    isOwnData={isOwnData}
-                    isAdmin={isAdminUser}
-                    period={selectedPeriod}
-                  />
-                  <PayrollPaymentStatus
-                    payrollPeriodId={payrollPeriodId}
-                    employeeId={employeeId}
-                    isAdmin={isAdminUser}
-                    period={selectedPeriod}
-                  />
                 </div>
               </div>
-            </div>
-          </div>
 
               {/* Activity Breakdown */}
               <div className="p-6">
@@ -305,7 +308,7 @@ export function PayrollEmployeeDetailPage({
                         </span>
                         <div className="text-sm font-semibold text-primary">
                           {formatMoney(
-                            Math.round(employeeData.lunchAllowanceTotal || 0)
+                            Math.round(employeeData.lunchAllowanceTotal || 0),
                           )}
                         </div>
                       </div>
@@ -326,7 +329,6 @@ export function PayrollEmployeeDetailPage({
           )}
         </div>
       </div>
-
     </>
   );
 }

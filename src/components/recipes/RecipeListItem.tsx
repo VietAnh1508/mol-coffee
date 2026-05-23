@@ -1,7 +1,8 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { FaEdit, FaMugHot, FaTrash } from "react-icons/fa";
-import { useDeleteRecipe, useToast } from "../../hooks";
+import { useDeleteRecipe } from "../../hooks/useRecipeMutations";
+import { useToast } from "../../hooks/useToast";
 import type { Recipe } from "../../types";
 import { ConfirmationDialog } from "../ConfirmationDialog";
 

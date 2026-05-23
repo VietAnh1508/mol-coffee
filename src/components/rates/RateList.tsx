@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { FaEdit } from "react-icons/fa";
 import { HiPlus } from "react-icons/hi2";
-import { useRates } from "../../hooks";
+import { useRates } from "../../hooks/useRates";
 import type { Rate } from "../../types";
 import { formatDateDMY } from "../../utils/dateUtils";
 import { formatMoney } from "../../utils/payrollUtils";

@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useAuth } from "../hooks";
-import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 import { Spinner } from "../components/Spinner";
+import { useAuth } from "../hooks/useAuth";
+import { ForgotPasswordPage } from "../pages/ForgotPasswordPage";
 
 export const Route = createFileRoute("/forgot-password")({
   component: ForgotPasswordRoute,

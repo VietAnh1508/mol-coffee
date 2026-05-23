@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { FaClock, FaTimes } from "react-icons/fa";
-import { useActivities, useScheduleMutations, useToast } from "../../hooks";
+import { useActivities } from "../../hooks/useActivities";
+import { useScheduleMutations } from "../../hooks/useScheduleMutations";
+import { useToast } from "../../hooks/useToast";
 import type { ScheduleShift } from "../../types";
 import { formatDate, formatTime } from "../../utils/dateUtils";
 

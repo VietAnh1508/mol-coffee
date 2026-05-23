@@ -2,9 +2,9 @@ import { useMemo, useState } from "react";
 import { FaMoneyBillWave } from "react-icons/fa";
 import {
   usePayrollConfirmation,
-  useToast,
   useUpdatePayrollPaidStatus,
-} from "../../hooks";
+} from "../../hooks/usePayrollConfirmations";
+import { useToast } from "../../hooks/useToast";
 import { formatDateTime } from "../../utils/dateUtils";
 import { formatMonthName } from "../../utils/payrollUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
@@ -31,7 +31,7 @@ export function PayrollPaymentStatus({
 
   const { data: confirmation, isLoading } = usePayrollConfirmation(
     payrollPeriodId,
-    employeeId
+    employeeId,
   );
   const updatePayrollPaidStatus = useUpdatePayrollPaidStatus();
 
@@ -49,8 +49,7 @@ export function PayrollPaymentStatus({
     !confirmation?.paid_at;
   const canUnmarkPaid =
     isAdmin && Boolean(payrollPeriodId) && Boolean(confirmation?.paid_at);
-  const disabled =
-    isLoading || updatePayrollPaidStatus.isPending;
+  const disabled = isLoading || updatePayrollPaidStatus.isPending;
 
   const isDialogOpen = dialogAction !== null;
   const isMarkingPaid = dialogAction === "markPaid";
@@ -61,7 +60,7 @@ export function PayrollPaymentStatus({
     if (!payrollPeriodId) {
       showToast(
         `Kỳ lương ${periodLabel} chưa được tạo, không thể cập nhật thanh toán.`,
-        "error"
+        "error",
       );
       setDialogAction(null);
       setPendingAction(null);
@@ -81,7 +80,7 @@ export function PayrollPaymentStatus({
         action === "markPaid"
           ? `Đã đánh dấu đã thanh toán kỳ ${periodLabel}.`
           : `Đã bỏ đánh dấu thanh toán kỳ ${periodLabel}.`,
-        "success"
+        "success",
       );
     } catch (error) {
       console.error(error);
@@ -89,7 +88,7 @@ export function PayrollPaymentStatus({
         action === "markPaid"
           ? "Không thể đánh dấu đã thanh toán, vui lòng kiểm tra trạng thái xác nhận."
           : "Không thể bỏ đánh dấu thanh toán, vui lòng thử lại.",
-        "error"
+        "error",
       );
     } finally {
       setDialogAction(null);
@@ -132,9 +131,10 @@ export function PayrollPaymentStatus({
             disabled={disabled}
             className="inline-flex w-full items-center justify-center rounded-xl bg-sky-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-sky-500 focus:outline-none focus:ring-2 focus:ring-sky-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
           >
-            {updatePayrollPaidStatus.isPending && pendingAction === "markPaid" && (
-              <Spinner size="sm" color="white" className="mr-2" />
-            )}
+            {updatePayrollPaidStatus.isPending &&
+              pendingAction === "markPaid" && (
+                <Spinner size="sm" color="white" className="mr-2" />
+              )}
             Đánh dấu đã thanh toán
           </button>
         )}
@@ -148,8 +148,8 @@ export function PayrollPaymentStatus({
           >
             {updatePayrollPaidStatus.isPending &&
               pendingAction === "unmarkPaid" && (
-              <Spinner size="sm" color="gray" className="mr-2" />
-            )}
+                <Spinner size="sm" color="gray" className="mr-2" />
+              )}
             Bỏ đánh dấu thanh toán
           </button>
         )}

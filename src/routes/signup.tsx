@@ -1,7 +1,7 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
-import { useAuth } from "../hooks";
-import { SignUpPage } from "../pages/SignUpPage";
 import { Spinner } from "../components/Spinner";
+import { useAuth } from "../hooks/useAuth";
+import { SignUpPage } from "../pages/SignUpPage";
 
 export const Route = createFileRoute("/signup")({
   component: SignUpRoute,

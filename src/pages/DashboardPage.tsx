@@ -10,7 +10,7 @@ import {
 } from "react-icons/fa";
 import { NextShiftNotice } from "../components/NextShiftNotice";
 import { canAccessManagement } from "../constants/userRoles";
-import { useAuth } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
 
 export function DashboardPage() {
   const { user } = useAuth();

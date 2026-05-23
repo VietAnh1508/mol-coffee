@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { FaClock, FaEdit, FaTrash } from "react-icons/fa";
-import { useScheduleMutations, useToast } from "../../hooks";
+import { useScheduleMutations } from "../../hooks/useScheduleMutations";
+import { useToast } from "../../hooks/useToast";
 import type { ScheduleShift } from "../../types";
-import { formatTime } from "../../utils/dateUtils";
 import { getActivityBadgeColor } from "../../utils/activityColors";
+import { formatTime } from "../../utils/dateUtils";
 import { ConfirmationDialog } from "../ConfirmationDialog";
 import { CurrentUserBadge } from "../CurrentUserBadge";
 
@@ -14,7 +15,12 @@ interface ShiftCardProps {
   onEdit?: (shift: ScheduleShift) => void;
 }
 
-export function ShiftCard({ shift, canManage, isLocked = false, onEdit }: ShiftCardProps) {
+export function ShiftCard({
+  shift,
+  canManage,
+  isLocked = false,
+  onEdit,
+}: ShiftCardProps) {
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   const { deleteShift } = useScheduleMutations();
   const { showToast } = useToast();

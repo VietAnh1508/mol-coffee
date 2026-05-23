@@ -1,4 +1,8 @@
-import { useCreateActivity, useToast, useUpdateActivity } from "../../hooks";
+import {
+  useCreateActivity,
+  useUpdateActivity,
+} from "../../hooks/useActivityMutations";
+import { useToast } from "../../hooks/useToast";
 import type { Activity } from "../../types";
 
 interface ActivityFormProps {
@@ -28,7 +32,7 @@ export function ActivityForm({ activity, onClose }: ActivityFormProps) {
           onError: () => {
             showToast("Có lỗi xảy ra khi cập nhật hoạt động", "error");
           },
-        }
+        },
       );
     } else {
       createActivityMutation.mutate(
@@ -43,7 +47,7 @@ export function ActivityForm({ activity, onClose }: ActivityFormProps) {
           onError: () => {
             showToast("Có lỗi xảy ra khi tạo hoạt động", "error");
           },
-        }
+        },
       );
     }
   };

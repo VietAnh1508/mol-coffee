@@ -1,7 +1,9 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
-import { AuthFormContainer, AuthFormFields, AuthMessages } from "../components/auth";
-import { useAuth } from "../hooks";
+import { AuthFormContainer } from "../components/auth/AuthFormContainer";
+import { AuthFormFields } from "../components/auth/AuthFormFields";
+import { AuthMessages } from "../components/auth/AuthMessages";
+import { useAuth } from "../hooks/useAuth";
 
 export function LoginPage() {
   const [email, setEmail] = useState("");

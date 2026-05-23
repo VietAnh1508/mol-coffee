@@ -9,10 +9,10 @@ import {
   HiUser,
   HiXMark,
 } from "react-icons/hi2";
-import { useAuth } from "../hooks";
+import { getRoleLabel } from "../constants/userRoles";
+import { useAuth } from "../hooks/useAuth";
 import { useToast } from "../hooks/useToast";
 import { useUpdateUserProfile } from "../hooks/useUserMutations";
-import { getRoleLabel } from "../constants/userRoles";
 import { isValidVietnamesePhone } from "../utils/phoneValidation";
 
 export function ProfilePage() {

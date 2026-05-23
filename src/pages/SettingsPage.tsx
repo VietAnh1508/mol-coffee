@@ -1,15 +1,15 @@
 import { useState } from "react";
 import { ActivityList } from "../components/activity/ActivityList";
 import { RateList } from "../components/rates/RateList";
-import { useAuth } from "../hooks";
 import { canManageResources } from "../constants/userRoles";
+import { useAuth } from "../hooks/useAuth";
 
 export function SettingsPage() {
   const { user } = useAuth();
 
   // Local state
   const [activeTab, setActiveTab] = useState<"activities" | "rates">(
-    "activities"
+    "activities",
   );
 
   if (!user) return null;

@@ -1,6 +1,6 @@
 import { createFileRoute, Navigate } from "@tanstack/react-router";
 import { USER_ROLES } from "../../../constants/userRoles";
-import { useAuth } from "../../../hooks";
+import { useAuth } from "../../../hooks/useAuth";
 import { PayrollEmployeeListPage } from "../../../pages/PayrollEmployeeListPage";
 import { getCurrentYearMonth } from "../../../utils/payrollUtils";
 

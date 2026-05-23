@@ -15,7 +15,8 @@ import {
   canAccessManagement,
   canManageResources,
 } from "../constants/userRoles";
-import { useAuth, usePayrollPeriodForDate } from "../hooks";
+import { useAuth } from "../hooks/useAuth";
+import { usePayrollPeriodForDate } from "../hooks/usePayrollPeriodForDate";
 import type { ScheduleShift } from "../types";
 import { formatWeekRangeCompact } from "../utils/dateUtils";
 import { formatMonthName } from "../utils/payrollUtils";
@@ -31,7 +32,7 @@ export function SchedulePage({
 }: SchedulePageProps = {}) {
   const { user } = useAuth();
   const [selectedDate, setSelectedDate] = useState(() =>
-    parseDateFromParam(initialDate)
+    parseDateFromParam(initialDate),
   );
   const [viewMode, setViewMode] = useState<"day" | "week">("day");
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -40,7 +41,7 @@ export function SchedulePage({
   >("morning");
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState<ScheduleShift | null>(
-    null
+    null,
   );
 
   const { start: weekStart, days: weekDays } = getWeekRange(selectedDate);
@@ -104,7 +105,9 @@ export function SchedulePage({
         onDateChange={updateSelectedDate}
       />
 
-      <div className={`flex items-center ${viewMode === "week" ? "mb-1" : "mb-4"}`}>
+      <div
+        className={`flex items-center ${viewMode === "week" ? "mb-1" : "mb-4"}`}
+      >
         {viewMode === "week" && (
           <span className="text-sm font-semibold text-primary">
             {formatWeekRangeCompact(weekStart, weekDays[weekDays.length - 1])}
