@@ -20,6 +20,7 @@ export default defineConfig({
       registerType: "autoUpdate",
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg}"],
+        cleanupOutdatedCaches: true,
       },
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       manifest: {
