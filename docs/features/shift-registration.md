@@ -41,7 +41,7 @@ This feature introduces a self-service shift registration screen inside the exis
 ### AC1 — Registration screen is accessible from the main app
 
 - A "Đăng ký ca" (Register shifts) entry point is visible in the app navigation for all logged-in users (employees, admins, and supervisors).
-- The screen always displays **next week only** (Monday–Sunday of the following week). There is no week navigation — the current week is not accessible here.
+- The screen always displays **next week only** (Monday–Saturday of the following week). There is no week navigation — the current week is not accessible here.
 - The current logged-in user's name and initials are shown in the top-right as a pill/avatar.
 - The week date range is displayed in the header (e.g. _"Tuần 26 tháng 5 – 1 tháng 6"_) so employees know exactly which week they are registering for.
 
@@ -51,8 +51,7 @@ This feature introduces a self-service shift registration screen inside the exis
 
 ### AC2 — Weekly grid shows all shifts with live occupancy
 
-- The grid has one row per day (Monday to Sunday) and two columns: **Ca sáng / Morning (06:00–12:00)** and **Ca chiều / Afternoon (12:00–18:00)**.
-- Saturday and Sunday are visually separated from weekdays (e.g. a divider line).
+- The grid has one row per day (Monday to Saturday) and two columns: **Ca sáng / Morning (06:00–12:00)** and **Ca chiều / Afternoon (12:00–18:00)**.
 - Each cell displays:
   - The avatar initials of employees who have registered for that slot, **in registration order** — the first employee to register appears first (leftmost), and subsequent registrations are appended to the right. This order is preserved on every load and never re-sorted.
   - A numeric count of registrations.
@@ -127,19 +126,11 @@ Additional visual rules for each state:
 
 ---
 
-### AC9 — Admin can copy the week's registrations as plain text
+### AC7 — Legend is always visible
 
-- A **Copy** button is visible in the summary bar **only to accounts with the `admin` role**, and only when at least one registration exists for the week.
-- Tapping **Copy** writes a compact text summary to the clipboard, grouped by employee, for easy sharing via chat (e.g. Zalo).
-- Employees are listed in the order they first registered (earliest `registered_at` first).
-- Each employee's shifts are sorted chronologically (earlier days first; morning before afternoon on the same day) and abbreviated as `s` (sáng) or `c` (chiều) followed by the Vietnamese day number (T**2**–T**7**).
-- Example output:
-  ```
-  Kiệt: s2, c3
-  Tâm: s3, s4, s5, c6
-  ```
-- After copying, the button label briefly changes to **✓ Đã copy** for 2 seconds as visual confirmation.
-- Employees and supervisors do not see this button.
+- A compact legend row is displayed below the header, showing all five heat states plus the Selected indicator with labels: **Trống, Nhẹ, Đủ, Đông, Quá đông, Đã chọn**.
+- Each legend item displays a color swatch using the exact background color defined in AC2.
+- The legend is static and always visible (not collapsible) to orient new users quickly.
 
 ---
 
@@ -162,11 +153,28 @@ Additional visual rules for each state:
 
 ---
 
-### AC7 — Legend is always visible
+### AC9 — Admin can copy the week's registrations as plain text
 
-- A compact legend row is displayed below the header, showing all five heat states plus the Selected indicator with labels: **Trống, Nhẹ, Đủ, Đông, Quá đông, Đã chọn**.
-- Each legend item displays a color swatch using the exact background color defined in AC2.
-- The legend is static and always visible (not collapsible) to orient new users quickly.
+- A **Copy** button is visible in the summary bar **only to accounts with the `admin` role**, and only when at least one registration exists for the week.
+- Tapping **Copy** writes a compact text summary to the clipboard, grouped by employee, for easy sharing via chat (e.g. Zalo).
+- Employees are listed in the order they first registered (earliest `registered_at` first).
+- Each employee's shifts are sorted chronologically (earlier days first; morning before afternoon on the same day) and abbreviated as `s` (sáng) or `c` (chiều) followed by the Vietnamese day number (T**2**–T**7**).
+- Example output:
+  ```
+  Kiệt: s2, c3
+  Tâm: s3, s4, s5, c6
+  ```
+- After copying, the button label briefly changes to **✓ Đã copy** for 2 seconds as visual confirmation.
+- Employees and supervisors do not see this button.
+
+---
+
+### AC10 — Admin can see how many employees have registered at a glance
+
+- In the `SummaryBar`, admins see a single line: **"Đã đăng ký: X/Y nhân viên"** where X = distinct employees with at least one registration this week, Y = total active employees with the `employee` role.
+- The X/Y count updates live whenever the query cache refreshes.
+- When X = Y (all employees have registered), the X/Y portion is rendered in fulfilled green (`#135E3F`) as a completion signal.
+- Employees and supervisors do not see this line.
 
 ---
 
@@ -217,12 +225,13 @@ The following screens were designed and approved during the discovery phase:
 
 ## Definition of Done
 
-- [ ] All 9 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
-- [ ] Grid data loads within 2 seconds on a standard mobile connection.
+- [ ] All 10 acceptance criteria are implemented and verified on mobile (iOS and Android) and desktop browsers.
+- [x] Grid data loads within 2 seconds on a standard mobile connection.
 - [ ] The feature is covered by unit tests (cell selection logic, submit flow, lock/unlock state, resubmit-preserves-order) and at least one end-to-end test (full registration journey, and admin lock flow).
-- [ ] The locked-board banner is shown correctly to employees when the admin locks the board.
-- [ ] The Lock / Unlock button is visible only to `admin` role accounts — not to employees or supervisors.
+- [x] The locked-board banner is shown correctly to employees when the admin locks the board.
+- [x] The Lock / Unlock button is visible only to `admin` role accounts — not to employees or supervisors.
 - [ ] Supervisors see the full grid read-only with no registration controls.
-- [ ] `docs/DATABASE.md` is updated with the new tables.
+- [x] `docs/DATABASE.md` is updated with the new tables.
 - [ ] The UI matches the approved design reference.
 - [ ] The feature has been reviewed and signed off by the admin (product owner).
+- [x] AC10: Admin registration ratio ("Đã đăng ký: X/Y nhân viên") shown in SummaryBar; turns green when all employees have registered.
