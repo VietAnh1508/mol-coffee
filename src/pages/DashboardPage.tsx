@@ -1,5 +1,5 @@
-import { Link } from "@tanstack/react-router";
-import type { IconType } from "react-icons";
+import { Link, useNavigate } from '@tanstack/react-router';
+import type { IconType } from 'react-icons';
 import {
   FaCalendarAlt,
   FaClipboardList,
@@ -7,13 +7,22 @@ import {
   FaDollarSign,
   FaMugHot,
   FaUsers,
-} from "react-icons/fa";
-import { NextShiftNotice } from "../components/NextShiftNotice";
-import { canAccessManagement } from "../constants/userRoles";
-import { useAuth } from "../hooks/useAuth";
+} from 'react-icons/fa';
+import { FeatureAnnouncementBanner } from '../components/FeatureAnnouncementBanner';
+import { NextShiftNotice } from '../components/NextShiftNotice';
+import { canAccessManagement } from '../constants/userRoles';
+import { useAuth } from '../hooks/useAuth';
+import {
+  useAcknowledgeFeature,
+  useNextUnacknowledgedFeature,
+} from '../hooks/useFeatureAcknowledgments';
 
 export function DashboardPage() {
   const { user } = useAuth();
+  const navigate = useNavigate();
+
+  const nextFeature = useNextUnacknowledgedFeature(user?.id ?? null);
+  const acknowledgeFeature = useAcknowledgeFeature(user?.id ?? '');
 
   if (!user) return null;
 
@@ -21,40 +30,40 @@ export function DashboardPage() {
 
   const shortcuts = [
     canAccessManage && {
-      to: "/settings",
-      title: "Cài đặt",
+      to: '/settings',
+      title: 'Cài đặt',
       icon: FaCog,
-      iconBg: "bg-purple-500",
+      iconBg: 'bg-purple-500',
     },
     canAccessManage && {
-      to: "/employees",
-      title: "Danh sách nhân viên",
+      to: '/employees',
+      title: 'Danh sách nhân viên',
       icon: FaUsers,
-      iconBg: "bg-orange-500",
+      iconBg: 'bg-orange-500',
     },
     {
-      to: "/recipes",
-      title: "Công thức pha chế",
+      to: '/recipes',
+      title: 'Công thức pha chế',
       icon: FaMugHot,
-      iconBg: "bg-amber-500",
+      iconBg: 'bg-amber-500',
     },
     {
-      to: "/shift-registration",
-      title: "Đăng ký ca",
+      to: '/shift-registration',
+      title: 'Đăng ký ca',
       icon: FaClipboardList,
-      iconBg: "bg-teal-500",
+      iconBg: 'bg-teal-500',
     },
     {
-      to: "/schedule",
-      title: canAccessManage ? "Quản lý ca làm việc" : "Ca làm việc",
+      to: '/schedule',
+      title: canAccessManage ? 'Quản lý ca làm việc' : 'Ca làm việc',
       icon: FaCalendarAlt,
-      iconBg: "bg-blue-500",
+      iconBg: 'bg-blue-500',
     },
     {
-      to: "/payroll",
-      title: canAccessManage ? "Quản lý bảng lương" : "Bảng lương",
+      to: '/payroll',
+      title: canAccessManage ? 'Quản lý bảng lương' : 'Bảng lương',
       icon: FaDollarSign,
-      iconBg: "bg-emerald-500",
+      iconBg: 'bg-emerald-500',
     },
   ].filter(Boolean) as Array<ShortcutCard>;
 
@@ -64,7 +73,7 @@ export function DashboardPage() {
 
       <header className="text-center sm:text-left">
         <h1 className="mt-3 text-3xl font-semibold tracking-tight text-primary sm:text-4xl">
-          Xin chào,{" "}
+          Xin chào,{' '}
           <span className="bg-gradient-to-r from-blue-500 via-purple-500 to-sky-500 bg-clip-text text-transparent">
             {user.name}
           </span>
@@ -74,6 +83,18 @@ export function DashboardPage() {
           <NextShiftNotice user={user} />
         </div>
       </header>
+
+      {nextFeature && (
+        <FeatureAnnouncementBanner
+          feature={nextFeature}
+          isPending={acknowledgeFeature.isPending}
+          onDismiss={() => acknowledgeFeature.mutate(nextFeature.key)}
+          onNavigate={() => {
+            acknowledgeFeature.mutate(nextFeature.key);
+            navigate({ to: nextFeature.to });
+          }}
+        />
+      )}
 
       <div className="mt-8 grid grid-cols-2 gap-4 max-w-md mx-auto sm:max-w-2xl">
         {shortcuts.map(({ to, title, icon: Icon, iconBg, badgeLabel }) => (
