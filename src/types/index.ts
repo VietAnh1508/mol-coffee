@@ -1,150 +1,159 @@
-import type { UserRole } from '../constants/userRoles'
-import type { ShiftTemplate } from '../constants/shifts'
+import type { ShiftTemplate } from '../constants/shifts';
+import type { UserRole } from '../constants/userRoles';
 
 export interface User {
-  id: string
-  email: string
-  phone: string
-  name: string
-  role: UserRole
-  status: 'active' | 'inactive'
-  auth_user_id: string
-  created_at: string
-  updated_at: string
+  id: string;
+  email: string;
+  phone: string;
+  name: string;
+  role: UserRole;
+  status: 'active' | 'inactive';
+  auth_user_id: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Activity {
-  id: string
-  name: string
-  is_active: boolean
-  created_at: string
-  updated_at: string
+  id: string;
+  name: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Rate {
-  id: string
-  activity_id: string
-  hourly_vnd: number
-  effective_from: string
-  effective_to: string | null
-  created_at: string
-  updated_at: string
-  activity?: Activity
+  id: string;
+  activity_id: string;
+  hourly_vnd: number;
+  effective_from: string;
+  effective_to: string | null;
+  created_at: string;
+  updated_at: string;
+  activity?: Activity;
 }
 
 export interface ScheduleShift {
-  id: string
-  user_id: string
-  activity_id: string
-  start_ts: string
-  end_ts: string
-  template_name: ShiftTemplate
-  is_manual: boolean
-  note?: string
-  created_at: string
-  updated_at: string
-  user?: User
-  activity?: Activity
+  id: string;
+  user_id: string;
+  activity_id: string;
+  start_ts: string;
+  end_ts: string;
+  template_name: ShiftTemplate;
+  is_manual: boolean;
+  note?: string;
+  created_at: string;
+  updated_at: string;
+  user?: User;
+  activity?: Activity;
 }
 
 // Reserved for future timekeeping features
 // Currently payroll is calculated directly from schedule_shifts
 export interface TimeEntry {
-  id: string
-  user_id: string
-  activity_id: string
-  start_ts: string
-  end_ts: string
-  source: 'schedule' | 'manual'
-  approved_by?: string
-  approved_at?: string
-  created_at: string
-  updated_at: string
-  user?: User
-  activity?: Activity
-  approved_by_user?: User
+  id: string;
+  user_id: string;
+  activity_id: string;
+  start_ts: string;
+  end_ts: string;
+  source: 'schedule' | 'manual';
+  approved_by?: string;
+  approved_at?: string;
+  created_at: string;
+  updated_at: string;
+  user?: User;
+  activity?: Activity;
+  approved_by_user?: User;
 }
 
 export interface PayrollPeriod {
-  id: string
-  year_month: string
-  status: 'open' | 'closed'
-  closed_by?: string
-  closed_at?: string
-  created_at: string
-  updated_at: string
-  closed_by_user?: User
+  id: string;
+  year_month: string;
+  status: 'open' | 'closed';
+  closed_by?: string;
+  closed_at?: string;
+  created_at: string;
+  updated_at: string;
+  closed_by_user?: User;
 }
 
 export interface PayrollConfirmation {
-  id: string
-  payroll_period_id: string
-  user_id: string
-  confirmed_at: string
-  paid_at: string | null
-  created_at: string
-  updated_at: string
-  user?: User
+  id: string;
+  payroll_period_id: string;
+  user_id: string;
+  confirmed_at: string;
+  paid_at: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: User;
 }
 
-export type AllowanceType = 'lunch'
+export type AllowanceType = 'lunch';
 
 export interface AllowanceRate {
-  id: string
-  type: AllowanceType
-  amount_vnd: number
-  effective_from: string
-  effective_to: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  type: AllowanceType;
+  amount_vnd: number;
+  effective_from: string;
+  effective_to: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Recipe {
-  id: string
-  slug: string
-  name: string
-  description: string | null
-  created_at: string
-  updated_at: string
+  id: string;
+  slug: string;
+  name: string;
+  description: string | null;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface RecipeStep {
-  id: string
-  recipe_id: string
-  step_number: number
-  instruction: string
-  created_at: string
-  updated_at: string
+  id: string;
+  recipe_id: string;
+  step_number: number;
+  instruction: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface SlotAnnotation {
-  customStartTime: string | null  // "HH:MM" or null — use shift default
-  customEndTime:   string | null
-  note:            string | null
+  customStartTime: string | null; // "HH:MM" or null — use shift default
+  customEndTime: string | null;
+  note: string | null;
 }
 
 export interface ShiftRegistration {
-  id: string
-  user_id: string
-  week_start_date: string          // YYYY-MM-DD
-  day_date: string                  // YYYY-MM-DD
-  shift_template: ShiftTemplate
-  registered_at: string             // ISO timestamp — drives avatar display order
-  custom_start_time: string | null  // "HH:MM:SS" from DB, null = shift default
-  custom_end_time:   string | null
-  note:              string | null
-  created_at: string
-  updated_at: string
-  user?: Pick<User, 'id' | 'name'>
+  id: string;
+  user_id: string;
+  week_start_date: string; // YYYY-MM-DD
+  day_date: string; // YYYY-MM-DD
+  shift_template: ShiftTemplate;
+  registered_at: string; // ISO timestamp — drives avatar display order
+  custom_start_time: string | null; // "HH:MM:SS" from DB, null = shift default
+  custom_end_time: string | null;
+  note: string | null;
+  created_at: string;
+  updated_at: string;
+  user?: Pick<User, 'id' | 'name'>;
 }
 
 export interface ShiftRegistrationBoard {
-  id: string
-  week_start_date: string
-  is_locked: boolean
-  locked_by: string | null
-  locked_at: string | null
-  created_at: string
-  updated_at: string
-  locked_by_user?: Pick<User, 'id' | 'name'>
+  id: string;
+  week_start_date: string;
+  is_locked: boolean;
+  locked_by: string | null;
+  locked_at: string | null;
+  created_at: string;
+  updated_at: string;
+  locked_by_user?: Pick<User, 'id' | 'name'>;
+}
+
+export interface FeatureAcknowledgment {
+  id: string;
+  user_id: string;
+  feature_key: string;
+  acknowledged_at: string;
+  created_at: string;
+  updated_at: string;
 }
