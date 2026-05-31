@@ -1,25 +1,25 @@
-import { useEffect, useState } from "react";
-import { DateNavigation } from "../components/DateNavigation";
-import { PageTitle } from "../components/PageTitle";
-import { DayScheduleView } from "../components/shift/DayScheduleView";
-import { ShiftAssignmentModal } from "../components/shift/ShiftAssignmentModal";
-import { ShiftEditModal } from "../components/shift/ShiftEditModal";
-import { WeekScheduleView } from "../components/shift/WeekScheduleView";
+import { useEffect, useState } from 'react';
+import { DateNavigation } from '../components/DateNavigation';
+import { PageTitle } from '../components/PageTitle';
+import { DayScheduleView } from '../components/shift/DayScheduleView';
+import { ShiftAssignmentModal } from '../components/shift/ShiftAssignmentModal';
+import { ShiftEditModal } from '../components/shift/ShiftEditModal';
+import { WeekScheduleView } from '../components/shift/WeekScheduleView';
 import {
   getWeekRange,
   isSameDay,
   normalizeDate,
   parseDateFromParam,
-} from "../constants/schedule";
+} from '../constants/schedule';
 import {
   canAccessManagement,
   canManageResources,
-} from "../constants/userRoles";
-import { useAuth } from "../hooks/useAuth";
-import { usePayrollPeriodForDate } from "../hooks/usePayrollPeriodForDate";
-import type { ScheduleShift } from "../types";
-import { formatWeekRangeCompact } from "../utils/dateUtils";
-import { formatMonthName } from "../utils/payrollUtils";
+} from '../constants/userRoles';
+import { useAuth } from '../hooks/useAuth';
+import { usePayrollPeriodForDate } from '../hooks/usePayrollPeriodForDate';
+import type { ScheduleShift } from '../types';
+import { formatWeekRangeCompact } from '../utils/dateUtils';
+import { formatMonthName } from '../utils/payrollUtils';
 
 interface SchedulePageProps {
   readonly initialDate?: string;
@@ -34,11 +34,11 @@ export function SchedulePage({
   const [selectedDate, setSelectedDate] = useState(() =>
     parseDateFromParam(initialDate),
   );
-  const [viewMode, setViewMode] = useState<"day" | "week">("day");
+  const [viewMode, setViewMode] = useState<'day' | 'week'>('day');
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedShiftTemplate, setSelectedShiftTemplate] = useState<
-    "morning" | "afternoon"
-  >("morning");
+    'morning' | 'afternoon'
+  >('morning');
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [selectedShift, setSelectedShift] = useState<ScheduleShift | null>(
     null,
@@ -69,7 +69,7 @@ export function SchedulePage({
     onDateChange?.(normalized);
   };
 
-  const handleOpenModal = (shiftTemplate: "morning" | "afternoon") => {
+  const handleOpenModal = (shiftTemplate: 'morning' | 'afternoon') => {
     // Prevent opening modal if period is locked
     if (isLocked || !canManage) return;
 
@@ -97,7 +97,7 @@ export function SchedulePage({
   return (
     <div className="px-4 py-6 text-primary sm:px-0">
       <PageTitle
-        title={canAccess ? "Quản lý ca làm việc" : "Ca làm việc của bạn"}
+        title={canAccess ? 'Quản lý ca làm việc' : 'Ca làm việc của bạn'}
       />
 
       <DateNavigation
@@ -106,9 +106,9 @@ export function SchedulePage({
       />
 
       <div
-        className={`flex items-center ${viewMode === "week" ? "mb-1" : "mb-4"}`}
+        className={`flex items-center ${viewMode === 'week' ? 'mb-1' : 'mb-4'}`}
       >
-        {viewMode === "week" && (
+        {viewMode === 'week' && (
           <span className="text-sm font-semibold text-primary">
             {formatWeekRangeCompact(weekStart, weekDays[weekDays.length - 1])}
           </span>
@@ -116,25 +116,25 @@ export function SchedulePage({
         <div className="ml-auto inline-flex rounded-full bg-surface-muted p-1 text-sm font-semibold text-subtle">
           <button
             type="button"
-            onClick={() => setViewMode("day")}
+            onClick={() => setViewMode('day')}
             className={`rounded-full px-4 py-2 transition ${
-              viewMode === "day"
-                ? "bg-surface text-primary shadow"
-                : "text-muted hover:text-primary"
+              viewMode === 'day'
+                ? 'bg-surface text-primary shadow'
+                : 'text-muted hover:text-primary'
             }`}
-            aria-pressed={viewMode === "day"}
+            aria-pressed={viewMode === 'day'}
           >
             Ngày
           </button>
           <button
             type="button"
-            onClick={() => setViewMode("week")}
+            onClick={() => setViewMode('week')}
             className={`rounded-full px-4 py-2 transition ${
-              viewMode === "week"
-                ? "bg-surface text-primary shadow"
-                : "text-muted hover:text-primary"
+              viewMode === 'week'
+                ? 'bg-surface text-primary shadow'
+                : 'text-muted hover:text-primary'
             }`}
-            aria-pressed={viewMode === "week"}
+            aria-pressed={viewMode === 'week'}
           >
             Tuần
           </button>
@@ -143,11 +143,11 @@ export function SchedulePage({
 
       {/* Payroll Period Lock Warning */}
       {isLocked && (
-        <div className="mb-4 rounded-2xl border border-amber-400/40 bg-amber-500/10 p-4 text-amber-100">
+        <div className="mb-4 rounded-2xl border border-amber-300 bg-amber-50 p-4 text-amber-900">
           <div className="flex items-start">
-            <div className="flex-shrink-0">
+            <div className="shrink-0">
               <svg
-                className="h-5 w-5 text-amber-300"
+                className="h-5 w-5 text-amber-500"
                 viewBox="0 0 20 20"
                 fill="currentColor"
               >
@@ -169,7 +169,7 @@ export function SchedulePage({
         </div>
       )}
 
-      {viewMode === "day" ? (
+      {viewMode === 'day' ? (
         <DayScheduleView
           canManage={canManage}
           isLocked={isLocked}
