@@ -1,9 +1,8 @@
-import { useEffect, useState } from "react";
-import type { ShiftTemplate } from "../../constants/shifts";
-import { SHIFT_TEMPLATES } from "../../constants/shifts";
-import type { ShiftRegistration, SlotAnnotation } from "../../types";
-import { getInitials } from "../../utils/nameUtils";
-import { avatarColor } from "../../utils/shiftRegistrationUtils";
+import { useEffect, useState } from 'react';
+import type { ShiftTemplate } from '../../constants/shifts';
+import { SHIFT_TEMPLATES } from '../../constants/shifts';
+import type { ShiftRegistration, SlotAnnotation } from '../../types';
+import { UserAvatar } from '../UserAvatar';
 
 interface Props {
   isOpen: boolean;
@@ -32,9 +31,9 @@ export function AnnotationBottomSheet({
 }: Props) {
   const shift = SHIFT_TEMPLATES[template];
 
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [note, setNote] = useState("");
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [note, setNote] = useState('');
 
   // Sync local state whenever the sheet opens or the annotation changes.
   // Fall back to the shift window boundaries so inputs are never blank.
@@ -42,7 +41,7 @@ export function AnnotationBottomSheet({
     if (isOpen && !readOnly) {
       setStartTime(annotation.customStartTime ?? shift.start);
       setEndTime(annotation.customEndTime ?? shift.end);
-      setNote(annotation.note ?? "");
+      setNote(annotation.note ?? '');
     }
   }, [isOpen, readOnly, annotation, shift.start, shift.end]);
 
@@ -50,7 +49,7 @@ export function AnnotationBottomSheet({
 
   const timeError =
     startTime && endTime && endTime <= startTime
-      ? "Giờ về phải sau Giờ đến"
+      ? 'Giờ về phải sau Giờ đến'
       : null;
 
   function handleSave() {
@@ -95,22 +94,20 @@ export function AnnotationBottomSheet({
             ) : (
               registrations.map((r) => (
                 <div key={r.id} className="flex items-start gap-3">
-                  <span
-                    style={{
-                      backgroundColor: avatarColor(r.user_id),
-                      color: "#fff",
-                    }}
-                    className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full text-[10px] font-bold"
-                  >
-                    {getInitials(r.user?.name ?? "")}
-                  </span>
+                  <UserAvatar
+                    name={r.user?.name ?? ''}
+                    avatarUrl={r.user?.avatar_url}
+                    userId={r.user_id}
+                    size="md"
+                    className="shrink-0"
+                  />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-primary">
                       {r.user?.name}
                     </p>
                     {(r.custom_start_time || r.custom_end_time) && (
                       <p className="mt-0.5 text-xs text-muted">
-                        Giờ đến:{" "}
+                        Giờ đến:{' '}
                         {r.custom_start_time?.slice(0, 5) ?? shift.start} · Giờ
                         về: {r.custom_end_time?.slice(0, 5) ?? shift.end}
                       </p>

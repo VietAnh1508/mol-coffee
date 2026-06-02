@@ -1,10 +1,11 @@
-import { Link } from "@tanstack/react-router";
-import type { PropsWithChildren } from "react";
-import { useEffect, useRef, useState } from "react";
-import { HiChevronDown, HiUser } from "react-icons/hi2";
-import { getRoleLabel } from "../constants/userRoles";
-import { useAuth } from "../hooks/useAuth";
-import { ProfileCompletionModal } from "./ProfileCompletionModal";
+import { Link } from '@tanstack/react-router';
+import type { PropsWithChildren } from 'react';
+import { useEffect, useRef, useState } from 'react';
+import { HiChevronDown } from 'react-icons/hi2';
+import { getRoleLabel } from '../constants/userRoles';
+import { useAuth } from '../hooks/useAuth';
+import { ProfileCompletionModal } from './ProfileCompletionModal';
+import { UserAvatar } from './UserAvatar';
 
 export function Layout({ children }: PropsWithChildren) {
   return <LayoutContent>{children}</LayoutContent>;
@@ -26,9 +27,9 @@ function LayoutContent({ children }: PropsWithChildren) {
       }
     }
 
-    document.addEventListener("mousedown", handleClickOutside);
+    document.addEventListener('mousedown', handleClickOutside);
     return () => {
-      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener('mousedown', handleClickOutside);
     };
   }, []);
 
@@ -62,12 +63,17 @@ function LayoutContent({ children }: PropsWithChildren) {
                   className="flex items-center gap-2 rounded-full border border-transparent px-3 py-2 text-sm font-medium text-muted transition hover:border-blue-200 hover:bg-surface-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-blue-400 focus-visible:ring-offset-2 focus-visible:ring-offset-surface"
                   aria-expanded={isDropdownOpen}
                 >
-                  <HiUser className="h-5 w-5 text-blue-500" />
+                  <UserAvatar
+                    name={user.name}
+                    avatarUrl={user.avatar_url}
+                    userId={user.id}
+                    size="sm"
+                  />
                   <span className="hidden sm:inline text-primary">
                     {user.name}
                   </span>
                   <HiChevronDown
-                    className={`h-4 w-4 text-muted transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                    className={`h-4 w-4 text-muted transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`}
                   />
                 </button>
 
