@@ -98,8 +98,7 @@ export function AnnotationBottomSheet({
                     name={r.user?.name ?? ''}
                     avatarUrl={r.user?.avatar_url}
                     userId={r.user_id}
-                    size="md"
-                    className="shrink-0"
+                    size="sm"
                   />
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-primary">

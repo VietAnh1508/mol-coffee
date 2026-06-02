@@ -1,4 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import type { User } from '../types';
 import { supabase } from '../lib/supabase';
 import { useAuth } from './useAuth';
 
@@ -47,13 +48,50 @@ export function useUploadAvatar() {
         .update({ avatar_url: avatarUrl })
         .eq('id', user.id);
 
-      if (updateError) throw updateError;
+      if (updateError) {
+        // DB write failed — remove the just-uploaded file so Storage and DB
+        // don't end up out of sync.
+        await supabase.storage.from('avatars').remove([storagePath]);
+        throw updateError;
+      }
 
       return avatarUrl;
     },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
+    onMutate: async (file: File) => {
+      if (!supabaseUser) return;
+      const queryKey = ['user-profile', supabaseUser.id];
+      await queryClient.cancelQueries({ queryKey });
+      const previousUser = queryClient.getQueryData<User>(queryKey);
+      // Show a local blob URL immediately so the avatar updates before the
+      // upload round-trip completes.
+      const previewUrl = URL.createObjectURL(file);
+      queryClient.setQueryData<User>(queryKey, (old) =>
+        old ? { ...old, avatar_url: previewUrl } : old,
+      );
+      return { previousUser, previewUrl };
+    },
+    onSuccess: (avatarUrl, _file, context) => {
+      if (context?.previewUrl) URL.revokeObjectURL(context.previewUrl);
+      // Replace the blob URL with the real persisted URL.
+      if (supabaseUser) {
+        queryClient.setQueryData<User>(
+          ['user-profile', supabaseUser.id],
+          (old) => (old ? { ...old, avatar_url: avatarUrl } : old),
+        );
+      }
       queryClient.invalidateQueries({ queryKey: ['users'] });
+    },
+    onError: (_err, _file, context) => {
+      if (context?.previewUrl) URL.revokeObjectURL(context.previewUrl);
+      if (supabaseUser && context?.previousUser) {
+        queryClient.setQueryData(
+          ['user-profile', supabaseUser.id],
+          context.previousUser,
+        );
+      }
+    },
+    onSettled: () => {
+      queryClient.invalidateQueries({ queryKey: ['user-profile'] });
     },
   });
 }
@@ -68,20 +106,38 @@ export function useRemoveAvatar() {
 
       const storagePath = `${supabaseUser.id}/avatar`;
 
-      const { error: removeError } = await supabase.storage
-        .from('avatars')
-        .remove([storagePath]);
-
-      if (removeError) throw removeError;
-
+      // Update DB first — if this fails, Storage is untouched and the user
+      // still sees their avatar (consistent state).
       const { error: updateError } = await supabase
         .from('users')
         .update({ avatar_url: null })
         .eq('id', user.id);
 
       if (updateError) throw updateError;
+
+      // Storage delete is best-effort: if it fails the file is orphaned but
+      // the DB already shows no avatar, so the user experience is correct.
+      await supabase.storage.from('avatars').remove([storagePath]);
     },
-    onSuccess: () => {
+    onMutate: async () => {
+      if (!supabaseUser) return;
+      const queryKey = ['user-profile', supabaseUser.id];
+      await queryClient.cancelQueries({ queryKey });
+      const previousUser = queryClient.getQueryData<User>(queryKey);
+      queryClient.setQueryData<User>(queryKey, (old) =>
+        old ? { ...old, avatar_url: null } : old,
+      );
+      return { previousUser };
+    },
+    onError: (_err, _vars, context) => {
+      if (supabaseUser && context?.previousUser) {
+        queryClient.setQueryData(
+          ['user-profile', supabaseUser.id],
+          context.previousUser,
+        );
+      }
+    },
+    onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ['user-profile'] });
       queryClient.invalidateQueries({ queryKey: ['users'] });
     },

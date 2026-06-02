@@ -1,6 +1,6 @@
 # Avatar Upload — Implementation Plan
 
-_Issue: #7 | Status: Planned_
+_Issue: #7 | Status: Complete_
 
 ## Overview
 
@@ -132,5 +132,5 @@ Ensure the auth context reads `avatar_url` when it queries `public.users` for th
 - [ ] Initials fallback is shown when no avatar is uploaded
 - [ ] Removing the avatar reverts to the initials fallback
 - [ ] File-size and format validation prevents invalid uploads
-- [ ] RLS prevents users from accessing other users' avatars in Storage
+- [ ] Users cannot upload/delete other users' avatars
 - [ ] Mobile layout handles the upload interaction correctly

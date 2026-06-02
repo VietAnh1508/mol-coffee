@@ -124,8 +124,7 @@ export function RegistrationCell({
                     name={r.user?.name ?? ''}
                     avatarUrl={r.user?.avatar_url}
                     userId={r.user_id}
-                    size="sm"
-                    className="!h-6 !w-6 !text-[9px]"
+                    size="xs"
                   />
                   {annotated && (
                     <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-white text-indigo-600">

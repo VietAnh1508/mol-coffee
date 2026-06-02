@@ -3,6 +3,7 @@ import { getInitials } from '../utils/nameUtils';
 import { avatarColor } from '../utils/shiftRegistrationUtils';
 
 const SIZE_CLASSES = {
+  xs: 'h-6 w-6 text-[9px]',
   sm: 'h-8 w-8 text-[10px]',
   md: 'h-12 w-12 text-sm',
   lg: 'h-24 w-24 text-xl',
