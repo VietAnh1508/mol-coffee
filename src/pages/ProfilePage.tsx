@@ -1,45 +1,79 @@
-import { Link } from "@tanstack/react-router";
-import { useState } from "react";
+import { Link } from '@tanstack/react-router';
+import { useRef, useState } from 'react';
 import {
+  HiCamera,
   HiCheck,
   HiEnvelope,
   HiLockClosed,
   HiPencil,
   HiPhone,
+  HiTrash,
   HiUser,
   HiXMark,
-} from "react-icons/hi2";
-import { getRoleLabel } from "../constants/userRoles";
-import { useAuth } from "../hooks/useAuth";
-import { useToast } from "../hooks/useToast";
-import { useUpdateUserProfile } from "../hooks/useUserMutations";
-import { isValidVietnamesePhone } from "../utils/phoneValidation";
+} from 'react-icons/hi2';
+import { UserAvatar } from '../components/UserAvatar';
+import { getRoleLabel } from '../constants/userRoles';
+import { useRemoveAvatar, useUploadAvatar } from '../hooks/useAvatarMutation';
+import { useAuth } from '../hooks/useAuth';
+import { useToast } from '../hooks/useToast';
+import { useUpdateUserProfile } from '../hooks/useUserMutations';
+import { isValidVietnamesePhone } from '../utils/phoneValidation';
 
 export function ProfilePage() {
   const { user } = useAuth();
   const { showToast } = useToast();
   const updateProfileMutation = useUpdateUserProfile();
+  const uploadAvatarMutation = useUploadAvatar();
+  const removeAvatarMutation = useRemoveAvatar();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const [isEditing, setIsEditing] = useState(false);
-  const [editedName, setEditedName] = useState(user?.name || "");
-  const [editedPhone, setEditedPhone] = useState(user?.phone || "");
+  const [editedName, setEditedName] = useState(user?.name || '');
+  const [editedPhone, setEditedPhone] = useState(user?.phone || '');
   const [errors, setErrors] = useState<{ name?: string; phone?: string }>({});
 
   if (!user) {
     return null;
   }
 
+  const isAvatarBusy =
+    uploadAvatarMutation.isPending || removeAvatarMutation.isPending;
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      await uploadAvatarMutation.mutateAsync(file);
+      showToast('Cập nhật ảnh đại diện thành công', 'success');
+    } catch (error) {
+      showToast(
+        error instanceof Error ? error.message : 'Có lỗi xảy ra khi tải ảnh',
+        'error',
+      );
+    }
+  };
+
+  const handleRemoveAvatar = async () => {
+    try {
+      await removeAvatarMutation.mutateAsync();
+      showToast('Đã xóa ảnh đại diện', 'success');
+    } catch {
+      showToast('Có lỗi xảy ra khi xóa ảnh', 'error');
+    }
+  };
+
   const validateForm = () => {
     const newErrors: { name?: string; phone?: string } = {};
 
     if (!editedName.trim()) {
-      newErrors.name = "Tên không được để trống";
+      newErrors.name = 'Tên không được để trống';
     }
 
     if (!editedPhone.trim()) {
-      newErrors.phone = "Số điện thoại không được để trống";
+      newErrors.phone = 'Số điện thoại không được để trống';
     } else if (!isValidVietnamesePhone(editedPhone)) {
-      newErrors.phone = "Số điện thoại không hợp lệ";
+      newErrors.phone = 'Số điện thoại không hợp lệ';
     }
 
     setErrors(newErrors);
@@ -59,10 +93,10 @@ export function ProfilePage() {
       });
 
       setIsEditing(false);
-      showToast("Cập nhật thông tin thành công", "success");
+      showToast('Cập nhật thông tin thành công', 'success');
     } catch (error) {
-      console.error("Error updating profile:", error);
-      showToast("Có lỗi xảy ra khi cập nhật thông tin", "error");
+      console.error('Error updating profile:', error);
+      showToast('Có lỗi xảy ra khi cập nhật thông tin', 'error');
     }
   };
 
@@ -106,11 +140,49 @@ export function ProfilePage() {
 
       <div className="overflow-hidden rounded-2xl border border-subtle bg-surface shadow-lg shadow-black/10">
         <div className="p-6 sm:p-8">
-          {/* Avatar placeholder */}
-          <div className="mb-6 flex justify-center">
-            <div className="flex h-24 w-24 items-center justify-center rounded-full bg-surface-muted text-muted">
-              <HiUser className="h-12 w-12" />
+          {/* Avatar */}
+          <div className="mb-6 flex flex-col items-center gap-3">
+            <div className="relative">
+              <UserAvatar
+                name={user.name}
+                avatarUrl={user.avatar_url}
+                userId={user.id}
+                size="lg"
+              />
+              <button
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isAvatarBusy}
+                className="absolute bottom-0 right-0 flex h-8 w-8 items-center justify-center rounded-full bg-blue-600 text-white shadow transition hover:bg-blue-500 disabled:cursor-not-allowed disabled:opacity-60"
+                title="Thay ảnh đại diện"
+              >
+                {uploadAvatarMutation.isPending ? (
+                  <span className="h-4 w-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                ) : (
+                  <HiCamera className="h-4 w-4" />
+                )}
+              </button>
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleFileChange}
+              />
             </div>
+            {user.avatar_url && (
+              <button
+                onClick={handleRemoveAvatar}
+                disabled={isAvatarBusy}
+                className="flex items-center gap-1 text-xs text-red-400 transition hover:text-red-300 disabled:cursor-not-allowed disabled:opacity-60"
+              >
+                {removeAvatarMutation.isPending ? (
+                  <span className="h-3 w-3 animate-spin rounded-full border border-current border-t-transparent" />
+                ) : (
+                  <HiTrash className="h-3 w-3" />
+                )}
+                Xóa ảnh
+              </button>
+            )}
           </div>
 
           {/* Profile fields */}
@@ -129,8 +201,8 @@ export function ProfilePage() {
                     onChange={(e) => setEditedName(e.target.value)}
                     className={`w-full rounded-xl border px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface ${
                       errors.name
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-400"
-                        : "border-subtle focus:border-blue-500 focus:ring-blue-400"
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-400'
+                        : 'border-subtle focus:border-blue-500 focus:ring-blue-400'
                     }`}
                     placeholder="Nhập họ và tên"
                   />
@@ -159,8 +231,8 @@ export function ProfilePage() {
                     onChange={(e) => setEditedPhone(e.target.value)}
                     className={`w-full rounded-xl border px-4 py-3 text-sm text-primary placeholder-subtle shadow-sm transition focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface ${
                       errors.phone
-                        ? "border-red-300 focus:border-red-500 focus:ring-red-400"
-                        : "border-subtle focus:border-blue-500 focus:ring-blue-400"
+                        ? 'border-red-300 focus:border-red-500 focus:ring-red-400'
+                        : 'border-subtle focus:border-blue-500 focus:ring-blue-400'
                     }`}
                     placeholder="0xxxxxxxxx"
                   />
@@ -226,7 +298,7 @@ export function ProfilePage() {
                 className="flex-1 flex items-center justify-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
               >
                 <HiCheck className="h-4 w-4" />
-                {updateProfileMutation.isPending ? "Đang lưu..." : "Lưu"}
+                {updateProfileMutation.isPending ? 'Đang lưu...' : 'Lưu'}
               </button>
             </div>
           )}

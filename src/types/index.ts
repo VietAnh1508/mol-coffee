@@ -9,6 +9,7 @@ export interface User {
   role: UserRole;
   status: 'active' | 'inactive';
   auth_user_id: string;
+  avatar_url?: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -135,7 +136,7 @@ export interface ShiftRegistration {
   note: string | null;
   created_at: string;
   updated_at: string;
-  user?: Pick<User, 'id' | 'name'>;
+  user?: Pick<User, 'id' | 'name' | 'avatar_url'>;
 }
 
 export interface ShiftRegistrationBoard {

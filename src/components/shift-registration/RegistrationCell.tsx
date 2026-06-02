@@ -1,14 +1,13 @@
-import type { ShiftTemplate } from "../../constants/shifts";
-import type { ShiftRegistration, SlotAnnotation } from "../../types";
-import { getInitials } from "../../utils/nameUtils";
+import type { ShiftTemplate } from '../../constants/shifts';
+import type { ShiftRegistration, SlotAnnotation } from '../../types';
 import {
-  avatarColor,
   getHeatLevel,
   hasAnnotation,
   HEAT_STYLES,
   slotKey,
-} from "../../utils/shiftRegistrationUtils";
-import { ClockIcon } from "../ClockIcon";
+} from '../../utils/shiftRegistrationUtils';
+import { ClockIcon } from '../ClockIcon';
+import { UserAvatar } from '../UserAvatar';
 
 function serverAnnotated(r: ShiftRegistration): boolean {
   return !!(r.custom_start_time || r.custom_end_time || r.note);
@@ -56,7 +55,7 @@ export function RegistrationCell({
   }
 
   function handleKeyDown(e: React.KeyboardEvent) {
-    if (e.key === "Enter" || e.key === " ") {
+    if (e.key === 'Enter' || e.key === ' ') {
       e.preventDefault();
       handleClick();
     }
@@ -76,7 +75,7 @@ export function RegistrationCell({
         backgroundColor: styles.backgroundColor,
         borderColor: styles.borderColor,
         color: styles.color,
-        cursor: isInteractive ? "pointer" : "default",
+        cursor: isInteractive ? 'pointer' : 'default',
         opacity: isReadOnly && !onInspect ? 0.8 : 1,
       }}
       className="relative flex min-h-[72px] flex-col items-center justify-center gap-1 rounded-lg border px-2 py-2 transition-opacity focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-1"
@@ -119,13 +118,14 @@ export function RegistrationCell({
                 <span
                   key={r.id}
                   title={r.user?.name}
-                  className="relative flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold leading-none"
-                  style={{
-                    backgroundColor: avatarColor(r.user_id),
-                    color: "#fff",
-                  }}
+                  className="relative flex h-6 w-6 shrink-0"
                 >
-                  {getInitials(r.user?.name ?? "")}
+                  <UserAvatar
+                    name={r.user?.name ?? ''}
+                    avatarUrl={r.user?.avatar_url}
+                    userId={r.user_id}
+                    size="xs"
+                  />
                   {annotated && (
                     <span className="absolute -right-0.5 -top-0.5 flex h-3 w-3 items-center justify-center rounded-full bg-white text-indigo-600">
                       <ClockIcon className="h-2 w-2" />
@@ -136,7 +136,7 @@ export function RegistrationCell({
             })}
             {overflow > 0 && (
               <span
-                style={{ backgroundColor: "#888", color: "#fff" }}
+                style={{ backgroundColor: '#888', color: '#fff' }}
                 className="flex h-6 w-6 items-center justify-center rounded-full text-[9px] font-bold leading-none"
               >
                 +{overflow}
