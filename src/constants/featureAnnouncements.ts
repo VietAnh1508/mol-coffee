@@ -1,5 +1,5 @@
 import type { IconType } from 'react-icons';
-import { FaClipboardList } from 'react-icons/fa';
+import { FaClipboardList, FaUserCircle } from 'react-icons/fa';
 
 export interface FeatureAnnouncement {
   key: string;
@@ -20,5 +20,13 @@ export const FEATURE_ANNOUNCEMENTS: readonly FeatureAnnouncement[] = [
     to: '/shift-registration',
     icon: FaClipboardList,
     iconBg: 'bg-teal-500',
+  },
+  {
+    key: 'avatar-upload-2026',
+    title: 'Ảnh đại diện cá nhân',
+    description: 'Bạn có thể tải lên ảnh đại diện của mình trong trang hồ sơ.',
+    to: '/profile',
+    icon: FaUserCircle,
+    iconBg: 'bg-blue-500',
   },
 ];
