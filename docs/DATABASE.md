@@ -10,6 +10,7 @@
 **Language Support:** Vietnamese interface with localized data
 
 ### Key Design Principles
+
 - **Single-branch MVP** - No multi-location support initially
 - **Role-based data isolation** - Employees see own data, Admins see all
 - **Schedule transparency** - Employees can view all schedules for coordination
@@ -17,7 +18,9 @@
 - **Vietnamese localization** - Default activities and currency in Vietnamese
 
 ### 📚 Feature-Specific Documentation
+
 For detailed feature documentation, see:
+
 - **[Authentication System](features/authentication.md)** - User registration, login, and profile management
 - **[Employee Management](features/employee-management.md)** - Role-based user administration
 - **[Scheduling System](features/scheduling.md)** - Shift management and conflict prevention
@@ -55,6 +58,7 @@ CREATE TYPE allowance_type AS ENUM ('lunch');
 ### Core Tables
 
 #### 1. `users` - Employee & Admin Profiles
+
 ```sql
 CREATE TABLE public.users (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -64,23 +68,34 @@ CREATE TABLE public.users (
     role user_role DEFAULT 'employee' NOT NULL,
     status user_status DEFAULT 'active' NOT NULL,
     auth_user_id UUID REFERENCES auth.users(id) ON DELETE CASCADE,
+    avatar_url TEXT,                                  -- Added in migration 20260602000000; public CDN URL with cache-buster
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL,
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW() NOT NULL
 );
 ```
 
 **Key Features:**
+
 - Email authentication (migrated from phone-based in Sep 2025)
 - Vietnamese phone validation (10 digits, 03/05/07/08/09 prefixes)
 - Progressive profile completion (email+password → name+phone)
 - Placeholder phone system (`+84000000XXX`) until real number provided
 - Role hierarchy: `admin` (full access), `supervisor` (read-only management), `employee` (self-service access)
 
+**Avatar Storage:**
+
+- `avatar_url` stores a public CDN URL pointing to `storage/avatars/{auth_user_id}/avatar` with a `?v=<timestamp>` cache-buster appended on each upload so the browser fetches the new image despite the stable path.
+- The storage path uses `auth_user_id` (not the `users.id` PK) because Supabase Storage RLS evaluates `auth.uid()`, which matches the auth UUID.
+- Removing an avatar sets `avatar_url` to `NULL`; the app falls back to initials display.
+
 **Related Features:**
+
 - **[Authentication System](features/authentication.md)** - User registration and login implementation
 - **[Employee Management](features/employee-management.md)** - Role and status management
+- **[Avatar Upload](avatar-upload-plan.md)** - Avatar upload and display
 
 #### 2. `activities` - Work Activity Types
+
 ```sql
 CREATE TABLE public.activities (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -92,15 +107,18 @@ CREATE TABLE public.activities (
 ```
 
 **Default Vietnamese Activities:**
+
 - `Thử việc` (Trial work) - 20,000 VND/hour
 - `Cà phê` (Coffee service) - 22,000 VND/hour
 - `Bánh mì` (Bread/food service) - 25,000 VND/hour
 - `Quản lý` (Management) - 28,000 VND/hour
 
 **Related Features:**
+
 - **[Settings Management](features/settings.md)** - Activities and rates configuration
 
 #### 3. `rates` - Activity-Based Hourly Rates
+
 ```sql
 CREATE TABLE public.rates (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -115,11 +133,13 @@ CREATE TABLE public.rates (
 ```
 
 **Features:**
+
 - Effective-dated rates for historical accuracy
 - Vietnamese Dong (VND) currency
 - Rate history preservation
 
 #### 4. `schedule_shifts` - Employee Work Schedules
+
 ```sql
 CREATE TABLE public.schedule_shifts (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -137,20 +157,24 @@ CREATE TABLE public.schedule_shifts (
 ```
 
 **Template System:**
+
 - `morning`: 06:00-12:00
 - `afternoon`: 12:00-18:00
 - ~~`custom`~~: Removed in migration 20250911000001
 
 **Business Rules (Database Enforced):**
+
 - Maximum 2 shifts per day per employee
 - No overlapping shifts per employee
 - Activity cannot change mid-shift
 
 **Related Features:**
+
 - **[Scheduling System](features/scheduling.md)** - Shift management and conflict prevention
 - **[Payroll System](features/payroll.md)** - Schedule-based salary calculation
 
 #### 5. `time_entries` - Future Timekeeping System
+
 ```sql
 CREATE TABLE public.time_entries (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -174,6 +198,7 @@ CREATE TABLE public.time_entries (
 **Current Status:** Reserved for Phase 2 - Payroll currently calculated directly from `schedule_shifts`
 
 #### 6. `payroll_periods` - Monthly Payroll Management
+
 ```sql
 CREATE TABLE public.payroll_periods (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -191,14 +216,17 @@ CREATE TABLE public.payroll_periods (
 ```
 
 **Features:**
+
 - Period locking prevents schedule changes after payroll finalization
 - Admin audit trail for period closures
 - Monthly organization (YYYY-MM format)
 
 **Related Features:**
+
 - **[Payroll System](features/payroll.md)** - Period management and salary calculation
 
 #### 7. `recipes` - Drink Recipe Catalog
+
 ```sql
 CREATE TABLE public.recipes (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -211,15 +239,18 @@ CREATE TABLE public.recipes (
 ```
 
 **Purpose:**
+
 - Serves as the read-only catalogue of pha chế (drink-making) recipes
 - Supports localized Vietnamese copy for quicker onboarding of new staff
 - Slug doubles as stable route identifier for the PWA
 
 **Access Model:**
+
 - RLS grants all authenticated users (`admin`, `supervisor`, `employee`) read access
 - Only admins may create, update, or delete recipes
 
 #### 8. `recipe_steps` - Step-by-Step Instructions
+
 ```sql
 CREATE TABLE public.recipe_steps (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -234,14 +265,17 @@ CREATE TABLE public.recipe_steps (
 ```
 
 **Details:**
+
 - Maintains 1-based ordering for display (`step_number`)
 - Cascades deletes when a recipe is removed, keeping data tidy
 - Indexed by `recipe_id` to speed up TanStack Query fetches
 
 **Access Model:**
+
 - Mirror of `recipes` policies: everyone authenticated can read, only admins mutate
 
 #### 7. `allowance_rates` - Effective-Dated Allowances (Per-Day)
+
 ```sql
 CREATE TABLE public.allowance_rates (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -256,15 +290,18 @@ CREATE TABLE public.allowance_rates (
 ```
 
 **Features:**
+
 - Effective-dated per-day allowances (initially lunch allowance)
 - Used in payroll to add bonus on qualifying days (2 shifts/day)
 
 **Access & RLS:**
+
 - RLS enabled
 - Everyone authenticated can `SELECT` for calculation and history
 - Admins can `INSERT/UPDATE/DELETE` via Settings
 
 **Example: Get applicable allowance for a date**
+
 ```sql
 SELECT amount_vnd FROM allowance_rates
 WHERE type = 'lunch' AND effective_from <= $1::date
@@ -274,6 +311,7 @@ LIMIT 1;
 ```
 
 #### 9. `shift_registration_boards` - Weekly Registration Lock State
+
 ```sql
 CREATE TABLE public.shift_registration_boards (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -291,15 +329,18 @@ CREATE TABLE public.shift_registration_boards (
 ```
 
 **Features:**
+
 - One row per week; missing row means unlocked (open by default)
 - Per-week lock state — locking week N does not affect week N+1
 - Admin audit trail (`locked_by`, `locked_at`) mirrors `payroll_periods` pattern
 
 **Access & RLS:**
+
 - All authenticated users can `SELECT`
 - Only `admin` role may `INSERT/UPDATE/DELETE`
 
 #### 10. `shift_registrations` - Employee Shift Preferences
+
 ```sql
 CREATE TABLE public.shift_registrations (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -322,6 +363,7 @@ CREATE TABLE public.shift_registrations (
 ```
 
 **Features:**
+
 - One row per (user, day, shift) slot; unique constraint prevents duplicates
 - `registered_at` drives avatar display order in the registration grid (first-in, leftmost)
 - Resubmit uses `ON CONFLICT DO UPDATE` to persist annotation changes; `registered_at` is excluded so avatar order is preserved
@@ -330,15 +372,18 @@ CREATE TABLE public.shift_registrations (
 - Annotation fields (`custom_start_time`, `custom_end_time`, `note`) are optional per-slot employee notes about partial attendance
 
 **Access & RLS:**
+
 - All authenticated users can `SELECT`
 - Employees can `INSERT/DELETE` their own rows (defense-in-depth; normal path uses the RPC)
 - Supervisors have read-only access
 
 **Related Features:**
+
 - **[Shift Registration](features/shift-registration.md)** — Employee self-service shift preference board
 - **[Shift Registration Annotations](features/shift-registration-annotations.md)** — Per-slot partial-shift annotation (AC8)
 
 #### 8. `payroll_employee_confirmations` - Employee Payroll Sign-off
+
 ```sql
 CREATE TABLE public.payroll_employee_confirmations (
     id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
@@ -353,15 +398,42 @@ CREATE TABLE public.payroll_employee_confirmations (
 ```
 
 **Features:**
+
 - Logs when an employee confirms their payroll for a specific period.
 - Tracks when an admin acknowledges payout completion via `paid_at`.
 - Enforces a single confirmation per employee-period pair with automatic timestamps.
 - Cascades removals alongside payroll periods or user deletion.
 
 **Access & RLS:**
+
 - Employees can read, create, and update only their own confirmation row.
 - Admins and supervisors have read access to all confirmations.
 - Admins may delete confirmations if a payroll adjustment is needed.
+
+---
+
+### Supabase Storage
+
+#### `avatars` bucket
+
+| Property           | Value                                                                 |
+| ------------------ | --------------------------------------------------------------------- |
+| Bucket ID          | `avatars`                                                             |
+| Public             | `true` (CDN reads bypass RLS; no signed URLs needed)                  |
+| File size limit    | 2 MB                                                                  |
+| Allowed MIME types | `image/jpeg`, `image/png`, `image/webp`                               |
+| Object path        | `{auth_user_id}/avatar` (one slot per user, overwritten on re-upload) |
+
+**RLS Policies on `storage.objects`:**
+
+> **Note:** Policies intentionally omit `TO authenticated`. Supabase Storage connects to Postgres as the `supabase_storage_admin` role — not `authenticated` — so `TO authenticated` policies are never matched. Auth is still enforced because `auth.uid()` returns `NULL` for unauthenticated requests, making the path-match condition false.
+
+| Policy                               | Operation | Condition                                                                                                                      |
+| ------------------------------------ | --------- | ------------------------------------------------------------------------------------------------------------------------------ |
+| Users can upload their own avatar    | INSERT    | `bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text`                                                   |
+| Users can update their own avatar    | UPDATE    | Same (both `USING` and `WITH CHECK`)                                                                                           |
+| Users can delete their own avatar    | DELETE    | `bucket_id = 'avatars' AND (storage.foldername(name))[1] = auth.uid()::text`                                                   |
+| Authenticated users can view avatars | SELECT    | `bucket_id = 'avatars'` (broad read needed for upsert's internal conflict check and for colleagues' avatars in calendar views) |
 
 ---
 
@@ -372,6 +444,7 @@ All tables have RLS enabled with role-based policies:
 ### User Access Patterns
 
 #### **Employees Can:**
+
 - ✅ View their own profile (full access)
 - ✅ View all colleagues' basic info (name, email, phone) - for coordination
 - ✅ View all schedule shifts (read-only) - for schedule visibility
@@ -381,12 +454,14 @@ All tables have RLS enabled with role-based policies:
 - ❌ Modify any shifts or admin data
 
 #### **Admins Can:**
+
 - ✅ Full CRUD access to all data
 - ✅ Manage users, activities, rates, shifts, payroll periods
 - ✅ View all employee data including roles and status
 - ❌ Demote themselves or delete their own account (Business Rule #7)
 
 #### **Supervisors Can:**
+
 - ✅ View all management data (employees, schedules, payroll, settings)
 - ✅ Audit payroll periods and schedule history in read-only mode
 - ❌ Perform INSERT/UPDATE/DELETE operations on protected tables
@@ -435,6 +510,7 @@ CREATE POLICY "Admins can manage payroll confirmations" ON public.payroll_employ
 ### Database-Enforced Rules
 
 #### 1. Shift Overlap Prevention
+
 ```sql
 CREATE OR REPLACE FUNCTION check_shift_overlap()
 RETURNS TRIGGER AS $$
@@ -444,6 +520,7 @@ RETURNS TRIGGER AS $$
 ```
 
 #### 2. Admin Self-Management Prevention
+
 ```sql
 CREATE OR REPLACE FUNCTION prevent_role_self_change()
 RETURNS TRIGGER AS $$
@@ -452,6 +529,7 @@ RETURNS TRIGGER AS $$
 ```
 
 #### 3. Auto Profile Creation
+
 ```sql
 CREATE OR REPLACE FUNCTION public.handle_new_user()
 RETURNS TRIGGER AS $$
@@ -465,6 +543,7 @@ RETURNS TRIGGER AS $$
 ## 📈 PERFORMANCE OPTIMIZATION
 
 ### Database Indexes
+
 ```sql
 -- User lookups
 CREATE INDEX idx_users_auth_user_id ON public.users(auth_user_id);
@@ -487,6 +566,7 @@ CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(us
 ```
 
 ### Query Patterns
+
 - **TanStack Query** for client-side caching (5-minute staleTime)
 - **Optimistic updates** for immediate UI feedback
 - **Background sync** for real-time data consistency
@@ -498,26 +578,28 @@ CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(us
 
 ### Key Migrations Timeline
 
-| Date | Migration | Purpose |
-|------|-----------|---------|
-| 2025-08-30 | `20250830000001_initial_schema` | Core tables and enums |
-| 2025-08-30 | `20250830000002_rls_policies` | Row Level Security setup |
-| 2025-08-30 | `20250830000003_seed_data` | Vietnamese activities and rates |
-| 2025-08-30 | `20250830000004_admin_functions` | Admin user management functions |
-| 2025-09-09 | `20250909034138_change_phone_to_email_auth` | **Migration to email authentication** |
-| 2025-09-09 | `20250909063909_update_handle_new_user_trigger_with_phone` | Placeholder phone system |
-| 2025-09-11 | `20250911000001_remove_custom_shift_template` | Simplified shift templates |
-| 2025-09-11 | `20250911164958_allow_employees_view_all_shifts` | **Employee schedule visibility** |
-| 2025-09-11 | `20250911175745_allow_employees_view_colleagues_info` | Employee coordination access |
-| 2025-09-19 | `20250919123000_allowance_rates` | Lunch allowance system |
-| 2025-10-02 | `20251002140953_payroll_period_lock_enforcement` | Prevent edits to locked periods |
-| 2025-10-21 | `20251021090000_update_shift_limit_timezone` | Asia/Ho_Chi_Minh day boundary fix |
-| 2025-11-08 | `20251108090000_add_supervisor_role` | Added `supervisor` enum value |
-| 2025-11-08 | `20251108090100_update_supervisor_policies` | Updated role safeguards and read policies |
-| 2026-05-20 | `20260520000000_shift_registration` | **Shift registration board — employee self-service preferences** |
-| 2026-05-21 | `20260521000000_shift_registration_annotations` | **Partial-shift annotations** — `custom_start_time`, `custom_end_time`, `note` columns; updated RPC; extended lock trigger |
+| Date       | Migration                                                  | Purpose                                                                                                                    |
+| ---------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
+| 2025-08-30 | `20250830000001_initial_schema`                            | Core tables and enums                                                                                                      |
+| 2025-08-30 | `20250830000002_rls_policies`                              | Row Level Security setup                                                                                                   |
+| 2025-08-30 | `20250830000003_seed_data`                                 | Vietnamese activities and rates                                                                                            |
+| 2025-08-30 | `20250830000004_admin_functions`                           | Admin user management functions                                                                                            |
+| 2025-09-09 | `20250909034138_change_phone_to_email_auth`                | **Migration to email authentication**                                                                                      |
+| 2025-09-09 | `20250909063909_update_handle_new_user_trigger_with_phone` | Placeholder phone system                                                                                                   |
+| 2025-09-11 | `20250911000001_remove_custom_shift_template`              | Simplified shift templates                                                                                                 |
+| 2025-09-11 | `20250911164958_allow_employees_view_all_shifts`           | **Employee schedule visibility**                                                                                           |
+| 2025-09-11 | `20250911175745_allow_employees_view_colleagues_info`      | Employee coordination access                                                                                               |
+| 2025-09-19 | `20250919123000_allowance_rates`                           | Lunch allowance system                                                                                                     |
+| 2025-10-02 | `20251002140953_payroll_period_lock_enforcement`           | Prevent edits to locked periods                                                                                            |
+| 2025-10-21 | `20251021090000_update_shift_limit_timezone`               | Asia/Ho_Chi_Minh day boundary fix                                                                                          |
+| 2025-11-08 | `20251108090000_add_supervisor_role`                       | Added `supervisor` enum value                                                                                              |
+| 2025-11-08 | `20251108090100_update_supervisor_policies`                | Updated role safeguards and read policies                                                                                  |
+| 2026-05-20 | `20260520000000_shift_registration`                        | **Shift registration board — employee self-service preferences**                                                           |
+| 2026-05-21 | `20260521000000_shift_registration_annotations`            | **Partial-shift annotations** — `custom_start_time`, `custom_end_time`, `note` columns; updated RPC; extended lock trigger |
+| 2026-06-02 | `20260602000000_add_avatar_url`                            | **Avatar upload** — `avatar_url TEXT` column on `users`; `avatars` Storage bucket with write-scoped RLS policies           |
 
 ### Major Schema Changes
+
 1. **Authentication Migration (Sep 9, 2025):** Moved from phone-based synthetic emails to direct email authentication with progressive profile completion
 2. **Schedule Visibility Enhancement (Sep 11, 2025):** Enabled employees to view all colleagues' schedules while maintaining admin-only modification rights
 3. **Shift Template Simplification (Sep 11, 2025):** Removed custom shift support, standardized to morning/afternoon only
@@ -527,32 +609,35 @@ CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(us
 ## 👨‍💻 DEVELOPMENT REFERENCE
 
 ### TypeScript Types
+
 Located in `src/types/index.ts`:
 
 ```typescript
 interface User {
-  id: string
-  email: string      // Added in migration 20250909034138
-  phone: string      // Vietnamese mobile format
-  name: string
-  role: 'admin' | 'employee'
-  status: 'active' | 'inactive'
-  auth_user_id: string
+  id: string;
+  email: string; // Added in migration 20250909034138
+  phone: string; // Vietnamese mobile format
+  name: string;
+  role: 'admin' | 'employee';
+  status: 'active' | 'inactive';
+  auth_user_id: string;
+  avatar_url?: string | null; // Added in migration 20260602000000
 }
 
 interface ScheduleShift {
-  id: string
-  user_id: string
-  activity_id: string
-  start_ts: string
-  end_ts: string
-  template_name: 'morning' | 'afternoon'  // 'custom' removed
-  is_manual: boolean
-  note?: string
+  id: string;
+  user_id: string;
+  activity_id: string;
+  start_ts: string;
+  end_ts: string;
+  template_name: 'morning' | 'afternoon'; // 'custom' removed
+  is_manual: boolean;
+  note?: string;
 }
 ```
 
 ### Admin Functions
+
 ```sql
 -- Create admin user with email
 SELECT create_admin_user('admin@example.com', 'password', 'Admin Name');
@@ -562,6 +647,7 @@ SELECT promote_user_to_admin('user@example.com');
 ```
 
 ### Common Queries
+
 ```sql
 -- Get employee schedule for a date
 SELECT ss.*, u.name, a.name as activity_name
@@ -588,24 +674,27 @@ WHERE u.id = ? AND DATE_TRUNC('month', ss.start_ts) = '2025-09-01'
 ## 🌍 VIETNAMESE LOCALIZATION
 
 ### Data Localization
+
 - **Activities:** Vietnamese names (Thử việc, Cà phê, Bánh mì, Quản lý)
 - **Currency:** Vietnamese Dong (VND) with proper formatting
 - **Phone Format:** Vietnamese mobile (+84, 10 digits, specific prefixes)
 - **Interface:** Vietnamese labels and error messages
 
 ### Phone Number Validation
+
 ```typescript
 // Vietnamese mobile pattern: 10 digits starting with 03, 05, 07, 08, 09
 const VIETNAMESE_PHONE_PATTERN = /^(03|05|07|08|09)\d{8}$/;
 ```
 
 ### Currency Display
+
 ```typescript
 // Format: 25.000 ₫ (Vietnamese Dong formatting)
 const formatMoney = (amount: number) =>
   new Intl.NumberFormat('vi-VN', {
     style: 'currency',
-    currency: 'VND'
+    currency: 'VND',
   }).format(amount);
 ```
 
@@ -613,11 +702,12 @@ const formatMoney = (amount: number) =>
 
 ## 🔄 CURRENT STATUS
 
-**Phase:** Phase 1 MVP Complete (~99%)
-**Last Updated:** May 21, 2026
+**Phase:** Phase 1 MVP Complete (~100%)
+**Last Updated:** June 2, 2026
 
 ### ✅ Completed Database Features
-- Complete schema with 10 core tables
+
+- Complete schema with 10 core tables + `avatars` Storage bucket
 - Row Level Security with employee schedule visibility
 - Business rules enforcement via triggers
 - Vietnamese data localization
@@ -625,8 +715,10 @@ const formatMoney = (amount: number) =>
 - Payroll period management with locking
 - Admin functions for user management
 - Shift registration board with per-week lock enforcement and atomic submit RPC
+- User avatar upload with per-user Storage RLS
 
 ### 🚧 Future Database Enhancements (Phase 2+)
+
 - Advanced time entries system (separate from schedules)
 - Real-time subscriptions for live updates
 - Multi-branch support (additional tables)
@@ -637,6 +729,7 @@ const formatMoney = (amount: number) =>
 ---
 
 **For more information:**
+
 - Technical setup: `docs/ARCHITECTURE.md`
 - Development progress: `docs/PROGRESS.md`
 - Feature documentation: `docs/features/` directory
