@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { FaClock, FaTimes } from "react-icons/fa";
-import { useActivities } from "../../hooks/useActivities";
-import { useScheduleMutations } from "../../hooks/useScheduleMutations";
-import { useToast } from "../../hooks/useToast";
-import type { ScheduleShift } from "../../types";
-import { formatDate, formatTime } from "../../utils/dateUtils";
+import { useEffect, useState } from 'react';
+import { FaClock, FaTimes } from 'react-icons/fa';
+import { useActivities } from '../../hooks/useActivities';
+import { useScheduleMutations } from '../../hooks/useScheduleMutations';
+import { useToast } from '../../hooks/useToast';
+import type { ScheduleShift } from '../../types';
+import { formatDate, formatTime } from '../../utils/dateUtils';
 
 interface ShiftEditModalProps {
   isOpen: boolean;
@@ -19,10 +19,10 @@ export function ShiftEditModal({
   shift,
   isLocked = false,
 }: ShiftEditModalProps) {
-  const [startTime, setStartTime] = useState("");
-  const [endTime, setEndTime] = useState("");
-  const [note, setNote] = useState("");
-  const [selectedActivityId, setSelectedActivityId] = useState("");
+  const [startTime, setStartTime] = useState('');
+  const [endTime, setEndTime] = useState('');
+  const [note, setNote] = useState('');
+  const [selectedActivityId, setSelectedActivityId] = useState('');
 
   const { updateShift } = useScheduleMutations();
   const { showToast } = useToast();
@@ -33,7 +33,7 @@ export function ShiftEditModal({
     if (shift) {
       setStartTime(formatTime(shift.start_ts));
       setEndTime(formatTime(shift.end_ts));
-      setNote(shift.note || "");
+      setNote(shift.note || '');
       setSelectedActivityId(shift.activity_id);
     }
   }, [shift]);
@@ -51,11 +51,11 @@ export function ShiftEditModal({
     if (!shift || !startTime || !endTime || !selectedActivityId) return;
 
     // Basic validation: end time must be after start time
-    const [startHours, startMinutes] = startTime.split(":").map(Number);
-    const [endHours, endMinutes] = endTime.split(":").map(Number);
+    const [startHours, startMinutes] = startTime.split(':').map(Number);
+    const [endHours, endMinutes] = endTime.split(':').map(Number);
 
     if (startHours * 60 + startMinutes >= endHours * 60 + endMinutes) {
-      showToast("Giờ kết thúc phải sau giờ bắt đầu", "error");
+      showToast('Giờ kết thúc phải sau giờ bắt đầu', 'error');
       return;
     }
 
@@ -78,11 +78,11 @@ export function ShiftEditModal({
         note: note.trim() || null,
       });
 
-      showToast("Cập nhật ca làm việc thành công", "success");
+      showToast('Cập nhật ca làm việc thành công', 'success');
       onClose();
     } catch (error) {
-      showToast("Có lỗi xảy ra khi cập nhật ca làm việc", "error");
-      console.error("Failed to update shift:", error);
+      showToast('Có lỗi xảy ra khi cập nhật ca làm việc', 'error');
+      console.error('Failed to update shift:', error);
     }
   };
 
@@ -92,11 +92,11 @@ export function ShiftEditModal({
     startTime &&
     endTime &&
     startTime
-      .split(":")
+      .split(':')
       .map(Number)
       .reduce((a, b) => a * 60 + b) >=
       endTime
-        .split(":")
+        .split(':')
         .map(Number)
         .reduce((a, b) => a * 60 + b);
 
@@ -136,7 +136,7 @@ export function ShiftEditModal({
           </div>
 
           {/* Time Inputs */}
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+          <div className="grid grid-cols-2 gap-2">
             <div>
               <label className="mb-2 block text-sm font-medium text-subtle">
                 <FaClock className="mr-1 inline" />
@@ -227,7 +227,7 @@ export function ShiftEditModal({
               }
               className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {updateShift.isPending ? "Đang cập nhật..." : "Cập nhật"}
+              {updateShift.isPending ? 'Đang cập nhật...' : 'Cập nhật'}
             </button>
           </div>
         </form>

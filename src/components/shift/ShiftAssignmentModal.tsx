@@ -1,10 +1,10 @@
-import { useEffect, useState } from "react";
-import { FaCheck, FaTimes, FaUser } from "react-icons/fa";
-import { SHIFT_TEMPLATES, type ShiftTemplate } from "../../constants/shifts";
-import { useActivities } from "../../hooks/useActivities";
-import { useScheduleMutations } from "../../hooks/useScheduleMutations";
-import { useScheduleShifts } from "../../hooks/useScheduleShifts";
-import { useActiveUsers } from "../../hooks/useUsers";
+import { useEffect, useState } from 'react';
+import { FaCheck, FaTimes, FaUser } from 'react-icons/fa';
+import { SHIFT_TEMPLATES, type ShiftTemplate } from '../../constants/shifts';
+import { useActivities } from '../../hooks/useActivities';
+import { useScheduleMutations } from '../../hooks/useScheduleMutations';
+import { useScheduleShifts } from '../../hooks/useScheduleShifts';
+import { useActiveUsers } from '../../hooks/useUsers';
 
 interface ShiftAssignmentModalProps {
   isOpen: boolean;
@@ -21,8 +21,8 @@ export function ShiftAssignmentModal({
   selectedDate,
   isLocked = false,
 }: ShiftAssignmentModalProps) {
-  const [selectedUserId, setSelectedUserId] = useState<string>("");
-  const [selectedActivityId, setSelectedActivityId] = useState<string>("");
+  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedActivityId, setSelectedActivityId] = useState<string>('');
 
   const { data: activeUsers = [] } = useActiveUsers();
   const { data: activities = [] } = useActivities();
@@ -50,7 +50,7 @@ export function ShiftAssignmentModal({
 
   const getShiftDateTime = (time: string) => {
     const date = new Date(selectedDate);
-    const [hours, minutes] = time.split(":").map(Number);
+    const [hours, minutes] = time.split(':').map(Number);
     date.setHours(hours, minutes, 0, 0);
     return date.toISOString();
   };
@@ -77,17 +77,17 @@ export function ShiftAssignmentModal({
       });
 
       onClose();
-      setSelectedUserId("");
-      setSelectedActivityId("");
+      setSelectedUserId('');
+      setSelectedActivityId('');
     } catch (error) {
-      console.error("Failed to create shift:", error);
+      console.error('Failed to create shift:', error);
     }
   };
 
   const handleClose = () => {
     onClose();
-    setSelectedUserId("");
-    setSelectedActivityId("");
+    setSelectedUserId('');
+    setSelectedActivityId('');
   };
 
   if (!isOpen) return null;
@@ -123,8 +123,8 @@ export function ShiftAssignmentModal({
               {shiftInfo.label}
             </h4>
             <p className="text-sm text-subtle">
-              {shiftInfo.start} - {shiftInfo.end} •{" "}
-              {selectedDate.toLocaleDateString("vi-VN")}
+              {shiftInfo.start} - {shiftInfo.end} •{' '}
+              {selectedDate.toLocaleDateString('vi-VN')}
             </p>
           </div>
 
@@ -133,14 +133,14 @@ export function ShiftAssignmentModal({
             <label className="mb-2 block text-sm font-medium text-subtle">
               Chọn người
             </label>
-            <div className="max-h-40 space-y-2 overflow-y-auto">
+            <div className="max-h-64 space-y-2 overflow-y-auto">
               {assignableUsers.map((user) => (
                 <label
                   key={user.id}
                   className={`flex cursor-pointer items-center rounded-xl border px-3 py-2 transition ${
                     selectedUserId === user.id
-                      ? "border-blue-400 bg-blue-500/10"
-                      : "border-subtle hover:bg-surface-muted"
+                      ? 'border-blue-400 bg-blue-500/10'
+                      : 'border-subtle hover:bg-surface-muted'
                   }`}
                 >
                   <input
@@ -170,8 +170,8 @@ export function ShiftAssignmentModal({
               {assignableUsers.length === 0 && (
                 <div className="py-8 text-center text-sm text-subtle">
                   {assignedUserIds.length > 0
-                    ? "Tất cả nhân sự đủ điều kiện đã được phân công vào ca này"
-                    : "Không có nhân sự nào khả dụng"}
+                    ? 'Tất cả nhân sự đủ điều kiện đã được phân công vào ca này'
+                    : 'Không có nhân sự nào khả dụng'}
                 </div>
               )}
             </div>
@@ -216,7 +216,7 @@ export function ShiftAssignmentModal({
               }
               className="flex-1 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface disabled:cursor-not-allowed disabled:opacity-60"
             >
-              {createShift.isPending ? "Đang thêm..." : "Thêm vào ca"}
+              {createShift.isPending ? 'Đang thêm...' : 'Thêm vào ca'}
             </button>
           </div>
         </form>
