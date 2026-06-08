@@ -1,15 +1,15 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "../lib/supabase";
-import { useAuth } from "./useAuth";
-import { isAdmin, isEmployee } from "../constants/userRoles";
-import type { ShiftTemplate } from "../constants/shifts";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '../lib/supabase';
+import { useAuth } from './useAuth';
+import { isAdmin, isEmployee } from '../constants/userRoles';
+import type { ShiftTemplate } from '../constants/shifts';
 
 interface SubmitSlot {
-  day_date:          string;
-  shift_template:    ShiftTemplate;
+  day_date: string;
+  shift_template: ShiftTemplate;
   custom_start_time: string | null;
-  custom_end_time:   string | null;
-  note:              string | null;
+  custom_end_time: string | null;
+  note: string | null;
 }
 
 interface SubmitParams {
@@ -30,10 +30,10 @@ export function useShiftRegistrationMutations() {
   const submit = useMutation({
     mutationFn: async ({ weekStart, userId, slots }: SubmitParams) => {
       if (!isEmployee(user?.role)) {
-        throw new Error("Chỉ nhân viên mới có thể đăng ký ca.");
+        throw new Error('Chỉ nhân viên mới có thể đăng ký ca.');
       }
 
-      const { error } = await supabase.rpc("submit_shift_registrations", {
+      const { error } = await supabase.rpc('submit_shift_registrations', {
         p_week_start: weekStart,
         p_user_id: userId,
         p_slots: slots,
@@ -44,14 +44,16 @@ export function useShiftRegistrationMutations() {
       }
     },
     onSuccess: (_data, { weekStart }) => {
-      queryClient.invalidateQueries({ queryKey: ["shift-registrations", weekStart] });
+      queryClient.invalidateQueries({
+        queryKey: ['shift-registrations', weekStart],
+      });
     },
   });
 
   const toggleLock = useMutation({
     mutationFn: async ({ weekStart, currentlyLocked }: ToggleLockParams) => {
       if (!isAdmin(user?.role)) {
-        throw new Error("Chỉ admin mới có thể khoá/mở bảng đăng ký.");
+        throw new Error('Chỉ admin mới có thể khoá/mở bảng đăng ký.');
       }
 
       const now = new Date().toISOString();
@@ -61,21 +63,57 @@ export function useShiftRegistrationMutations() {
         locked_by: string | null;
         locked_at: string | null;
       } = currentlyLocked
-        ? { week_start_date: weekStart, is_locked: false, locked_by: null, locked_at: null }
-        : { week_start_date: weekStart, is_locked: true, locked_by: user!.id, locked_at: now };
+        ? {
+            week_start_date: weekStart,
+            is_locked: false,
+            locked_by: null,
+            locked_at: null,
+          }
+        : {
+            week_start_date: weekStart,
+            is_locked: true,
+            locked_by: user!.id,
+            locked_at: now,
+          };
 
       const { error } = await supabase
-        .from("shift_registration_boards")
-        .upsert(payload, { onConflict: "week_start_date" });
+        .from('shift_registration_boards')
+        .upsert(payload, { onConflict: 'week_start_date' });
 
       if (error) {
         throw new Error(error.message);
       }
     },
     onSuccess: (_data, { weekStart }) => {
-      queryClient.invalidateQueries({ queryKey: ["shift-registration-board", weekStart] });
+      queryClient.invalidateQueries({
+        queryKey: ['shift-registration-board', weekStart],
+      });
     },
   });
 
-  return { submit, toggleLock };
+  const deleteBoard = useMutation({
+    mutationFn: async ({ weekStart }: { weekStart: string }) => {
+      if (!isAdmin(user?.role)) {
+        throw new Error('Chỉ admin mới có thể xoá bảng đăng ký ca.');
+      }
+
+      const { error } = await supabase.rpc('delete_shift_registration_board', {
+        p_week_start: weekStart,
+      });
+
+      if (error) {
+        throw new Error(error.message);
+      }
+    },
+    onSuccess: (_data, { weekStart }) => {
+      queryClient.invalidateQueries({
+        queryKey: ['shift-registrations', weekStart],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ['shift-registration-board', weekStart],
+      });
+    },
+  });
+
+  return { submit, toggleLock, deleteBoard };
 }

@@ -1,30 +1,30 @@
-import { VN_TIMEZONE_OFFSET_MINUTES } from "../constants/payroll";
+import { VN_TIMEZONE_OFFSET_MINUTES } from '../constants/payroll';
 
 export const formatDate = (date: Date) => {
-  return date.toLocaleDateString("vi-VN", {
-    weekday: "long",
-    year: "numeric",
-    month: "long",
-    day: "numeric",
+  return date.toLocaleDateString('vi-VN', {
+    weekday: 'long',
+    year: 'numeric',
+    month: 'long',
+    day: 'numeric',
   });
 };
 
 export const formatDateDMY = (date: Date): string => {
-  const dd = String(date.getDate()).padStart(2, "0");
-  const mm = String(date.getMonth() + 1).padStart(2, "0");
+  const dd = String(date.getDate()).padStart(2, '0');
+  const mm = String(date.getMonth() + 1).padStart(2, '0');
   const yyyy = date.getFullYear();
   return `${dd}/${mm}/${yyyy}`;
 };
 
 export const formatDateWeekdayDMY = (date: Date): string => {
-  const weekday = date.toLocaleDateString("vi-VN", { weekday: "long" });
+  const weekday = date.toLocaleDateString('vi-VN', { weekday: 'long' });
   return `${weekday}, ${formatDateDMY(date)}`;
 };
 
 export const formatTime = (dateString: string) => {
-  return new Date(dateString).toLocaleTimeString("vi-VN", {
-    hour: "2-digit",
-    minute: "2-digit",
+  return new Date(dateString).toLocaleTimeString('vi-VN', {
+    hour: '2-digit',
+    minute: '2-digit',
     hour12: false,
   });
 };
@@ -34,23 +34,23 @@ export const formatHours = (hours: number): string => {
 };
 
 export const formatDateTime = (dateInput: Date | string): string => {
-  const date = typeof dateInput === "string" ? new Date(dateInput) : dateInput;
+  const date = typeof dateInput === 'string' ? new Date(dateInput) : dateInput;
   if (!date || Number.isNaN(date.getTime())) {
-    return "";
+    return '';
   }
 
-  return date.toLocaleString("vi-VN", {
+  return date.toLocaleString('vi-VN', {
     hour12: false,
-    day: "2-digit",
-    month: "2-digit",
-    year: "numeric",
-    hour: "2-digit",
-    minute: "2-digit",
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   });
 };
 
 export const createMonthDateRange = (yearMonth: string) => {
-  const parts = yearMonth.split("-").map((part) => part.trim());
+  const parts = yearMonth.split('-').map((part) => part.trim());
   if (parts.length !== 2) {
     throw new Error(`Invalid yearMonth value: ${yearMonth}`);
   }
@@ -92,8 +92,8 @@ export const createMonthDateRange = (yearMonth: string) => {
  * Cross-year:         "30/12/2025 - 05/01/2026"
  */
 export const formatWeekRangeCompact = (start: Date, end: Date): string => {
-  const dd = (d: Date) => String(d.getDate()).padStart(2, "0");
-  const mm = (d: Date) => String(d.getMonth() + 1).padStart(2, "0");
+  const dd = (d: Date) => String(d.getDate()).padStart(2, '0');
+  const mm = (d: Date) => String(d.getMonth() + 1).padStart(2, '0');
   const endStr = `${dd(end)}/${mm(end)}/${end.getFullYear()}`;
   if (start.getFullYear() !== end.getFullYear()) {
     return `${dd(start)}/${mm(start)}/${start.getFullYear()} - ${endStr}`;
@@ -107,11 +107,17 @@ export const formatWeekRangeCompact = (start: Date, end: Date): string => {
 export const formatDateLocal = (date: Date): string => {
   return (
     date.getFullYear() +
-    "-" +
-    String(date.getMonth() + 1).padStart(2, "0") +
-    "-" +
-    String(date.getDate()).padStart(2, "0")
+    '-' +
+    String(date.getMonth() + 1).padStart(2, '0') +
+    '-' +
+    String(date.getDate()).padStart(2, '0')
   );
+};
+
+export const addWeeks = (weekStart: string, n: number): string => {
+  const d = new Date(weekStart + 'T00:00:00');
+  d.setDate(d.getDate() + 7 * n);
+  return formatDateLocal(d);
 };
 
 export const getNextWeekMondayVN = (): string => {
@@ -122,7 +128,7 @@ export const getNextWeekMondayVN = (): string => {
   const nextMonday = new Date(vnNowMs);
   nextMonday.setUTCDate(nextMonday.getUTCDate() + diffToThisMonday + 7);
   const yyyy = nextMonday.getUTCFullYear();
-  const mm = String(nextMonday.getUTCMonth() + 1).padStart(2, "0");
-  const dd = String(nextMonday.getUTCDate()).padStart(2, "0");
+  const mm = String(nextMonday.getUTCMonth() + 1).padStart(2, '0');
+  const dd = String(nextMonday.getUTCDate()).padStart(2, '0');
   return `${yyyy}-${mm}-${dd}`;
 };
