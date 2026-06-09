@@ -2,20 +2,9 @@
 
 > **Purpose:** Comprehensive database schema documentation for the MoL Coffee scheduling and payroll system. This document serves as the single source of truth for understanding the database structure, eliminating the need to read multiple migration files and documentation.
 
-## 🏗️ ARCHITECTURE OVERVIEW
+## 🏗️ OVERVIEW
 
-**Database System:** PostgreSQL via Supabase
-**Authentication:** Email-based with progressive profile completion
-**Security Model:** Row Level Security (RLS) with role-based access control
-**Language Support:** Vietnamese interface with localized data
-
-### Key Design Principles
-
-- **Single-branch MVP** - No multi-location support initially
-- **Role-based data isolation** - Employees see own data, Admins see all
-- **Schedule transparency** - Employees can view all schedules for coordination
-- **Business rules enforcement** - Database-level constraints and triggers
-- **Vietnamese localization** - Default activities and currency in Vietnamese
+> Employees can view **all** colleagues' schedules (not just their own) — this is intentional for coordination.
 
 ### 📚 Feature-Specific Documentation
 
@@ -132,12 +121,6 @@ CREATE TABLE public.rates (
 );
 ```
 
-**Features:**
-
-- Effective-dated rates for historical accuracy
-- Vietnamese Dong (VND) currency
-- Rate history preservation
-
 #### 4. `schedule_shifts` - Employee Work Schedules
 
 ```sql
@@ -215,11 +198,7 @@ CREATE TABLE public.payroll_periods (
 );
 ```
 
-**Features:**
-
-- Period locking prevents schedule changes after payroll finalization
-- Admin audit trail for period closures
-- Monthly organization (YYYY-MM format)
+**Note:** Locking a period prevents any further schedule changes for that month.
 
 **Related Features:**
 
@@ -263,12 +242,6 @@ CREATE TABLE public.recipe_steps (
     CONSTRAINT recipe_steps_unique_step UNIQUE (recipe_id, step_number)
 );
 ```
-
-**Details:**
-
-- Maintains 1-based ordering for display (`step_number`)
-- Cascades deletes when a recipe is removed, keeping data tidy
-- Indexed by `recipe_id` to speed up TanStack Query fetches
 
 **Access Model:**
 
@@ -328,11 +301,7 @@ CREATE TABLE public.shift_registration_boards (
 );
 ```
 
-**Features:**
-
-- One row per week; missing row means unlocked (open by default)
-- Per-week lock state — locking week N does not affect week N+1
-- Admin audit trail (`locked_by`, `locked_at`) mirrors `payroll_periods` pattern
+**Note:** A missing row means the week is unlocked — no row needs to be created until an admin explicitly locks it.
 
 **Access & RLS:**
 
@@ -397,12 +366,7 @@ CREATE TABLE public.payroll_employee_confirmations (
 );
 ```
 
-**Features:**
-
-- Logs when an employee confirms their payroll for a specific period.
-- Tracks when an admin acknowledges payout completion via `paid_at`.
-- Enforces a single confirmation per employee-period pair with automatic timestamps.
-- Cascades removals alongside payroll periods or user deletion.
+**Note:** `paid_at` is set by an admin to acknowledge cash payout — it is distinct from the employee's own `confirmed_at`.
 
 **Access & RLS:**
 
@@ -467,41 +431,8 @@ All tables have RLS enabled with role-based policies:
 - ❌ Perform INSERT/UPDATE/DELETE operations on protected tables
 - ❌ Promote/demote users or adjust statuses (UI + RLS guarded)
 
-### Key RLS Policies
-
-```sql
--- Employee schedule coordination (Migration 20250911164958)
-CREATE POLICY "Employees can view all shifts" ON public.schedule_shifts
-    FOR SELECT USING (true);
-
--- Employee colleague information (Migration 20250911175745)
-CREATE POLICY "Employees can view colleagues basic info" ON public.users
-    FOR SELECT USING (auth.uid() IS NOT NULL);
-
--- Admin & supervisor data visibility
-CREATE POLICY "Admins can view all users" ON public.users
-    FOR SELECT USING (get_user_role(auth.uid()) IN ('admin', 'supervisor'));
-
--- Payroll confirmation visibility and ownership
-CREATE POLICY "Employees can view their payroll confirmations" ON public.payroll_employee_confirmations
-    FOR SELECT USING (user_id = get_user_by_auth_id(auth.uid()));
-
-CREATE POLICY "Employees can upsert their payroll confirmations" ON public.payroll_employee_confirmations
-    FOR INSERT WITH CHECK (user_id = get_user_by_auth_id(auth.uid()));
-
-CREATE POLICY "Employees can maintain their payroll confirmations" ON public.payroll_employee_confirmations
-    FOR UPDATE USING (user_id = get_user_by_auth_id(auth.uid()))
-    WITH CHECK (user_id = get_user_by_auth_id(auth.uid()));
-
-CREATE POLICY "Management can view all payroll confirmations" ON public.payroll_employee_confirmations
-    FOR SELECT USING (get_user_role(auth.uid()) IN ('admin', 'supervisor'));
-
-CREATE POLICY "Admins can manage payroll confirmations" ON public.payroll_employee_confirmations
-    FOR ALL USING (get_user_role(auth.uid()) = 'admin');
-```
-
-- `enforce_payroll_paid_at_rules` trigger ensures only admins can set or clear `paid_at`, prevents marking payment before confirmation, and maintains an immutable payment timestamp unless explicitly cleared.
-- `upsert_payroll_employee_confirmation(payroll_period_id, user_id, confirmed_at, paid_at)` helper allows backfills to set both confirmation and payment timestamps atomically (admin/service usage only).
+- `enforce_payroll_paid_at_rules` trigger: only admins can set or clear `paid_at`; payment cannot be marked before confirmation; timestamp is immutable once set unless explicitly cleared.
+- `upsert_payroll_employee_confirmation(payroll_period_id, user_id, confirmed_at, paid_at)` RPC: sets both confirmation and payment timestamps atomically (admin/service use only).
 
 ---
 
@@ -509,132 +440,13 @@ CREATE POLICY "Admins can manage payroll confirmations" ON public.payroll_employ
 
 ### Database-Enforced Rules
 
-#### 1. Shift Overlap Prevention
-
-```sql
-CREATE OR REPLACE FUNCTION check_shift_overlap()
-RETURNS TRIGGER AS $$
--- Prevents overlapping shifts for same user
--- Enforces maximum 2 shifts per day per employee
--- Evaluates Asia/Ho_Chi_Minh local day to respect Vietnam schedule boundaries (Migration 20251021090000)
-```
-
-#### 2. Admin Self-Management Prevention
-
-```sql
-CREATE OR REPLACE FUNCTION prevent_role_self_change()
-RETURNS TRIGGER AS $$
--- Prevents users from changing their own role
--- Last admin protection (Business Rule #7)
-```
-
-#### 3. Auto Profile Creation
-
-```sql
-CREATE OR REPLACE FUNCTION public.handle_new_user()
-RETURNS TRIGGER AS $$
--- Creates user profile on auth signup
--- Auto-confirms emails
--- Generates placeholder phone numbers
-```
-
----
-
-## 📈 PERFORMANCE OPTIMIZATION
-
-### Database Indexes
-
-```sql
--- User lookups
-CREATE INDEX idx_users_auth_user_id ON public.users(auth_user_id);
-CREATE INDEX idx_users_email ON public.users(email);
-CREATE INDEX idx_users_phone ON public.users(phone);
-
--- Schedule queries
-CREATE INDEX idx_schedule_shifts_user_id ON public.schedule_shifts(user_id);
-CREATE INDEX idx_schedule_shifts_time_range ON public.schedule_shifts(start_ts, end_ts);
-
--- Rate lookups
-CREATE INDEX idx_rates_effective_period ON public.rates(effective_from, effective_to);
-
--- Time entries (future)
-CREATE INDEX idx_time_entries_approved ON public.time_entries(approved_at) WHERE approved_at IS NOT NULL;
-
--- Shift registration lookups
-CREATE INDEX idx_shift_registrations_week_start ON public.shift_registrations(week_start_date);
-CREATE INDEX idx_shift_registrations_user_week  ON public.shift_registrations(user_id, week_start_date);
-```
-
-### Query Patterns
-
-- **TanStack Query** for client-side caching (5-minute staleTime)
-- **Optimistic updates** for immediate UI feedback
-- **Background sync** for real-time data consistency
-- **RLS-aware queries** via Supabase client
-
----
-
-## 🗄️ MIGRATION HISTORY
-
-### Key Migrations Timeline
-
-| Date       | Migration                                                  | Purpose                                                                                                                    |
-| ---------- | ---------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------- |
-| 2025-08-30 | `20250830000001_initial_schema`                            | Core tables and enums                                                                                                      |
-| 2025-08-30 | `20250830000002_rls_policies`                              | Row Level Security setup                                                                                                   |
-| 2025-08-30 | `20250830000003_seed_data`                                 | Vietnamese activities and rates                                                                                            |
-| 2025-08-30 | `20250830000004_admin_functions`                           | Admin user management functions                                                                                            |
-| 2025-09-09 | `20250909034138_change_phone_to_email_auth`                | **Migration to email authentication**                                                                                      |
-| 2025-09-09 | `20250909063909_update_handle_new_user_trigger_with_phone` | Placeholder phone system                                                                                                   |
-| 2025-09-11 | `20250911000001_remove_custom_shift_template`              | Simplified shift templates                                                                                                 |
-| 2025-09-11 | `20250911164958_allow_employees_view_all_shifts`           | **Employee schedule visibility**                                                                                           |
-| 2025-09-11 | `20250911175745_allow_employees_view_colleagues_info`      | Employee coordination access                                                                                               |
-| 2025-09-19 | `20250919123000_allowance_rates`                           | Lunch allowance system                                                                                                     |
-| 2025-10-02 | `20251002140953_payroll_period_lock_enforcement`           | Prevent edits to locked periods                                                                                            |
-| 2025-10-21 | `20251021090000_update_shift_limit_timezone`               | Asia/Ho_Chi_Minh day boundary fix                                                                                          |
-| 2025-11-08 | `20251108090000_add_supervisor_role`                       | Added `supervisor` enum value                                                                                              |
-| 2025-11-08 | `20251108090100_update_supervisor_policies`                | Updated role safeguards and read policies                                                                                  |
-| 2026-05-20 | `20260520000000_shift_registration`                        | **Shift registration board — employee self-service preferences**                                                           |
-| 2026-05-21 | `20260521000000_shift_registration_annotations`            | **Partial-shift annotations** — `custom_start_time`, `custom_end_time`, `note` columns; updated RPC; extended lock trigger |
-| 2026-06-02 | `20260602000000_add_avatar_url`                            | **Avatar upload** — `avatar_url TEXT` column on `users`; `avatars` Storage bucket with write-scoped RLS policies           |
-
-### Major Schema Changes
-
-1. **Authentication Migration (Sep 9, 2025):** Moved from phone-based synthetic emails to direct email authentication with progressive profile completion
-2. **Schedule Visibility Enhancement (Sep 11, 2025):** Enabled employees to view all colleagues' schedules while maintaining admin-only modification rights
-3. **Shift Template Simplification (Sep 11, 2025):** Removed custom shift support, standardized to morning/afternoon only
+- **`check_shift_overlap`** trigger: prevents overlapping shifts per user; enforces max 2 shifts/day; day boundary evaluated in `Asia/Ho_Chi_Minh` (not UTC).
+- **`prevent_role_self_change`** trigger: users cannot change their own role; last-admin protection (cannot demote or delete the final admin).
+- **`handle_new_user`** trigger: creates a `users` profile on auth signup, auto-confirms the email, and assigns a placeholder phone (`+84000000XXX`) until the user provides a real one.
 
 ---
 
 ## 👨‍💻 DEVELOPMENT REFERENCE
-
-### TypeScript Types
-
-Located in `src/types/index.ts`:
-
-```typescript
-interface User {
-  id: string;
-  email: string; // Added in migration 20250909034138
-  phone: string; // Vietnamese mobile format
-  name: string;
-  role: 'admin' | 'employee';
-  status: 'active' | 'inactive';
-  auth_user_id: string;
-  avatar_url?: string | null; // Added in migration 20260602000000
-}
-
-interface ScheduleShift {
-  id: string;
-  user_id: string;
-  activity_id: string;
-  start_ts: string;
-  end_ts: string;
-  template_name: 'morning' | 'afternoon'; // 'custom' removed
-  is_manual: boolean;
-  note?: string;
-}
-```
 
 ### Admin Functions
 
@@ -645,92 +457,3 @@ SELECT create_admin_user('admin@example.com', 'password', 'Admin Name');
 -- Promote existing user to admin
 SELECT promote_user_to_admin('user@example.com');
 ```
-
-### Common Queries
-
-```sql
--- Get employee schedule for a date
-SELECT ss.*, u.name, a.name as activity_name
-FROM schedule_shifts ss
-JOIN users u ON ss.user_id = u.id
-JOIN activities a ON ss.activity_id = a.id
-WHERE DATE(ss.start_ts) = '2025-09-17';
-
--- Calculate monthly salary for user
-SELECT
-  u.name,
-  SUM(EXTRACT(epoch FROM (ss.end_ts - ss.start_ts))/3600) as total_hours,
-  SUM(EXTRACT(epoch FROM (ss.end_ts - ss.start_ts))/3600 * r.hourly_vnd) as total_salary_vnd
-FROM schedule_shifts ss
-JOIN users u ON ss.user_id = u.id
-JOIN rates r ON ss.activity_id = r.activity_id
-WHERE u.id = ? AND DATE_TRUNC('month', ss.start_ts) = '2025-09-01'
-  AND ss.start_ts >= r.effective_from
-  AND (r.effective_to IS NULL OR ss.start_ts <= r.effective_to);
-```
-
----
-
-## 🌍 VIETNAMESE LOCALIZATION
-
-### Data Localization
-
-- **Activities:** Vietnamese names (Thử việc, Cà phê, Bánh mì, Quản lý)
-- **Currency:** Vietnamese Dong (VND) with proper formatting
-- **Phone Format:** Vietnamese mobile (+84, 10 digits, specific prefixes)
-- **Interface:** Vietnamese labels and error messages
-
-### Phone Number Validation
-
-```typescript
-// Vietnamese mobile pattern: 10 digits starting with 03, 05, 07, 08, 09
-const VIETNAMESE_PHONE_PATTERN = /^(03|05|07|08|09)\d{8}$/;
-```
-
-### Currency Display
-
-```typescript
-// Format: 25.000 ₫ (Vietnamese Dong formatting)
-const formatMoney = (amount: number) =>
-  new Intl.NumberFormat('vi-VN', {
-    style: 'currency',
-    currency: 'VND',
-  }).format(amount);
-```
-
----
-
-## 🔄 CURRENT STATUS
-
-**Phase:** Phase 1 MVP Complete (~100%)
-**Last Updated:** June 2, 2026
-
-### ✅ Completed Database Features
-
-- Complete schema with 10 core tables + `avatars` Storage bucket
-- Row Level Security with employee schedule visibility
-- Business rules enforcement via triggers
-- Vietnamese data localization
-- Email authentication with progressive profile completion
-- Payroll period management with locking
-- Admin functions for user management
-- Shift registration board with per-week lock enforcement and atomic submit RPC
-- User avatar upload with per-user Storage RLS
-
-### 🚧 Future Database Enhancements (Phase 2+)
-
-- Advanced time entries system (separate from schedules)
-- Real-time subscriptions for live updates
-- Multi-branch support (additional tables)
-- Audit logging for administrative actions
-- Database-level shift swap workflows
-- Advanced reporting views and materialized tables
-
----
-
-**For more information:**
-
-- Technical setup: `docs/ARCHITECTURE.md`
-- Development progress: `docs/PROGRESS.md`
-- Feature documentation: `docs/features/` directory
-- Migration files: `supabase/migrations/`
