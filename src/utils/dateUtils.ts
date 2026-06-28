@@ -114,6 +114,19 @@ export const formatDateLocal = (date: Date): string => {
   );
 };
 
+export const getFirstOfNextMonth = (): string => {
+  const today = new Date();
+  return formatDateLocal(
+    new Date(today.getFullYear(), today.getMonth() + 1, 1),
+  );
+};
+
+export const getTomorrow = (): string => {
+  const d = new Date();
+  d.setDate(d.getDate() + 1);
+  return formatDateLocal(d);
+};
+
 export const addWeeks = (weekStart: string, n: number): string => {
   const d = new Date(weekStart + 'T00:00:00');
   d.setDate(d.getDate() + 7 * n);
