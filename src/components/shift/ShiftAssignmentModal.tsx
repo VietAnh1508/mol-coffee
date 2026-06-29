@@ -4,6 +4,7 @@ import { SHIFT_TEMPLATES, type ShiftTemplate } from '../../constants/shifts';
 import { useActivities } from '../../hooks/useActivities';
 import { useScheduleMutations } from '../../hooks/useScheduleMutations';
 import { useScheduleShifts } from '../../hooks/useScheduleShifts';
+import { useToast } from '../../hooks/useToast';
 import { useActiveUsers } from '../../hooks/useUsers';
 
 interface ShiftAssignmentModalProps {
@@ -21,12 +22,13 @@ export function ShiftAssignmentModal({
   selectedDate,
   isLocked = false,
 }: ShiftAssignmentModalProps) {
-  const [selectedUserId, setSelectedUserId] = useState<string>('');
+  const [selectedUserIds, setSelectedUserIds] = useState<string[]>([]);
   const [selectedActivityId, setSelectedActivityId] = useState<string>('');
 
   const { data: activeUsers = [] } = useActiveUsers();
   const { data: activities = [] } = useActivities();
   const { createShift } = useScheduleMutations();
+  const { showSuccess, showError } = useToast();
   const { data: existingShifts = [] } = useScheduleShifts(selectedDate);
 
   // Get users already assigned to this shift template on the selected date
@@ -41,10 +43,10 @@ export function ShiftAssignmentModal({
 
   // Auto-select user if there's only one option remaining
   useEffect(() => {
-    if (assignableUsers.length === 1 && !selectedUserId) {
-      setSelectedUserId(assignableUsers[0].id);
+    if (assignableUsers.length === 1 && selectedUserIds.length === 0) {
+      setSelectedUserIds([assignableUsers[0].id]);
     }
-  }, [assignableUsers, selectedUserId]);
+  }, [assignableUsers, selectedUserIds.length]);
 
   const shiftInfo = SHIFT_TEMPLATES[shiftTemplate];
 
@@ -55,38 +57,51 @@ export function ShiftAssignmentModal({
     return date.toISOString();
   };
 
+  const toggleUser = (userId: string) => {
+    setSelectedUserIds((prev) =>
+      prev.includes(userId)
+        ? prev.filter((id) => id !== userId)
+        : [...prev, userId],
+    );
+  };
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Prevent submission if period is locked
-    if (isLocked) {
-      return;
-    }
-
-    if (!selectedUserId || !selectedActivityId) {
-      return;
-    }
+    if (isLocked) return;
+    if (selectedUserIds.length === 0 || !selectedActivityId) return;
 
     try {
-      await createShift.mutateAsync({
-        user_id: selectedUserId,
-        activity_id: selectedActivityId,
-        start_ts: getShiftDateTime(shiftInfo.start),
-        end_ts: getShiftDateTime(shiftInfo.end),
-        template_name: shiftTemplate,
-      });
+      await Promise.all(
+        selectedUserIds.map((userId) =>
+          createShift.mutateAsync({
+            user_id: userId,
+            activity_id: selectedActivityId,
+            start_ts: getShiftDateTime(shiftInfo.start),
+            end_ts: getShiftDateTime(shiftInfo.end),
+            template_name: shiftTemplate,
+          }),
+        ),
+      );
 
+      const count = selectedUserIds.length;
       onClose();
-      setSelectedUserId('');
+      setSelectedUserIds([]);
       setSelectedActivityId('');
+      showSuccess(
+        count === 1
+          ? 'Đã thêm 1 nhân viên vào ca thành công'
+          : `Đã thêm ${count} nhân viên vào ca thành công`,
+      );
     } catch (error) {
       console.error('Failed to create shift:', error);
+      showError('Không thể thêm nhân viên vào ca. Vui lòng thử lại.');
     }
   };
 
   const handleClose = () => {
     onClose();
-    setSelectedUserId('');
+    setSelectedUserIds([]);
     setSelectedActivityId('');
   };
 
@@ -131,42 +146,47 @@ export function ShiftAssignmentModal({
           {/* User Selection */}
           <div>
             <label className="mb-2 block text-sm font-medium text-subtle">
-              Chọn người
+              Chọn người{' '}
+              {selectedUserIds.length > 0 && (
+                <span className="text-blue-400">
+                  ({selectedUserIds.length} đã chọn)
+                </span>
+              )}
             </label>
             <div className="max-h-64 space-y-2 overflow-y-auto">
-              {assignableUsers.map((user) => (
-                <label
-                  key={user.id}
-                  className={`flex cursor-pointer items-center rounded-xl border px-3 py-2 transition ${
-                    selectedUserId === user.id
-                      ? 'border-blue-400 bg-blue-500/10'
-                      : 'border-subtle hover:bg-surface-muted'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="employee"
-                    value={user.id}
-                    checked={selectedUserId === user.id}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="sr-only"
-                  />
-                  <div className="flex flex-1 items-center">
-                    <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-surface-muted text-muted">
-                      <FaUser className="text-sm" />
-                    </div>
-                    <div>
-                      <div className="font-semibold text-primary">
-                        {user.name}
+              {assignableUsers.map((user) => {
+                const isSelected = selectedUserIds.includes(user.id);
+                return (
+                  <label
+                    key={user.id}
+                    className={`flex cursor-pointer items-center rounded-xl border px-3 py-2 transition ${
+                      isSelected
+                        ? 'border-blue-400 bg-blue-500/10'
+                        : 'border-subtle hover:bg-surface-muted'
+                    }`}
+                  >
+                    <input
+                      type="checkbox"
+                      value={user.id}
+                      checked={isSelected}
+                      onChange={() => toggleUser(user.id)}
+                      className="sr-only"
+                    />
+                    <div className="flex flex-1 items-center">
+                      <div className="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-surface-muted text-muted">
+                        <FaUser className="text-sm" />
                       </div>
-                      <div className="text-sm text-subtle">{user.email}</div>
+                      <div>
+                        <div className="font-semibold text-primary">
+                          {user.name}
+                        </div>
+                        <div className="text-sm text-subtle">{user.email}</div>
+                      </div>
                     </div>
-                  </div>
-                  {selectedUserId === user.id && (
-                    <FaCheck className="ml-2 text-blue-400" />
-                  )}
-                </label>
-              ))}
+                    {isSelected && <FaCheck className="ml-2 text-blue-400" />}
+                  </label>
+                );
+              })}
               {assignableUsers.length === 0 && (
                 <div className="py-8 text-center text-sm text-subtle">
                   {assignedUserIds.length > 0
@@ -209,7 +229,7 @@ export function ShiftAssignmentModal({
             <button
               type="submit"
               disabled={
-                !selectedUserId ||
+                selectedUserIds.length === 0 ||
                 !selectedActivityId ||
                 createShift.isPending ||
                 isLocked
