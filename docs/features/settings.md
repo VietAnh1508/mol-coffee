@@ -6,7 +6,7 @@
 
 ## Overview
 
-The Settings Management system provides comprehensive admin controls for configuring coffee shop operations, including work activities and hourly rates with effective dating. This feature enables dynamic pricing and operational flexibility.
+The Settings Management system provides comprehensive admin controls for configuring coffee shop operations, including work activities, hourly rates, and lunch allowance rates, all with effective dating. This feature enables dynamic pricing and operational flexibility.
 
 ## Core Features
 
@@ -20,6 +20,12 @@ The Settings Management system provides comprehensive admin controls for configu
 - **Activity-based Hourly Rates:** Set different rates for different work types
 - **Effective Dating:** Historical rate tracking with date-based transitions
 - **Rate History:** Complete audit trail of rate changes
+- **Vietnamese Currency:** VND formatting and Vietnamese number display
+
+### Allowance Management
+- **Lunch Allowance Rate:** Set the daily lunch allowance amount (VND) paid on qualifying double-shift days
+- **Effective Dating:** Same schedule-change/edit-future pattern as Rates — historical tracking with date-based transitions
+- **Rate History:** Complete audit trail of allowance amount changes
 - **Vietnamese Currency:** VND formatting and Vietnamese number display
 
 ### Data Management
@@ -57,6 +63,21 @@ CREATE TABLE public.rates (
 );
 ```
 
+#### Allowance Rates Table
+```sql
+CREATE TABLE public.allowance_rates (
+  id UUID DEFAULT gen_random_uuid() PRIMARY KEY,
+  type allowance_type NOT NULL,                    -- enum, currently only 'lunch'
+  amount_vnd INTEGER NOT NULL,                     -- Vietnamese Dong, per day
+  effective_from DATE NOT NULL,
+  effective_to DATE,                               -- NULL = current rate
+  created_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  updated_at TIMESTAMPTZ DEFAULT NOW() NOT NULL,
+  CONSTRAINT allowance_rates_effective_period_check CHECK (effective_to IS NULL OR effective_to > effective_from)
+);
+```
+Unlike `rates`, `allowance_rates` is keyed by a `type` enum instead of `activity_id` — there's no activity picker in the Allowance tab.
+
 ### Default Vietnamese Activities
 Seeded during initial setup:
 - **Thử việc** (Trial work) - 20,000 VND/hour
@@ -82,7 +103,7 @@ ORDER BY effective_from DESC LIMIT 1;
 ## User Interface
 
 ### Settings Page Layout
-- **Tab Navigation:** Organized tabs for Activities and Rates management
+- **Tab Navigation:** Organized tabs for Activities, Rates, and Allowance management
 - **Mobile-Responsive:** Optimized for mobile coffee shop management
 - **Real-time Data:** Live updates with TanStack Query integration
 - **Action Buttons:** React Icons integration for intuitive controls
@@ -99,6 +120,11 @@ ORDER BY effective_from DESC LIMIT 1;
 - **Date-based Organization:** Chronological rate display
 - **Add Rate Form:** Set new rates with effective dating
 - **Current Rate Highlighting:** Visual emphasis on active rates
+
+### Allowance Management UI
+- **Allowance History View:** Complete historical lunch allowance tracking, mirrors Rates
+- **Add/Schedule/Edit Form:** Same three modes as Rates (create, schedule a future change, edit an upcoming amount)
+- **Current Allowance Highlighting:** Visual emphasis on the active allowance
 
 ## Core Functionality
 
@@ -137,6 +163,11 @@ ORDER BY effective_from DESC LIMIT 1;
   - [x] Rate effective dating system
   - [x] Rate history view with automatic refresh
   - [x] React Icons integration for action buttons
+
+- [x] **Allowance Management (powered by TanStack Query)**
+  - [x] Set lunch allowance amount per day
+  - [x] Allowance effective dating system (create/schedule-change/edit-future)
+  - [x] Allowance history view with automatic refresh
 
 - [x] **Data Persistence and User Experience**
   - [x] Data persistence with automatic cache invalidation

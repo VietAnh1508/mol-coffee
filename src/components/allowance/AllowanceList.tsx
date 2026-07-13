@@ -1,45 +1,45 @@
-import { useState } from 'react';
-import { FaCalendarAlt, FaEdit } from 'react-icons/fa';
-import { HiPlus } from 'react-icons/hi2';
-import { useRates } from '../../hooks/useRates';
-import type { Rate } from '../../types';
-import { formatDateDMY } from '../../utils/dateUtils';
-import { formatMoney } from '../../utils/payrollUtils';
-import { RATE_STATUS_ORDER, getEffectivePeriodStatus } from '../../utils/rateStatus';
-import { Spinner } from '../Spinner';
-import { RateForm } from './RateForm';
-import type { RateFormMode } from './RateForm';
-import { RateStatusBadge } from './RateStatusBadge';
+import { useState } from "react";
+import { FaCalendarAlt, FaEdit } from "react-icons/fa";
+import { HiPlus } from "react-icons/hi2";
+import { useAllowanceRates } from "../../hooks/useAllowanceRates";
+import type { AllowanceRate } from "../../types";
+import { formatDateDMY } from "../../utils/dateUtils";
+import { formatMoney } from "../../utils/payrollUtils";
+import { RATE_STATUS_ORDER, getEffectivePeriodStatus } from "../../utils/rateStatus";
+import { Spinner } from "../Spinner";
+import { RateStatusBadge } from "../rates/RateStatusBadge";
+import { AllowanceForm } from "./AllowanceForm";
+import type { AllowanceFormMode } from "./AllowanceForm";
 
-interface RateListProps {
+interface AllowanceListProps {
   readonly canManage?: boolean;
 }
 
-export function RateList({ canManage = true }: RateListProps) {
-  const { data: rates = [], isLoading } = useRates();
+export function AllowanceList({ canManage = true }: AllowanceListProps) {
+  const { data: rates = [], isLoading } = useAllowanceRates("lunch");
 
-  const [formMode, setFormMode] = useState<RateFormMode>('create');
-  const [selectedRate, setSelectedRate] = useState<Rate | null>(null);
+  const [formMode, setFormMode] = useState<AllowanceFormMode>("create");
+  const [selectedRate, setSelectedRate] = useState<AllowanceRate | null>(null);
   const [showForm, setShowForm] = useState(false);
 
-  const handleScheduleChange = (rate: Rate) => {
+  const handleScheduleChange = (rate: AllowanceRate) => {
     if (!canManage) return;
     setSelectedRate(rate);
-    setFormMode('schedule-change');
+    setFormMode("schedule-change");
     setShowForm(true);
   };
 
-  const handleEditFuture = (rate: Rate) => {
+  const handleEditFuture = (rate: AllowanceRate) => {
     if (!canManage) return;
     setSelectedRate(rate);
-    setFormMode('edit-future');
+    setFormMode("edit-future");
     setShowForm(true);
   };
 
   const handleAdd = () => {
     if (!canManage) return;
     setSelectedRate(null);
-    setFormMode('create');
+    setFormMode("create");
     setShowForm(true);
   };
 
@@ -53,7 +53,7 @@ export function RateList({ canManage = true }: RateListProps) {
       RATE_STATUS_ORDER[getEffectivePeriodStatus(a)] -
       RATE_STATUS_ORDER[getEffectivePeriodStatus(b)];
     if (statusDiff !== 0) return statusDiff;
-    return b.hourly_vnd - a.hourly_vnd;
+    return b.amount_vnd - a.amount_vnd;
   });
 
   if (isLoading) {
@@ -68,7 +68,7 @@ export function RateList({ canManage = true }: RateListProps) {
     <div>
       <div className="mb-6 flex items-center justify-between">
         <h2 className="text-xl font-semibold text-primary">
-          Quản lý mức lương
+          Quản lý phụ cấp
         </h2>
         {canManage && (
           <button
@@ -76,7 +76,7 @@ export function RateList({ canManage = true }: RateListProps) {
             className="flex items-center gap-2 rounded-xl bg-blue-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-blue-500 focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
           >
             <HiPlus className="w-4 h-4" />
-            Thêm mức lương
+            Thêm phụ cấp
           </button>
         )}
       </div>
@@ -88,27 +88,27 @@ export function RateList({ canManage = true }: RateListProps) {
             return (
               <li
                 key={rate.id}
-                className={`px-6 py-4 ${index < sortedRates.length - 1 ? 'border-b border-subtle' : ''}`}
+                className={`px-6 py-4 ${index < sortedRates.length - 1 ? "border-b border-subtle" : ""}`}
               >
                 <div className="flex items-center justify-between gap-4">
                   <div className="min-w-0">
                     <div className="flex flex-wrap items-center gap-2">
                       <h3 className="text-lg font-semibold text-primary">
-                        {rate.activity?.name}
+                        Phụ cấp ăn trưa
                       </h3>
                       <RateStatusBadge status={status} />
                     </div>
                     <div className="mt-1 text-sm text-subtle">
                       <span className="font-medium">
-                        {formatMoney(rate.hourly_vnd)}/giờ
+                        {formatMoney(rate.amount_vnd)}/ngày
                       </span>
-                      {' • '}
+                      {" • "}
                       <span>
                         Từ: {formatDateDMY(new Date(rate.effective_from))}
                       </span>
                       {rate.effective_to && (
                         <>
-                          {' • '}
+                          {" • "}
                           <span>
                             Đến: {formatDateDMY(new Date(rate.effective_to))}
                           </span>
@@ -116,21 +116,21 @@ export function RateList({ canManage = true }: RateListProps) {
                       )}
                     </div>
                   </div>
-                  {canManage && status !== 'expired' && (
+                  {canManage && status !== "expired" && (
                     <button
                       onClick={() =>
-                        status === 'active'
+                        status === "active"
                           ? handleScheduleChange(rate)
                           : handleEditFuture(rate)
                       }
                       aria-label={
-                        status === 'active'
-                          ? 'Lên lịch thay đổi mức lương'
-                          : 'Chỉnh sửa mức lương'
+                        status === "active"
+                          ? "Lên lịch thay đổi phụ cấp"
+                          : "Chỉnh sửa phụ cấp"
                       }
                       className="flex shrink-0 items-center gap-1.5 rounded-lg border border-subtle px-3 py-1.5 text-xs font-semibold text-subtle transition hover:bg-surface-muted hover:text-primary focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 focus:ring-offset-surface"
                     >
-                      {status === 'active' ? (
+                      {status === "active" ? (
                         <>
                           <FaCalendarAlt className="h-3 w-3" />
                           Thay đổi
@@ -151,7 +151,7 @@ export function RateList({ canManage = true }: RateListProps) {
       </div>
 
       {canManage && showForm && (
-        <RateForm
+        <AllowanceForm
           mode={formMode}
           rate={selectedRate}
           onClose={handleCloseForm}

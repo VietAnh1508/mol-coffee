@@ -195,7 +195,7 @@ const formatMoney = (amount: number) =>
   - [x] Update PayrollDailyBreakdown to show lunch allowance per qualifying day
   - [x] Vietnamese localization for lunch allowance terminology
   - [x] Database schema for lunch allowance rates (configurable amount per day)
-  - [ ] Admin settings to configure lunch allowance rates
+  - [x] Admin settings to configure lunch allowance rates
   - [ ] Integration with existing payroll period locking system
   
 Note: Payroll now reads the lunch allowance from the database (`allowance_rates`), effective-dated by day. If no applicable rate exists, a safe fallback is used on the client to avoid disruption.

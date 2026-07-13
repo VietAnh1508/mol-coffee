@@ -273,6 +273,8 @@ CREATE TABLE public.allowance_rates (
 - Everyone authenticated can `SELECT` for calculation and history
 - Admins can `INSERT/UPDATE/DELETE` via Settings
 
+> ⚠️ **Known inconsistency:** unlike `rates` (non-admins can only `SELECT` the currently-active row; admins see full history), `allowance_rates`' `SELECT` policy is `auth.uid() IS NOT NULL` — any authenticated user, including supervisors, can read the **full** effective-dated history, not just the current rate. Both Settings tabs are read-only for non-admins either way, so this isn't a functional bug, but it's a visible gap if the two tabs are meant to behave identically. Closing it would need a new migration splitting the `allowance_rates` SELECT policy the same way `rates` already does.
+
 **Example: Get applicable allowance for a date**
 
 ```sql

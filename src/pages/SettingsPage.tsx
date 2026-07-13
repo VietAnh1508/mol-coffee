@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ActivityList } from "../components/activity/ActivityList";
+import { AllowanceList } from "../components/allowance/AllowanceList";
 import { RateList } from "../components/rates/RateList";
 import { canManageResources } from "../constants/userRoles";
 import { useAuth } from "../hooks/useAuth";
@@ -8,9 +9,9 @@ export function SettingsPage() {
   const { user } = useAuth();
 
   // Local state
-  const [activeTab, setActiveTab] = useState<"activities" | "rates">(
-    "activities",
-  );
+  const [activeTab, setActiveTab] = useState<
+    "activities" | "rates" | "allowance"
+  >("activities");
 
   if (!user) return null;
 
@@ -56,12 +57,27 @@ export function SettingsPage() {
               <span className="absolute inset-x-0 -bottom-[1px] h-0.5 rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-blue-500" />
             )}
           </button>
+          <button
+            onClick={() => setActiveTab("allowance")}
+            className={`relative py-2 text-sm font-semibold transition-colors ${
+              activeTab === "allowance"
+                ? "text-blue-500"
+                : "text-subtle hover:text-primary"
+            }`}
+          >
+            Phụ cấp
+            {activeTab === "allowance" && (
+              <span className="absolute inset-x-0 -bottom-[1px] h-0.5 rounded-full bg-gradient-to-r from-blue-500 via-sky-500 to-blue-500" />
+            )}
+          </button>
         </nav>
       </div>
 
       {activeTab === "activities" && <ActivityList canManage={canManage} />}
 
       {activeTab === "rates" && <RateList canManage={canManage} />}
+
+      {activeTab === "allowance" && <AllowanceList canManage={canManage} />}
     </div>
   );
 }
